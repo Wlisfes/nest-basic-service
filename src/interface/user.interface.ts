@@ -3,7 +3,6 @@ import { IsNotEmpty, Length, IsNumber } from 'class-validator'
 import { Type, Transform } from 'class-transformer'
 import { IsOptional, IsMobile, TransferNumber } from '@/decorator/common.decorator'
 import { RequestCommon } from '@/interface/common.interface'
-import { at } from '@/i18n'
 
 export class RequestUser extends PickType(RequestCommon, ['id', 'uid']) {
 	@ApiProperty({ description: '昵称', example: '猪头' })
@@ -11,29 +10,25 @@ export class RequestUser extends PickType(RequestCommon, ['id', 'uid']) {
 	nickname: string
 
 	@ApiProperty({ description: '密码' })
-	@IsNotEmpty({ message: at('user.password.required') })
-	@Length(6, 18, { message: at('user.password.format') })
+	@IsNotEmpty({ message: '密码 必填' })
+	@Length(6, 18, { message: '密码格式错误' })
 	password: string
 
 	@ApiProperty({ description: '头像', required: false })
 	@IsOptional()
 	avatar: string
 
-	@ApiProperty({ description: 'OpenID' })
-	@IsNotEmpty({ message: at('user.openid.required') })
-	openid: string
-
 	@ApiProperty({ description: '验证码' })
-	@IsNotEmpty({ message: at('user.code.required') })
-	@Length(4, 6, { message: at('user.code.error') })
+	@IsNotEmpty({ message: '验证码 必填' })
+	@Length(4, 6, { message: '验证码错误' })
 	code: string
 }
 
 /**注册用户**/
-export class RequestRegister extends PickType(RequestUser, ['nickname', 'password', 'mobile', 'code']) {}
+export class RequestRegister extends PickType(RequestUser, ['nickname', 'password', 'code']) {}
 
 /**登录**/
-export class RequestAuthorize extends PickType(RequestUser, ['mobile', 'password', 'code']) {}
+export class RequestAuthorize extends PickType(RequestUser, ['password', 'code']) {}
 
 /**用户信息**/
 export class RequestBasicUser extends PickType(RequestUser, ['uid']) {}
