@@ -1,0 +1,13 @@
+{
+	"CREATE_SUCCESS": "创建成功",
+	"UPDATE_SUCCESS": "编辑成功",
+	"DELETE_SUCCESS": "删除成功",
+	"SERVICE_ERROR": "服务器开小差了",
+	"NOT_HAS": "{name}已存在",
+	"NOT_DONE": "{name}不存在",
+	"NOT_CLOSE": "{name}已关闭",
+	"NOT_DELETE": "{name}已删除",
+	"NOT_ENABLE": "{name}已启用",
+	"NOT_DISABLE": "{name}已禁用",
+	"NOT_ISSUE": "{name}不存在或已禁用"
+}

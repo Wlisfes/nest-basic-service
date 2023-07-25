@@ -1,4 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common'
+import { CoreService } from '@/core/core.service'
+import { EntityService } from '@/core/entity.service'
 
 @Injectable()
-export class UserService {}
+export class UserService extends CoreService {
+	constructor(private readonly entity: EntityService) {
+		super()
+	}
+}

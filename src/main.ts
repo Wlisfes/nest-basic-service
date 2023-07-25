@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core'
 import { ValidationPipe } from '@nestjs/common'
 import { NestExpressApplication } from '@nestjs/platform-express'
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger'
+import { I18nValidationPipe } from 'nestjs-i18n'
 import { AppModule } from '@/app.module'
 import { logger } from '@/middleware/logger.middleware'
 import { join } from 'path'
@@ -44,6 +45,8 @@ async function bootstrap() {
 	app.useStaticAssets(join(__dirname, '..', 'public'))
 	//全局注册验证管道
 	app.useGlobalPipes(new ValidationPipe({ transform: true, whitelist: true }))
+	//全局注册i18n管道
+	app.useGlobalPipes(new I18nValidationPipe())
 
 	//文档挂载
 	await useSwagger(app)
