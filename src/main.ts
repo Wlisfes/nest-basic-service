@@ -3,6 +3,7 @@ import { ValidationPipe } from '@nestjs/common'
 import { NestExpressApplication } from '@nestjs/platform-express'
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger'
 import { AppModule } from '@/app.module'
+import { logger } from '@/middleware/logger.middleware'
 import { join } from 'path'
 import * as express from 'express'
 import * as cookieParser from 'cookie-parser'
@@ -36,6 +37,7 @@ async function bootstrap() {
 	//解析body参数
 	app.use(express.json())
 	app.use(express.urlencoded({ extended: true }))
+	app.use(logger)
 
 	//静态资源
 	app.useStaticAssets(join(__dirname, '..', 'public'))
