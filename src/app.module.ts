@@ -2,11 +2,11 @@ import { Module } from '@nestjs/common'
 import { APP_INTERCEPTOR, APP_FILTER } from '@nestjs/core'
 import { ConfigModule, ConfigService } from '@nestjs/config'
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm'
+import { TransformInterceptor } from '@/interceptor/transform.interceptor'
+import { HttpExceptionFilter } from '@/filter/http-exception.filter'
 import { AppController } from '@/app.controller'
 import { AppService } from '@/app.service'
 import { CoreModule } from '@/core/core.module'
-import { TransformInterceptor } from '@/interceptor/transform.interceptor'
-import { HttpExceptionFilter } from '@/filter/http-exception.filter'
 
 @Module({
 	imports: [

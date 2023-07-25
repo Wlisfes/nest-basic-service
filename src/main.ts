@@ -38,6 +38,7 @@ async function bootstrap() {
 	app.use(express.json())
 	app.use(express.urlencoded({ extended: true }))
 	app.use(logger)
+	app.setGlobalPrefix('/api')
 
 	//静态资源
 	app.useStaticAssets(join(__dirname, '..', 'public'))
