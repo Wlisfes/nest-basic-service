@@ -8,7 +8,7 @@ import { HttpExceptionFilter } from '@/filter/http-exception.filter'
 import { AppController } from '@/app.controller'
 import { AppService } from '@/app.service'
 import { CoreModule } from '@/core/core.module'
-import { join } from 'path'
+import * as path from 'path'
 
 @Module({
 	imports: [
@@ -18,10 +18,10 @@ import { join } from 'path'
 			loader: I18nJsonLoader,
 			fallbacks: { cn: 'cn', en: 'en' },
 			loaderOptions: {
-				path: join(__dirname, '/i18n/'),
+				path: path.join(__dirname, '/i18n/'),
 				watch: true
 			},
-			typesOutputPath: join(__dirname, '../src/i18n/i18n.interface.ts'),
+			typesOutputPath: path.join(__dirname, '../src/i18n/i18n.interface.ts'),
 			resolvers: [new HeaderResolver(['x-locale'])]
 		}),
 		TypeOrmModule.forRootAsync({

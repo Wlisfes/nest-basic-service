@@ -1,6 +1,6 @@
 import { Repository, FindOneOptions } from 'typeorm'
 
-export interface ICoreDator<T> {
+export interface CoreRequest<T> {
 	name: string //模型名称
 	message?: string //错误提示
 	ids?: Array<number> //批量查找时id列表

@@ -13,6 +13,7 @@ lerna-debug.log*
 package-lock.json
 yarn.lock
 .env
+/src/i18n/i18n.interface.ts
 
 # OS
 .DS_Store
