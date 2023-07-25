@@ -1,10 +1,17 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common'
 import { usuCurrent } from '@/i18n'
 import { CoreRequest } from '@/interface/core.interface'
+import * as Nanoid from 'nanoid'
 import * as moment from 'dayjs'
 
 @Injectable()
 export class CoreService {
+	/**创建UID**/
+	public createCustomByte(size: number = 32, toLowerCase: boolean = false) {
+		const uid = Nanoid.customAlphabet('0123456789ABCDEFGHIJKLMNOPQRSTUVWSYZ')(size)
+		return toLowerCase ? uid.toLowerCase() : uid
+	}
+
 	/**创建国际化实例**/
 	public async usuCurrent() {
 		return usuCurrent()
