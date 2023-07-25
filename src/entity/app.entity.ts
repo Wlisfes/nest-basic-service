@@ -1,6 +1,7 @@
 import { Entity, Column, ManyToOne } from 'typeorm'
 import { CommonEntity } from '@/entity/common.entity'
 import { UserEntity } from '@/entity/user.entity'
+import { RecordEntity } from '@/entity/record.entity'
 
 @Entity('tb-app')
 export class AppEntity extends CommonEntity {
@@ -24,4 +25,7 @@ export class AppEntity extends CommonEntity {
 
 	@ManyToOne(type => UserEntity, user => user.app)
 	user: UserEntity
+
+	@ManyToOne(type => RecordEntity, record => record.app)
+	record: RecordEntity[]
 }
