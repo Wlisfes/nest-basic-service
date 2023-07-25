@@ -7,4 +7,9 @@ export class UserService extends CoreService {
 	constructor(private readonly entity: EntityService) {
 		super()
 	}
+
+	/**注册用户**/
+	public async httpRegister(props: http.RequestRegister)  {
+		
+	}
 }
