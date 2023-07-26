@@ -3,12 +3,27 @@ import { usuCurrent } from '@/i18n'
 import { CoreRequest } from '@/interface/core.interface'
 import * as Nanoid from 'nanoid'
 import * as moment from 'dayjs'
+import * as crypto from 'crypto'
 
 @Injectable()
 export class CoreService {
+	/**AES加密**/
+	public aesEncrypt(data: any, key: string, iv: string) {
+		const cipher = crypto.createCipheriv('aes-256-cbc', key, iv)
+		const encrypted = cipher.update(JSON.stringify(data), 'utf8', 'hex')
+		return encrypted + cipher.final('hex')
+	}
+
+	/**AES解密**/
+	public aesDecrypt(text: string, key: string, iv: string) {
+		const decipher = crypto.createDecipheriv('aes-256-cbc', key, iv)
+		const decrypted = decipher.update(text, 'hex', 'utf8')
+		return JSON.parse(decrypted + decipher.final('utf8'))
+	}
+
 	/**创建UID**/
 	public createCustomByte(size: number = 32, toLowerCase: boolean = false) {
-		const uid = Nanoid.customAlphabet('0123456789ABCDEFGHIJKLMNOPQRSTUVWSYZ')(size)
+		const uid = Nanoid.customAlphabet('0123456789ABCDEFGHIJKLMnopqrstuvwsyz')(size)
 		return toLowerCase ? uid.toLowerCase() : uid
 	}
 

@@ -7,16 +7,22 @@ export class RecordEntity extends CommonEntity {
 	@Column({ type: 'bigint', comment: 'uid', readonly: true })
 	uid: number
 
-	@Column({ type: 'bigint', comment: 'RequestID', readonly: true })
-	requestId: number
+	@Column({ type: 'varchar', comment: 'RequestID', readonly: true })
+	requestId: string
 
-	@Column('simple-json', { nullable: false, comment: '位置参数' })
-	location: Object
+	@Column({ type: 'int', nullable: false, comment: '图形宽度' })
+	width: number
 
-	@Column({ type: 'bigint', nullable: false, comment: 'X轴位置' })
+	@Column({ type: 'int', nullable: false, comment: '图形高度' })
+	height: number
+
+	@Column({ type: 'int', nullable: false, comment: '偏移量' })
+	offset: number
+
+	@Column({ type: 'int', nullable: false, comment: 'X轴位置' })
 	pinX: number
 
-	@Column({ type: 'bigint', nullable: false, comment: 'Y轴位置' })
+	@Column({ type: 'int', nullable: false, comment: 'Y轴位置' })
 	pinY: number
 
 	@ManyToOne(type => AppEntity, app => app.record)
