@@ -6,13 +6,15 @@ import { RedisService } from '@/core/redis.service'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { UserEntity } from '@/entity/user.entity'
 import { AppEntity } from '@/entity/app.entity'
+import { RecordEntity } from '@/entity/record.entity'
 //module
 import { UserModule } from '@/module/user/user.module'
 import { AppModule } from '@/module/app/app.module'
+import { SupervisorModule } from '@/module/supervisor/supervisor.module'
 
 @Global()
 @Module({
-	imports: [TypeOrmModule.forFeature([UserEntity, AppEntity]), UserModule, AppModule],
+	imports: [TypeOrmModule.forFeature([UserEntity, AppEntity, RecordEntity]), UserModule, AppModule, SupervisorModule],
 	providers: [CoreService, EntityService, RedisService],
 	exports: [CoreService, EntityService, RedisService]
 })
