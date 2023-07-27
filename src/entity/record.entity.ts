@@ -25,7 +25,7 @@ export class RecordEntity extends CommonEntity {
 	@Column({ type: 'int', nullable: false, comment: 'Y轴位置', readonly: true })
 	pinY: number
 
-	@Column({ type: 'varchar', length: 1000, comment: '校验凭证', readonly: true })
+	@Column({ type: 'varchar', length: 1000, comment: '校验凭证', default: null })
 	token: string
 
 	@Column({ type: 'varchar', length: 1000, comment: '来源域名', readonly: true })

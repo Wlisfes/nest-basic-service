@@ -16,8 +16,6 @@ export class SupervisorController {
 		response: { status: 200, description: 'OK', type: http.ResultReducer }
 	})
 	public async httpReducer(@Headers() headers, @Body() body: http.RequestReducer) {
-		console.log(headers)
-		return headers
-		return await this.supervisorService.httpReducer(body)
+		return await this.supervisorService.httpReducer(body, headers.origin)
 	}
 }
