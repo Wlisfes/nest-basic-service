@@ -1,4 +1,4 @@
-import { Controller, Post, Put, Get, Body, Request, Query } from '@nestjs/common'
+import { Controller, Post, Put, Get, Body, Request, Headers, Query } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { ApiDecorator } from '@/decorator/compute.decorator'
 import { SupervisorService } from '@/module/supervisor/supervisor.service'
@@ -15,7 +15,8 @@ export class SupervisorController {
 		operation: { summary: '注册验证码配置' },
 		response: { status: 200, description: 'OK', type: http.ResultReducer }
 	})
-	public async httpReducer(@Body() body: http.RequestReducer) {
+	public async httpReducer(@Headers() headers, @Body() body: http.RequestReducer) {
+		console.log(headers)
 		return await this.supervisorService.httpReducer(body)
 	}
 }

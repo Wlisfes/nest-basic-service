@@ -7,6 +7,10 @@ import * as crypto from 'crypto'
 
 @Injectable()
 export class CoreService {
+	/**范围随机数**/
+	public createRandom(min: number, max: number) {
+		return Math.ceil(Math.random() * (max - min) + min)
+	}
 	/**AES加密**/
 	public aesEncrypt(data: any, key: string, iv: string) {
 		const cipher = crypto.createCipheriv('aes-256-cbc', key, iv)
