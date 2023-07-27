@@ -17,6 +17,7 @@ export class SupervisorController {
 	})
 	public async httpReducer(@Headers() headers, @Body() body: http.RequestReducer) {
 		console.log(headers)
+		return headers
 		return await this.supervisorService.httpReducer(body)
 	}
 }
