@@ -9,30 +9,32 @@ import * as uuid from 'uuid'
 @Injectable()
 export class CoreService {
 	/**UUID & RequestId**/
-	public createUUIDRequest(): string {
+	public async createUUIDRequest(): Promise<string> {
 		return uuid.v4()
 	}
 
 	/**范围随机数**/
-	public createRandom(min: number, max: number) {
+	public async createRandom(min: number, max: number) {
 		return Math.ceil(Math.random() * (max - min) + min)
 	}
 	/**AES加密**/
-	public aesEncrypt(data: any, key: string, iv: string) {
+	public async aesEncrypt(data: any, key: string, iv: string): Promise<string> {
 		const cipher = crypto.createCipheriv('aes-256-cbc', key, iv)
 		const encrypted = cipher.update(JSON.stringify(data), 'utf8', 'hex')
-		return encrypted + cipher.final('hex')
+		const hash = encrypted + cipher.final('hex')
+		return Buffer.from(hash).toString('base64')
 	}
 
 	/**AES解密**/
-	public aesDecrypt(text: string, key: string, iv: string) {
+	public async aesDecrypt<T>(text: string, key: string, iv: string): Promise<T> {
+		const hash = Buffer.from(text, 'base64').toString()
 		const decipher = crypto.createDecipheriv('aes-256-cbc', key, iv)
-		const decrypted = decipher.update(text, 'hex', 'utf8')
+		const decrypted = decipher.update(hash, 'hex', 'utf8')
 		return JSON.parse(decrypted + decipher.final('utf8'))
 	}
 
 	/**创建UID**/
-	public createCustomByte(size: number = 32, toLowerCase: boolean = false) {
+	public async createCustomByte(size: number = 32, toLowerCase: boolean = false) {
 		const uid = Nanoid.customAlphabet('0123456789ABCDEFGHIJKLMnopqrstuvwsyz')(size)
 		return toLowerCase ? uid.toLowerCase() : uid
 	}

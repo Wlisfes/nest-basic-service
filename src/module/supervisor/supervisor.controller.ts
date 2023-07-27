@@ -18,4 +18,22 @@ export class SupervisorController {
 	public async httpReducer(@Headers() headers, @Body() body: http.RequestReducer) {
 		return await this.supervisorService.httpReducer(body, headers.origin)
 	}
+
+	@Post('/authorize')
+	@ApiDecorator({
+		operation: { summary: '生成校验凭证' },
+		response: { status: 200, description: 'OK', type: http.ResultAuthorize }
+	})
+	public async httpAuthorize(@Headers() headers, @Body() body: http.RequestAuthorize) {
+		return await this.supervisorService.httpAuthorize(body, headers.origin)
+	}
+
+	@Post('/inspector')
+	@ApiDecorator({
+		operation: { summary: '校验凭证' },
+		response: { status: 200, description: 'OK', type: ResultNotice }
+	})
+	public async httpInspector(@Headers() headers, @Body() body: http.RequestInspector) {
+		return await this.supervisorService.httpInspector(body, headers.origin)
+	}
 }

@@ -25,10 +25,10 @@ export class RecordEntity extends CommonEntity {
 	@Column({ type: 'int', nullable: false, comment: 'Y轴位置', readonly: true })
 	pinY: number
 
-	@Column({ type: 'varchar', length: 1000, comment: '校验凭证', default: null })
+	@Column({ type: 'varchar', charset: 'utf8mb4', length: 2000, comment: '校验凭证', nullable: true, default: null })
 	token: string
 
-	@Column({ type: 'varchar', length: 1000, comment: '来源域名', readonly: true })
+	@Column({ type: 'varchar', charset: 'utf8mb4', length: 2000, comment: '来源域名', readonly: true })
 	referer: string
 
 	@Column({

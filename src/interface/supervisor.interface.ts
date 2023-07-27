@@ -25,13 +25,13 @@ export class RequestSupervisor extends PickType(RequestCommon, ['id', 'uid', 'cr
 
 	@ApiProperty({ description: '校验凭证' })
 	@IsNotEmpty({ message: '校验凭证 必填' })
-	token: number
+	token: string
 
 	@ApiProperty({ description: '来源域名' })
-	referer: number
+	referer: string
 
 	@ApiProperty({ description: 'RequestID' })
-	requestId: number
+	requestId: string
 
 	@ApiProperty({ description: 'Y轴位置' })
 	pinY: number
@@ -46,3 +46,10 @@ export class RequestSupervisor extends PickType(RequestCommon, ['id', 'uid', 'cr
 /**注册验证码配置**/
 export class RequestReducer extends PickType(RequestSupervisor, ['width', 'height', 'offset', 'appKey']) {}
 export class ResultReducer extends PickType(RequestSupervisor, ['pinX', 'pinX']) {}
+
+/**生成校验凭证**/
+export class RequestAuthorize extends PickType(RequestSupervisor, ['requestId', 'appKey']) {}
+export class ResultAuthorize extends PickType(RequestSupervisor, ['token']) {}
+
+/**校验凭证**/
+export class RequestInspector extends PickType(RequestSupervisor, ['requestId', 'appKey', 'token']) {}
