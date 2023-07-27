@@ -4,9 +4,15 @@ import { CoreRequest } from '@/interface/core.interface'
 import * as Nanoid from 'nanoid'
 import * as moment from 'dayjs'
 import * as crypto from 'crypto'
+import * as uuid from 'uuid'
 
 @Injectable()
 export class CoreService {
+	/**UUID & RequestId**/
+	public createUUIDRequest(): string {
+		return uuid.v4()
+	}
+
 	/**范围随机数**/
 	public createRandom(min: number, max: number) {
 		return Math.ceil(Math.random() * (max - min) + min)
