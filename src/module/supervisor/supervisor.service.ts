@@ -29,7 +29,7 @@ export class SupervisorService extends CoreService {
 				).then(e => data)
 			})
 
-			const session = await this.createCustomByte()
+			const session = (await this.createCustomByte()).toUpperCase()
 			const pinX = await this.createRandom(props.offset, props.width - props.offset - 20)
 			const pinY = await this.createRandom(20, props.height - props.offset - 20)
 			const node = await this.entity.recordModel.create({
@@ -37,7 +37,7 @@ export class SupervisorService extends CoreService {
 				width: props.width,
 				height: props.height,
 				offset: props.offset,
-				session: session.toUpperCase(),
+				session,
 				referer,
 				pinY,
 				pinX,
@@ -66,20 +66,18 @@ export class SupervisorService extends CoreService {
 					}
 				).then(e => data)
 			})
-			// const node = await this.validator({
-			// 	model: this.entity.recordModel,
-			// 	name: 'session记录',
-			// 	empty: { value: true },
-			// 	options: { where: { session: props.session } }
-			// })
+			await this.validator({
+				model: this.entity.recordModel,
+				name: 'session记录',
+				empty: { value: true },
+				options: { where: { session: props.session } }
+			})
 			const token = await this.aesEncrypt(
 				{ referer, session: props.session, appKey: app.appKey },
 				app.appSecret,
 				app.appKey
 			)
-
-			return await this.entity.recordModel.update({ session: props.session }, { check: 'INVALID' }).then(e => {
-				console.log(e)
+			return await this.entity.recordModel.update({ session: props.session }, { token }).then(e => {
 				return { token }
 			})
 		})

@@ -15,8 +15,8 @@ export class AppService extends CoreService {
 			const node = await this.entity.appModel.create({
 				uid: Date.now(),
 				name: props.name,
-				appKey: await this.createCustomByte(18),
-				appSecret: await this.createCustomByte(64)
+				appKey: await this.createCustomByte(16),
+				appSecret: await this.createCustomByte(32)
 			})
 			return await this.entity.appModel.save(node).then(async () => {
 				return { message: '注册成功' }

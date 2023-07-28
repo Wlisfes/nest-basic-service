@@ -27,11 +27,12 @@ export class RequestSupervisor extends PickType(RequestCommon, ['id', 'uid', 'cr
 	@IsNotEmpty({ message: '校验凭证 必填' })
 	token: string
 
+	@ApiProperty({ description: 'session记录' })
+	@IsNotEmpty({ message: 'session记录 必填' })
+	session: string
+
 	@ApiProperty({ description: '来源域名' })
 	referer: string
-
-	@ApiProperty({ description: 'session记录' })
-	session: string
 
 	@ApiProperty({ description: 'Y轴位置' })
 	pinY: number
