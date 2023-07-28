@@ -26,9 +26,10 @@ export class SupervisorService extends CoreService {
 					e => {
 						throw new HttpException('地址未授权', HttpStatus.BAD_REQUEST)
 					}
-				).then(e => e)
+				).then(e => data)
 			})
-			const requestId = await this.createUUIDRequest()
+
+			const session = await this.createCustomByte()
 			const pinX = await this.createRandom(props.offset, props.width - props.offset - 20)
 			const pinY = await this.createRandom(20, props.height - props.offset - 20)
 			const node = await this.entity.recordModel.create({
@@ -36,14 +37,14 @@ export class SupervisorService extends CoreService {
 				width: props.width,
 				height: props.height,
 				offset: props.offset,
+				session: session.toUpperCase(),
 				referer,
-				requestId,
 				pinY,
 				pinX,
 				app
 			})
 			return await this.entity.recordModel.save(node).then(() => {
-				return { requestId, pinX, pinY }
+				return { session, pinX, pinY }
 			})
 		})
 	}
@@ -65,18 +66,20 @@ export class SupervisorService extends CoreService {
 					}
 				).then(e => data)
 			})
-			await this.validator({
-				model: this.entity.recordModel,
-				name: 'RequestID',
-				empty: { value: true },
-				options: { where: { requestId: props.requestId } }
-			})
+			// const node = await this.validator({
+			// 	model: this.entity.recordModel,
+			// 	name: 'session记录',
+			// 	empty: { value: true },
+			// 	options: { where: { session: props.session } }
+			// })
 			const token = await this.aesEncrypt(
-				{ referer, requestId: props.requestId, appKey: app.appKey },
+				{ referer, session: props.session, appKey: app.appKey },
 				app.appSecret,
 				app.appKey
 			)
-			return await this.entity.recordModel.update({ requestId: props.requestId }, { token }).then(e => {
+
+			return await this.entity.recordModel.update({ session: props.session }, { check: 'INVALID' }).then(e => {
+				console.log(e)
 				return { token }
 			})
 		})
@@ -102,9 +105,9 @@ export class SupervisorService extends CoreService {
 				})
 				const u = await this.validator({
 					model: this.entity.recordModel,
-					name: 'RequestID',
+					name: 'session记录',
 					empty: { value: true },
-					options: { where: { requestId: props.requestId } }
+					options: { where: { session: props.session } }
 				})
 				return { message: '验证成功' }
 			} catch (e) {}

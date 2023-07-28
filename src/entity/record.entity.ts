@@ -7,32 +7,32 @@ export class RecordEntity extends CommonEntity {
 	@Column({ type: 'bigint', comment: 'uid', readonly: true })
 	uid: number
 
-	@Column({ type: 'varchar', comment: 'RequestID', readonly: true })
-	requestId: string
+	@Column({ type: 'varchar', comment: 'session记录' })
+	session: string
 
-	@Column({ type: 'int', nullable: false, comment: '图形宽度', readonly: true })
+	@Column({ type: 'int', nullable: false, comment: '图形宽度' })
 	width: number
 
-	@Column({ type: 'int', nullable: false, comment: '图形高度', readonly: true })
+	@Column({ type: 'int', nullable: false, comment: '图形高度' })
 	height: number
 
-	@Column({ type: 'int', nullable: false, comment: '偏移量', readonly: true })
+	@Column({ type: 'int', nullable: false, comment: '偏移量' })
 	offset: number
 
-	@Column({ type: 'int', nullable: false, comment: 'X轴位置', readonly: true })
+	@Column({ type: 'int', nullable: false, comment: 'X轴位置' })
 	pinX: number
 
-	@Column({ type: 'int', nullable: false, comment: 'Y轴位置', readonly: true })
+	@Column({ type: 'int', nullable: false, comment: 'Y轴位置' })
 	pinY: number
 
-	@Column({ type: 'varchar', charset: 'utf8mb4', length: 2000, comment: '校验凭证', nullable: true, default: null })
+	@Column({ type: 'varchar', length: 2000, comment: '校验凭证', nullable: true })
 	token: string
 
-	@Column({ type: 'varchar', charset: 'utf8mb4', length: 2000, comment: '来源域名', readonly: true })
+	@Column({ type: 'varchar', length: 2000, comment: '来源域名' })
 	referer: string
 
 	@Column({
-		comment: '校验状态: NODE：未验证、SUCCESS：验证成功、FAILURE：验证失败',
+		comment: '校验状态: NODE：未验证、SUCCESS：验证成功、FAILURE：验证失败、INVALID：失效',
 		default: 'NODE',
 		nullable: false
 	})

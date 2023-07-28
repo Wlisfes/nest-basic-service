@@ -30,8 +30,8 @@ export class RequestSupervisor extends PickType(RequestCommon, ['id', 'uid', 'cr
 	@ApiProperty({ description: '来源域名' })
 	referer: string
 
-	@ApiProperty({ description: 'RequestID' })
-	requestId: string
+	@ApiProperty({ description: 'session记录' })
+	session: string
 
 	@ApiProperty({ description: 'Y轴位置' })
 	pinY: number
@@ -48,11 +48,11 @@ export class RequestReducer extends PickType(RequestSupervisor, ['width', 'heigh
 export class ResultReducer extends PickType(RequestSupervisor, ['pinX', 'pinX']) {}
 
 /**生成校验凭证**/
-export class RequestAuthorize extends PickType(RequestSupervisor, ['requestId', 'appKey']) {}
+export class RequestAuthorize extends PickType(RequestSupervisor, ['session', 'appKey']) {}
 export class ResultAuthorize extends PickType(RequestSupervisor, ['token']) {}
 
 /**校验凭证**/
-export class RequestInspector extends PickType(RequestSupervisor, ['requestId', 'appKey', 'token']) {}
+export class RequestInspector extends PickType(RequestSupervisor, ['session', 'appKey', 'token']) {}
 
 /**校验记录**/
 export class RequestColumnSupervisor extends IntersectionType(
