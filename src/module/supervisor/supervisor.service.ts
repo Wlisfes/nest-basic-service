@@ -1,4 +1,5 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common'
+import { Brackets, In } from 'typeorm'
 import { CoreService } from '@/core/core.service'
 import { EntityService } from '@/core/entity.service'
 import { divineHandler } from '@/utils/utils-common'
@@ -107,6 +108,21 @@ export class SupervisorService extends CoreService {
 				})
 				return { message: '验证成功' }
 			} catch (e) {}
+		})
+	}
+
+	/**校验记录**/
+	public async httpColumnSupervisor(props: http.RequestColumnSupervisor) {
+		return await this.RunCatch(async i18n => {
+			const [list = [], total = 0] = await this.entity.recordModel
+				.createQueryBuilder('t')
+				.where(new Brackets(Q => {}))
+				.orderBy({ 't.createTime': 'DESC' })
+				.skip((props.page - 1) * props.size)
+				.take(props.size)
+				.getManyAndCount()
+
+			return { size: props.size, page: props.page, total, list }
 		})
 	}
 }

@@ -53,3 +53,9 @@ export class ResultAuthorize extends PickType(RequestSupervisor, ['token']) {}
 
 /**校验凭证**/
 export class RequestInspector extends PickType(RequestSupervisor, ['requestId', 'appKey', 'token']) {}
+
+/**校验记录**/
+export class RequestColumnSupervisor extends IntersectionType(
+	PickType(RequestCommon, ['page', 'size']),
+	PickType(RequestSupervisor, [])
+) {}
