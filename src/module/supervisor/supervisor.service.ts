@@ -52,7 +52,7 @@ export class SupervisorService extends CoreService {
 	/**生成校验凭证**/
 	public async httpAuthorize(props: http.RequestAuthorize, referer: string) {
 		return await this.RunCatch(async i18n => {
-			const app = await this.validator({
+			const { appKey, appSecret } = await this.validator({
 				model: this.entity.appModel,
 				name: '应用',
 				empty: { value: true },
@@ -66,18 +66,14 @@ export class SupervisorService extends CoreService {
 					}
 				).then(e => data)
 			})
-			await this.validator({
+			const { session } = await this.validator({
 				model: this.entity.recordModel,
 				name: 'session记录',
 				empty: { value: true },
 				options: { where: { session: props.session } }
 			})
-			const token = await this.aesEncrypt(
-				{ referer, session: props.session, appKey: app.appKey },
-				app.appSecret,
-				app.appKey
-			)
-			return await this.entity.recordModel.update({ session: props.session }, { token }).then(e => {
+			const token = await this.aesEncrypt({ referer, session, appKey }, appSecret, appKey)
+			return await this.entity.recordModel.update({ session }, { token }).then(e => {
 				return { token }
 			})
 		})
