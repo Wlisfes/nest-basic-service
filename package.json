@@ -33,13 +33,11 @@
 		"class-validator": "^0.14.0",
 		"cookie-parser": "^1.4.6",
 		"dayjs": "^1.11.9",
-		"log4js": "^6.9.1",
 		"mysql": "^2.18.1",
 		"nanoid": "^3.3.4",
 		"nestjs-i18n": "^10.2.6",
 		"reflect-metadata": "^0.1.13",
 		"rxjs": "^7.2.0",
-		"stacktrace-js": "^2.0.2",
 		"swagger-ui-express": "^5.0.0",
 		"typeorm": "^0.3.17",
 		"uuid": "^9.0.0"
