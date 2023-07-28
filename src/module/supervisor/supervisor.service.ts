@@ -1,4 +1,4 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common'
+import { Injectable, HttpException, HttpStatus, Logger } from '@nestjs/common'
 import { Brackets, In } from 'typeorm'
 import { CoreService } from '@/core/core.service'
 import { EntityService } from '@/core/entity.service'
@@ -7,6 +7,7 @@ import * as http from '@/interface/supervisor.interface'
 
 @Injectable()
 export class SupervisorService extends CoreService {
+	private readonly logger = new Logger(SupervisorService.name)
 	constructor(private readonly entity: EntityService) {
 		super()
 	}
@@ -43,7 +44,9 @@ export class SupervisorService extends CoreService {
 				pinX,
 				app
 			})
-			return await this.entity.recordModel.save(node).then(() => {
+			return await this.entity.recordModel.save(node).then(e => {
+				console.log(e)
+				this.logger.log(node)
 				return { session, pinX, pinY }
 			})
 		})
