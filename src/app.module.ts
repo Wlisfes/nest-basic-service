@@ -3,6 +3,7 @@ import { APP_INTERCEPTOR, APP_FILTER } from '@nestjs/core'
 import { ConfigModule, ConfigService } from '@nestjs/config'
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm'
 import { RedisModule } from '@nestjs-modules/ioredis'
+import { BullModule } from '@nestjs/bull'
 import { I18nModule, HeaderResolver, I18nJsonLoader } from 'nestjs-i18n'
 import { TransformInterceptor } from '@/interceptor/transform.interceptor'
 import { HttpExceptionFilter } from '@/filter/http-exception.filter'
@@ -60,6 +61,19 @@ import * as path from 'path'
 					lazyConnect: false
 				}
 			})
+		}),
+		BullModule.forRootAsync({
+			inject: [ConfigService],
+			useFactory: (config: ConfigService) => {
+				return {
+					redis: {
+						host: config.get('REDIS_HOST'),
+						port: parseInt(config.get('REDIS_PORT')),
+						password: config.get('REDIS_PASSWORD'),
+						db: config.get('REDIS_DB')
+					}
+				}
+			}
 		}),
 		CoreModule
 	],

@@ -1,9 +1,9 @@
-import { Module } from '@nestjs/common';
-import { SupervisorController } from './supervisor.controller';
-import { SupervisorService } from './supervisor.service';
+import { Module } from '@nestjs/common'
+import { SupervisorController } from '@/module/supervisor/supervisor.controller'
+// import { SupervisorService } from '@/module/supervisor/supervisor.service'
 
 @Module({
-  controllers: [SupervisorController],
-  providers: [SupervisorService]
+	controllers: [SupervisorController]
+	// providers: [SupervisorService]
 })
 export class SupervisorModule {}

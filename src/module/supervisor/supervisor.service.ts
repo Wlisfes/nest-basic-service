@@ -33,11 +33,15 @@ export class SupervisorService extends CoreService {
 			const session = (await this.createCustomByte()).toUpperCase()
 			const pinX = await this.createRandom(props.offset, props.width - props.offset - 20)
 			const pinY = await this.createRandom(20, props.height - props.offset - 20)
+
+			/**创建定时队列**/
+			// const job = await this.execute.supervisor.add({ session }, { delay: 5 * 2 * 1000 })
 			const node = await this.entity.recordModel.create({
 				uid: Date.now(),
 				width: props.width,
 				height: props.height,
 				offset: props.offset,
+				// jobId: job.id as number,
 				session,
 				referer,
 				pinY,
@@ -45,8 +49,6 @@ export class SupervisorService extends CoreService {
 				app
 			})
 			return await this.entity.recordModel.save(node).then(e => {
-				console.log(e)
-				this.logger.log(node)
 				return { session, pinX, pinY }
 			})
 		})
@@ -100,12 +102,15 @@ export class SupervisorService extends CoreService {
 						}
 					).then(e => data)
 				})
-				const u = await this.validator({
+				const { jobId } = await this.validator({
 					model: this.entity.recordModel,
 					name: 'session记录',
 					empty: { value: true },
 					options: { where: { session: props.session } }
 				})
+				// const job = await this.execute.supervisor.getJob(jobId)
+				// await job.progress(100)
+
 				return { message: '验证成功' }
 			} catch (e) {}
 		})
