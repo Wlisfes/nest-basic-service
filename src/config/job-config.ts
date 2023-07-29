@@ -1,1 +1,3 @@
-export const JOB_SUPERVISOR = 'supervisor'
+export const JOB_SUPERVISOR = {
+	name: 'supervisor'
+}

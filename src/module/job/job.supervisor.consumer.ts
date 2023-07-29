@@ -1,25 +1,24 @@
 import { Logger } from '@nestjs/common'
-import {
-	Processor,
-	Process,
-	OnQueueProgress,
-	OnQueueCompleted,
-	OnQueueFailed,
-	OnQueuePaused,
-	OnQueueResumed,
-	OnQueueRemoved
-} from '@nestjs/bull'
+import { Processor, Process, OnQueueProgress, OnQueueCompleted, OnQueueFailed, OnQueueRemoved } from '@nestjs/bull'
 import { Job } from 'bull'
-import * as JobName from '@/config/job-config'
+import { JOB_SUPERVISOR } from '@/config/job-config'
 
-@Processor({ name: JobName.JOB_SUPERVISOR })
-export class JobConsumer {
-	private readonly logger = new Logger(JobConsumer.name)
+@Processor({ name: JOB_SUPERVISOR.name })
+export class JobSupervisorConsumer {
+	private readonly logger = new Logger(JobSupervisorConsumer.name)
 
 	/**队列开始执行**/
 	@Process()
 	async onProcess(job: Job<unknown>) {
-		this.logger.log('任务开始', job.id, job.data)
+		this.logger.log('任务开始', job.id, job.isCompleted(), job.data)
+		console.log({
+			isCompleted: await job.isCompleted(),
+			isActive: await job.isActive(),
+			isFailed: await job.isFailed(),
+			isDelayed: await job.isDelayed(),
+			isStuck: await job.isStuck(),
+			isWaiting: await job.isWaiting()
+		})
 		await new Promise(resolve => {
 			setTimeout(() => {
 				resolve('')
@@ -36,8 +35,6 @@ export class JobConsumer {
 		console.log('OnQueueProgress：', job.data)
 		if (job.progress() === 100) {
 			await job.finished() /**进度为100、队列已完成**/
-			// return await job.remove()
-			return await job.moveToCompleted()
 		}
 	}
 
@@ -51,18 +48,6 @@ export class JobConsumer {
 	@OnQueueFailed()
 	async onFailed(job: Job<unknown>) {
 		console.log('OnQueueFailed：', job.data)
-	}
-
-	/**队列被暂停**/
-	@OnQueuePaused()
-	async onPaused(job: Job<unknown>) {
-		console.log('OnQueuePaused：', job.data)
-	}
-
-	/**队列被恢复**/
-	@OnQueueResumed()
-	async onResumed(job: Job<unknown>) {
-		console.log('OnQueueResumed：', job.data)
 	}
 
 	/**队列被成功移除**/

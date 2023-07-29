@@ -1,12 +1,13 @@
-import { Module } from '@nestjs/common'
+import { Module, Global } from '@nestjs/common'
 import { JobService } from '@/module/job/job.service'
 import { BullModule } from '@nestjs/bull'
-import { JobConsumer } from '@/module/job/job.consumer'
-import * as JobName from '@/config/job-config'
+import { JobSupervisorConsumer } from '@/module/job/job.supervisor.consumer'
+import { JOB_SUPERVISOR } from '@/config/job-config'
 
+@Global()
 @Module({
-	imports: [BullModule.registerQueue({ name: JobName.JOB_SUPERVISOR })],
-	providers: [JobService, JobConsumer],
+	imports: [BullModule.registerQueue({ name: JOB_SUPERVISOR.name })],
+	providers: [JobService, JobSupervisorConsumer],
 	exports: [JobService]
 })
 export class JobModule {}

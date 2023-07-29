@@ -2,13 +2,14 @@ import { Injectable, HttpException, HttpStatus, Logger } from '@nestjs/common'
 import { Brackets, In } from 'typeorm'
 import { CoreService } from '@/core/core.service'
 import { EntityService } from '@/core/entity.service'
+import { JobService } from '@/module/job/job.service'
 import { divineHandler } from '@/utils/utils-common'
 import * as http from '@/interface/supervisor.interface'
 
 @Injectable()
 export class SupervisorService extends CoreService {
 	private readonly logger = new Logger(SupervisorService.name)
-	constructor(private readonly entity: EntityService) {
+	constructor(private readonly entity: EntityService, private readonly job: JobService) {
 		super()
 	}
 
@@ -35,13 +36,13 @@ export class SupervisorService extends CoreService {
 			const pinY = await this.createRandom(20, props.height - props.offset - 20)
 
 			/**创建定时队列**/
-			// const job = await this.execute.supervisor.add({ session }, { delay: 5 * 2 * 1000 })
+			const job = await this.job.supervisor.add({ session }, { delay: 5 * 2 * 1000 })
 			const node = await this.entity.recordModel.create({
 				uid: Date.now(),
 				width: props.width,
 				height: props.height,
 				offset: props.offset,
-				// jobId: job.id as number,
+				jobId: job.id as number,
 				session,
 				referer,
 				pinY,
@@ -108,8 +109,11 @@ export class SupervisorService extends CoreService {
 					empty: { value: true },
 					options: { where: { session: props.session } }
 				})
-				// const job = await this.execute.supervisor.getJob(jobId)
+				const job = await this.job.supervisor.getJob(jobId)
 				// await job.progress(100)
+				// await job.remove()
+
+				// await job.completed()
 
 				return { message: '验证成功' }
 			} catch (e) {}
