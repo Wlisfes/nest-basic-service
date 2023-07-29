@@ -23,6 +23,10 @@ export class RequestSupervisor extends PickType(RequestCommon, ['id', 'uid', 'cr
 	@IsNotEmpty({ message: '应用key 必填' })
 	appKey: string
 
+	@ApiProperty({ description: '应用密钥' })
+	@IsNotEmpty({ message: '应用密钥 必填' })
+	appSecret: string
+
 	@ApiProperty({ description: '校验凭证' })
 	@IsNotEmpty({ message: '校验凭证 必填' })
 	token: string
@@ -53,7 +57,7 @@ export class RequestAuthorize extends PickType(RequestSupervisor, ['session', 'a
 export class ResultAuthorize extends PickType(RequestSupervisor, ['token']) {}
 
 /**校验凭证**/
-export class RequestInspector extends PickType(RequestSupervisor, ['session', 'appKey', 'token']) {}
+export class RequestInspector extends PickType(RequestSupervisor, ['session', 'appKey', 'appSecret', 'token']) {}
 
 /**校验记录**/
 export class RequestColumnSupervisor extends IntersectionType(

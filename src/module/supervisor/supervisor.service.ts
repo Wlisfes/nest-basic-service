@@ -1,5 +1,6 @@
-import { Injectable, HttpException, HttpStatus, Logger } from '@nestjs/common'
-import { Brackets, In } from 'typeorm'
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common'
+import { Brackets } from 'typeorm'
+import { Job } from 'bull'
 import { CoreService } from '@/core/core.service'
 import { EntityService } from '@/core/entity.service'
 import { JobService } from '@/module/job/job.service'
@@ -8,7 +9,6 @@ import * as http from '@/interface/supervisor.interface'
 
 @Injectable()
 export class SupervisorService extends CoreService {
-	private readonly logger = new Logger(SupervisorService.name)
 	constructor(private readonly entity: EntityService, private readonly job: JobService) {
 		super()
 	}
@@ -36,7 +36,7 @@ export class SupervisorService extends CoreService {
 			const pinY = await this.createRandom(20, props.height - props.offset - 20)
 
 			/**创建定时队列**/
-			const job = await this.job.supervisor.add({ session }, { delay: 5 * 2 * 1000 })
+			const job = await this.job.supervisor.add({ session, check: 'NODE' }, { delay: 5 * 2 * 1000 })
 			const node = await this.entity.recordModel.create({
 				uid: Date.now(),
 				width: props.width,
@@ -55,7 +55,7 @@ export class SupervisorService extends CoreService {
 		})
 	}
 
-	/**生成校验凭证**/
+	/**生成校验凭证**/ //prettier-ignore
 	public async httpAuthorize(props: http.RequestAuthorize, referer: string) {
 		return await this.RunCatch(async i18n => {
 			const { appKey, appSecret } = await this.validator({
@@ -72,51 +72,65 @@ export class SupervisorService extends CoreService {
 					}
 				).then(e => data)
 			})
-			const { session } = await this.validator({
+			const { jobId, session } = await this.validator({
 				model: this.entity.recordModel,
 				name: 'session记录',
 				empty: { value: true },
 				options: { where: { session: props.session } }
 			})
-			const token = await this.aesEncrypt({ referer, session, appKey }, appSecret, appKey)
-			return await this.entity.recordModel.update({ session }, { token }).then(e => {
-				return { token }
+			return await this.job.supervisor.getJob(jobId).then(async job => {
+				if (!job || job.data.check === 'INVALID') {
+					throw new HttpException('session记录已失效', HttpStatus.BAD_REQUEST)
+				} else {
+					const token = await this.aesEncrypt({ referer, session, appKey }, appSecret, appKey)
+					await this.entity.recordModel.update({ session }, { token })
+					await job.update({ ...job.data, token })
+					return { token }
+				}
 			})
 		})
 	}
 
-	/**校验凭证**/
+	/**校验凭证**/ //prettier-ignore
 	public async httpInspector(props: http.RequestInspector, referer: string) {
 		return await this.RunCatch(async i18n => {
-			try {
-				const app = await this.validator({
-					model: this.entity.appModel,
-					name: '应用',
-					empty: { value: true },
-					close: { value: true },
-					options: { where: { appKey: props.appKey } }
-				}).then(async data => {
-					return await divineHandler(
-						e => !(data.bucket.includes('*') || data.bucket.includes(referer)),
-						e => {
-							throw new HttpException('地址未授权', HttpStatus.BAD_REQUEST)
-						}
-					).then(e => data)
-				})
-				const { jobId } = await this.validator({
-					model: this.entity.recordModel,
-					name: 'session记录',
-					empty: { value: true },
-					options: { where: { session: props.session } }
-				})
-				const job = await this.job.supervisor.getJob(jobId)
-				// await job.progress(100)
-				// await job.remove()
-
-				// await job.completed()
-
+			await this.validator({
+				model: this.entity.appModel,
+				name: '应用',
+				empty: { value: true, message: 'appKey、appSecret错误' },
+				close: { value: true },
+				options: { where: { appKey: props.appKey, appSecret: props.appSecret } }
+			}).then(async data => {
+				return await divineHandler(
+					e => !(data.bucket.includes('*') || data.bucket.includes(referer)),
+					e => {
+						throw new HttpException('地址未授权', HttpStatus.BAD_REQUEST)
+					}
+				).then(e => data)
+			})
+			const { jobId, session } = await this.validator({
+				model: this.entity.recordModel,
+				name: 'session记录',
+				empty: { value: true },
+				options: { where: { session: props.session } }
+			}).then(async data => {
+				return await divineHandler(
+					e => (props.token !== data.token),
+					e => {
+						throw new HttpException('token错误', HttpStatus.BAD_REQUEST)
+					}
+				).then(e => data)
+			})
+			return await this.job.supervisor.getJob(jobId).then(async (job: Job<{session: string; check: string }>) => {
+				if (!job || job.data.check === 'INVALID') {
+					throw new HttpException('session记录已失效', HttpStatus.BAD_REQUEST)
+				} else {
+					await this.entity.recordModel.update({ session }, { check: 'SUCCESS' })
+					await job.update({ ...job.data, check: 'SUCCESS' })
+					await job.promote()
+				}
 				return { message: '验证成功' }
-			} catch (e) {}
+			})
 		})
 	}
 

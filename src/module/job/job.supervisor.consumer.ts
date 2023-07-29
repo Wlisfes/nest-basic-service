@@ -1,58 +1,60 @@
 import { Logger } from '@nestjs/common'
 import { Processor, Process, OnQueueProgress, OnQueueCompleted, OnQueueFailed, OnQueueRemoved } from '@nestjs/bull'
 import { Job } from 'bull'
+import { EventEmitter2 } from '@nestjs/event-emitter'
+import { CoreService } from '@/core/core.service'
+import { EntityService } from '@/core/entity.service'
 import { JOB_SUPERVISOR } from '@/config/job-config'
 
 @Processor({ name: JOB_SUPERVISOR.name })
-export class JobSupervisorConsumer {
+export class JobSupervisorConsumer extends CoreService {
 	private readonly logger = new Logger(JobSupervisorConsumer.name)
+	constructor(private readonly event: EventEmitter2, private readonly entity: EntityService) {
+		super()
+	}
 
 	/**队列开始执行**/
 	@Process()
-	async onProcess(job: Job<unknown>) {
-		this.logger.log('任务开始', job.id, job.isCompleted(), job.data)
-		console.log({
-			isCompleted: await job.isCompleted(),
-			isActive: await job.isActive(),
-			isFailed: await job.isFailed(),
-			isDelayed: await job.isDelayed(),
-			isStuck: await job.isStuck(),
-			isWaiting: await job.isWaiting()
+	async process(job: Job<{ session: string; check: string }>) {
+		this.logger.log('process---队列开始执行:', {
+			jobId: job.id,
+			data: job.data
 		})
-		await new Promise(resolve => {
-			setTimeout(() => {
-				resolve('')
-			}, 3000)
+		const { session, check } = job.data
+		if (check === 'NODE') {
+			await this.entity.recordModel.update({ session }, { check: 'INVALID' })
+			await job.update({ session, check: 'INVALID' })
+		}
+		await job.progress(100)
+		this.logger.log('process---队列执行完毕:', {
+			jobId: job.id,
+			data: job.data
 		})
-		this.logger.log('任务结束', job.id, job.data)
-		// return await job.progress(100)
+		return await job.discard()
+		// return this.event.emit(JOB_SUPERVISOR.event.process, job)
 	}
 
 	/**队列进度更新**/
 	@OnQueueProgress()
-	async onProgress(job: Job<unknown>) {
-		console.log('OnQueueProgress：', typeof job.progress())
-		console.log('OnQueueProgress：', job.data)
-		if (job.progress() === 100) {
-			await job.finished() /**进度为100、队列已完成**/
-		}
+	onProgress(job: Job<unknown>) {
+		// return this.event.emit(JOB_SUPERVISOR.event.progress, job)
 	}
 
 	/**队列执行成功**/
 	@OnQueueCompleted()
-	async onCompleted(job: Job<unknown>) {
-		console.log('OnQueueCompleted：', job.data)
+	onCompleted(job: Job<unknown>) {
+		// return this.event.emit(JOB_SUPERVISOR.event.completed, job)
 	}
 
 	/**队列执行失败**/
 	@OnQueueFailed()
-	async onFailed(job: Job<unknown>) {
-		console.log('OnQueueFailed：', job.data)
+	onFailed(job: Job<unknown>) {
+		// return this.event.emit(JOB_SUPERVISOR.event.failed, job)
 	}
 
 	/**队列被成功移除**/
 	@OnQueueRemoved()
-	async onRemoved(job: Job<unknown>) {
-		console.log('OnQueueRemoved：', job.data)
+	onRemoved(job: Job<unknown>) {
+		// return this.event.emit(JOB_SUPERVISOR.event.removed, job)
 	}
 }

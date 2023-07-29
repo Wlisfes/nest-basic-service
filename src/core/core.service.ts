@@ -1,9 +1,10 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common'
+import { Injectable, HttpException, HttpStatus, Logger } from '@nestjs/common'
 import { usuCurrent } from '@/i18n'
 import { CoreRequest } from '@/interface/core.interface'
 import * as Nanoid from 'nanoid'
 import * as moment from 'dayjs'
 import * as crypto from 'crypto'
+const logger = new Logger('CoreService')
 
 @Injectable()
 export class CoreService {
@@ -51,6 +52,7 @@ export class CoreService {
 		try {
 			return await callback(i18n)
 		} catch (e) {
+			logger.error(e)
 			throw new HttpException(
 				e.response || e.message || i18n.t('http.SERVICE_ERROR'),
 				e.status || HttpStatus.BAD_REQUEST
