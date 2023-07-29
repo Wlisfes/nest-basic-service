@@ -5,6 +5,7 @@ import { CoreService } from '@/core/core.service'
 import { EntityService } from '@/core/entity.service'
 import { JobService } from '@/module/job/job.service'
 import { divineHandler } from '@/utils/utils-common'
+import { JOB_SUPERVISOR } from '@/config/job-config'
 import * as http from '@/interface/supervisor.interface'
 
 @Injectable()
@@ -35,8 +36,8 @@ export class SupervisorService extends CoreService {
 			const pinX = await this.createRandom(props.offset, props.width - props.offset - 20)
 			const pinY = await this.createRandom(20, props.height - props.offset - 20)
 
-			/**创建定时队列**/
-			const job = await this.job.supervisor.add({ session, check: 'NODE' }, { delay: 5 * 2 * 1000 })
+			/**创建定时队列**/ //prettier-ignore
+			const job = await this.job.supervisor.add({ session, check: 'NODE' }, { delay: JOB_SUPERVISOR.expire * 1000 })
 			const node = await this.entity.recordModel.create({
 				uid: Date.now(),
 				width: props.width,
