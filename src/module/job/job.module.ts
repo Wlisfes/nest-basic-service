@@ -7,7 +7,17 @@ import { JOB_SUPERVISOR } from '@/config/job-config'
 
 @Global()
 @Module({
-	imports: [BullModule.registerQueue({ name: JOB_SUPERVISOR.name }), EventEmitterModule.forRoot()],
+	imports: [
+		BullModule.registerQueue({
+			name: JOB_SUPERVISOR.name,
+			limiter: JOB_SUPERVISOR.limiter,
+			defaultJobOptions: {
+				removeOnComplete: JOB_SUPERVISOR.removeOnComplete,
+				removeOnFail: JOB_SUPERVISOR.removeOnFail
+			}
+		}),
+		EventEmitterModule.forRoot()
+	],
 	providers: [JobService, JobSupervisorConsumer],
 	exports: [JobService]
 })

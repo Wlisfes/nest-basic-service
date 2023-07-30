@@ -34,11 +34,7 @@ export class SupervisorService extends CoreService {
 			const session = (await this.createCustomByte()).toUpperCase()
 			const pinX = await this.createRandom(props.offset, props.width - props.offset - 20)
 			const pinY = await this.createRandom(20, props.height - props.offset - 20)
-			const job = await this.job.supervisor.add({ session, check: 'NODE' }, {
-				removeOnComplete: true,
-				removeOnFail: false, 
-				delay: JOB_SUPERVISOR.expire * 1000
-			})
+			const job = await this.job.supervisor.add({ session, check: 'NODE' }, { delay: JOB_SUPERVISOR.delay })
 			const node = await this.entity.recordModel.create({
 				uid: Date.now(),
 				width: props.width,
