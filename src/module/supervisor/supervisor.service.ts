@@ -37,7 +37,11 @@ export class SupervisorService extends CoreService {
 			const pinY = await this.createRandom(20, props.height - props.offset - 20)
 
 			/**创建定时队列**/ //prettier-ignore
-			const job = await this.job.supervisor.add({ session, check: 'NODE' }, { delay: JOB_SUPERVISOR.expire * 1000 })
+			const job = await this.job.supervisor.add({ session, check: 'NODE' }, {
+				removeOnComplete: true,
+				removeOnFail: false, 
+				delay: JOB_SUPERVISOR.expire * 1000
+			})
 			const node = await this.entity.recordModel.create({
 				uid: Date.now(),
 				width: props.width,
@@ -95,6 +99,7 @@ export class SupervisorService extends CoreService {
 	/**校验凭证**/ //prettier-ignore
 	public async httpInspector(props: http.RequestInspector, referer: string) {
 		return await this.RunCatch(async i18n => {
+			console.log(props, referer)
 			await this.validator({
 				model: this.entity.appModel,
 				name: '应用',
