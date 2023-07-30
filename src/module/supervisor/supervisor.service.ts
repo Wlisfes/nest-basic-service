@@ -14,7 +14,7 @@ export class SupervisorService extends CoreService {
 		super()
 	}
 
-	/**注册验证码配置**/
+	/**注册验证码配置**/ //prettier-ignore
 	public async httpReducer(props: http.RequestReducer, referer: string) {
 		return await this.RunCatch(async i18n => {
 			const app = await this.validator({
@@ -22,21 +22,18 @@ export class SupervisorService extends CoreService {
 				name: '应用',
 				empty: { value: true },
 				close: { value: true },
-				options: { where: { appKey: props.appKey } }
+				options: { where: { appKey: props.appKey }, relations: ['user'] }
 			}).then(async data => {
 				return await divineHandler(
-					e => !(data.bucket.includes('*') || data.bucket.includes(referer)),
-					e => {
+					() => !(data.bucket.includes('*') || data.bucket.includes(referer)),
+					() => {
 						throw new HttpException('地址未授权', HttpStatus.BAD_REQUEST)
 					}
 				).then(e => data)
 			})
-
 			const session = (await this.createCustomByte()).toUpperCase()
 			const pinX = await this.createRandom(props.offset, props.width - props.offset - 20)
 			const pinY = await this.createRandom(20, props.height - props.offset - 20)
-
-			/**创建定时队列**/ //prettier-ignore
 			const job = await this.job.supervisor.add({ session, check: 'NODE' }, {
 				removeOnComplete: true,
 				removeOnFail: false, 
@@ -48,11 +45,12 @@ export class SupervisorService extends CoreService {
 				height: props.height,
 				offset: props.offset,
 				jobId: job.id as number,
+				user: app.user || null,
+				app,
 				session,
 				referer,
 				pinY,
 				pinX,
-				app
 			})
 			return await this.entity.recordModel.save(node).then(e => {
 				return { session, pinX, pinY }
@@ -71,8 +69,8 @@ export class SupervisorService extends CoreService {
 				options: { where: { appKey: props.appKey } }
 			}).then(async data => {
 				return await divineHandler(
-					e => !(data.bucket.includes('*') || data.bucket.includes(referer)),
-					e => {
+					() => !(data.bucket.includes('*') || data.bucket.includes(referer)),
+					() => {
 						throw new HttpException('地址未授权', HttpStatus.BAD_REQUEST)
 					}
 				).then(e => data)
@@ -108,8 +106,8 @@ export class SupervisorService extends CoreService {
 				options: { where: { appKey: props.appKey, appSecret: props.appSecret } }
 			}).then(async data => {
 				return await divineHandler(
-					e => !(data.bucket.includes('*') || data.bucket.includes(referer)),
-					e => {
+					() => !(data.bucket.includes('*') || data.bucket.includes(referer)),
+					() => {
 						throw new HttpException('地址未授权', HttpStatus.BAD_REQUEST)
 					}
 				).then(e => data)
