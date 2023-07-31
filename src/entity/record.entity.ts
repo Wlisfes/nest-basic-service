@@ -11,7 +11,7 @@ export class RecordEntity extends CommonEntity {
 	@Column({ type: 'varchar', comment: 'session记录', readonly: true })
 	session: string
 
-	@Column({ type: 'int', default: null, comment: '图形宽度', readonly: true })
+	@Column({ type: 'int', default: null, comment: '任务ID', readonly: true })
 	jobId: number
 
 	@Column({ type: 'int', nullable: false, comment: '图形宽度', readonly: true })
