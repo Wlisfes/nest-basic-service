@@ -5,7 +5,7 @@ import { ResultNotice } from '@/interface/common.interface'
 import { SupervisorService } from './supervisor.service'
 import * as http from './interface/supervisor.interface'
 
-@ApiTags('验证模块')
+@ApiTags('验证码校验模块')
 @Controller('captcha/supervisor')
 export class SupervisorController {
 	constructor(private readonly supervisorService: SupervisorService) {}

@@ -12,6 +12,7 @@ export class AppService extends CoreService {
 	/**创建应用**/
 	public async httpCreateApplication(props: http.CreateApplication) {
 		return await this.RunCatch(async i18n => {
+			console.log(props)
 			const node = await this.entity.checkApplication.create({
 				uid: Date.now(),
 				name: props.name,

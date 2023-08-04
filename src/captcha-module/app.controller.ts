@@ -5,7 +5,7 @@ import { ResultNotice } from '@/interface/common.interface'
 import { AppService } from './app.service'
 import * as http from './interface/app.interface'
 
-@ApiTags('应用模块')
+@ApiTags('验证码应用模块')
 @Controller('captcha/app')
 export class AppController {
 	constructor(private readonly appService: AppService) {}
