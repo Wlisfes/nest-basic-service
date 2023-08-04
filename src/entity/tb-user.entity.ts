@@ -1,6 +1,6 @@
 import { Entity, Column, OneToMany } from 'typeorm'
 import { Common } from '@/entity/tb-common'
-import { CheckApplication } from '@/entity/tb-check-Application'
+import { CheckApplication } from '@/entity/tb-check.entity'
 import { hashSync } from 'bcryptjs'
 
 @Entity('tb-user')

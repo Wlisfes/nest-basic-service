@@ -1,9 +1,8 @@
 import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
-import { User } from '@/entity/tb-user'
-import { CheckApplication } from '@/entity/tb-check-Application'
-import { CheckRecord } from '@/entity/tb-check-record'
+import { User } from '@/entity/tb-user.entity'
+import { CheckRecord, CheckApplication } from '@/entity/tb-check.entity'
 
 @Injectable()
 export class EntityService {
