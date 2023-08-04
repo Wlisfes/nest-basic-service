@@ -1,10 +1,10 @@
 import { Entity, Column, ManyToOne, OneToMany } from 'typeorm'
-import { CommonEntity } from '@/entity/common.entity'
-import { UserEntity } from '@/entity/user.entity'
-import { RecordEntity } from '@/entity/record.entity'
+import { Common } from '@/entity/tb-common'
+import { User } from '@/entity/tb-user'
+import { CheckRecord } from '@/entity/tb-check-record'
 
-@Entity('tb-app')
-export class AppEntity extends CommonEntity {
+@Entity('tb-check-application')
+export class CheckApplication extends Common {
 	@Column({ type: 'bigint', comment: 'uid', readonly: true })
 	uid: number
 
@@ -35,9 +35,9 @@ export class AppEntity extends CommonEntity {
 	})
 	bucket: string[]
 
-	@ManyToOne(type => UserEntity, user => user.app)
-	user: UserEntity
+	@ManyToOne(type => User, user => user.check)
+	user: User
 
-	@OneToMany(type => RecordEntity, record => record.app)
-	record: RecordEntity[]
+	@OneToMany(type => CheckRecord, record => record.app)
+	record: CheckRecord[]
 }

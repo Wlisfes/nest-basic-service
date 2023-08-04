@@ -39,7 +39,7 @@ async function bootstrap() {
 	//解析body参数
 	app.use(express.json())
 	app.use(express.urlencoded({ extended: true }))
-	app.setGlobalPrefix('/api-captcha')
+	app.setGlobalPrefix('/api-basic')
 
 	//静态资源
 	app.useStaticAssets(join(__dirname, '..', 'public'))

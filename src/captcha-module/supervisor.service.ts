@@ -3,10 +3,10 @@ import { Brackets } from 'typeorm'
 import { Job } from 'bull'
 import { CoreService } from '@/core/core.service'
 import { EntityService } from '@/core/entity.service'
-import { JobService } from '@/module/job/job.service'
+import { JobService } from '@/job-module/job.service'
 import { divineHandler } from '@/utils/utils-common'
 import { JOB_SUPERVISOR } from '@/config/job-config'
-import * as http from '@/interface/supervisor.interface'
+import * as http from './interface/supervisor.interface'
 
 @Injectable()
 export class SupervisorService extends CoreService {
@@ -14,11 +14,11 @@ export class SupervisorService extends CoreService {
 		super()
 	}
 
-	/**注册验证码配置**/ //prettier-ignore
-	public async httpReducer(props: http.RequestReducer, referer: string) {
+	/**注册验证码配置**/
+	public async httpReducer(props: http.Reducer, referer: string) {
 		return await this.RunCatch(async i18n => {
 			const app = await this.validator({
-				model: this.entity.appModel,
+				model: this.entity.checkApplication,
 				name: '应用',
 				empty: { value: true },
 				close: { value: true },
@@ -35,7 +35,7 @@ export class SupervisorService extends CoreService {
 			const pinX = await this.createRandom(props.offset, props.width - props.offset - 20)
 			const pinY = await this.createRandom(20, props.height - props.offset - 20)
 			const job = await this.job.supervisor.add({ session, check: 'NODE' }, { delay: JOB_SUPERVISOR.delay })
-			const node = await this.entity.recordModel.create({
+			const node = await this.entity.checkRecord.create({
 				uid: Date.now(),
 				width: props.width,
 				height: props.height,
@@ -46,19 +46,19 @@ export class SupervisorService extends CoreService {
 				session,
 				referer,
 				pinY,
-				pinX,
+				pinX
 			})
-			return await this.entity.recordModel.save(node).then(e => {
+			return await this.entity.checkRecord.save(node).then(e => {
 				return { session, pinX, pinY }
 			})
 		})
 	}
 
-	/**生成校验凭证**/ //prettier-ignore
-	public async httpAuthorize(props: http.RequestAuthorize, referer: string) {
+	/**生成校验凭证**/
+	public async httpAuthorize(props: http.Authorize, referer: string) {
 		return await this.RunCatch(async i18n => {
 			const { appKey, appSecret } = await this.validator({
-				model: this.entity.appModel,
+				model: this.entity.checkApplication,
 				name: '应用',
 				empty: { value: true },
 				close: { value: true },
@@ -72,7 +72,7 @@ export class SupervisorService extends CoreService {
 				).then(e => data)
 			})
 			const { jobId, session } = await this.validator({
-				model: this.entity.recordModel,
+				model: this.entity.checkRecord,
 				name: 'session记录',
 				empty: { value: true },
 				options: { where: { session: props.session } }
@@ -82,7 +82,7 @@ export class SupervisorService extends CoreService {
 					throw new HttpException('session记录已失效', HttpStatus.BAD_REQUEST)
 				} else {
 					const token = await this.aesEncrypt({ referer, session, appKey }, appSecret, appKey)
-					await this.entity.recordModel.update({ session }, { token })
+					await this.entity.checkRecord.update({ session }, { token })
 					await job.update({ ...job.data, token })
 					return { token }
 				}
@@ -90,12 +90,12 @@ export class SupervisorService extends CoreService {
 		})
 	}
 
-	/**校验凭证**/ //prettier-ignore
-	public async httpInspector(props: http.RequestInspector, referer: string) {
+	/**校验凭证**/
+	public async httpInspector(props: http.Inspector, referer: string) {
 		return await this.RunCatch(async i18n => {
 			console.log(props, referer)
 			await this.validator({
-				model: this.entity.appModel,
+				model: this.entity.checkApplication,
 				name: '应用',
 				empty: { value: true, message: 'appKey、appSecret错误' },
 				close: { value: true },
@@ -109,35 +109,37 @@ export class SupervisorService extends CoreService {
 				).then(e => data)
 			})
 			const { jobId, session } = await this.validator({
-				model: this.entity.recordModel,
+				model: this.entity.checkRecord,
 				name: 'session记录',
 				empty: { value: true },
 				options: { where: { session: props.session } }
 			}).then(async data => {
 				return await divineHandler(
-					e => (props.token !== data.token),
+					e => props.token !== data.token,
 					e => {
 						throw new HttpException('token错误', HttpStatus.BAD_REQUEST)
 					}
 				).then(e => data)
 			})
-			return await this.job.supervisor.getJob(jobId).then(async (job: Job<{session: string; check: string }>) => {
-				if (!job || job.data.check === 'INVALID') {
-					throw new HttpException('session记录已失效', HttpStatus.BAD_REQUEST)
-				} else {
-					await this.entity.recordModel.update({ session }, { check: 'SUCCESS' })
-					await job.update({ ...job.data, check: 'SUCCESS' })
-					await job.promote()
-				}
-				return { message: '验证成功' }
-			})
+			return await this.job.supervisor
+				.getJob(jobId)
+				.then(async (job: Job<{ session: string; check: string }>) => {
+					if (!job || job.data.check === 'INVALID') {
+						throw new HttpException('session记录已失效', HttpStatus.BAD_REQUEST)
+					} else {
+						await this.entity.checkRecord.update({ session }, { check: 'SUCCESS' })
+						await job.update({ ...job.data, check: 'SUCCESS' })
+						await job.promote()
+					}
+					return { message: '验证成功' }
+				})
 		})
 	}
 
 	/**校验记录**/
-	public async httpColumnSupervisor(props: http.RequestColumnSupervisor) {
+	public async httpColumnSupervisor(props: http.ColumnSupervisor) {
 		return await this.RunCatch(async i18n => {
-			const [list = [], total = 0] = await this.entity.recordModel
+			const [list = [], total = 0] = await this.entity.checkRecord
 				.createQueryBuilder('t')
 				.where(new Brackets(Q => {}))
 				.orderBy({ 't.createTime': 'DESC' })

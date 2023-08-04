@@ -1,10 +1,10 @@
 import { Entity, Column, OneToMany } from 'typeorm'
-import { CommonEntity } from '@/entity/common.entity'
-import { AppEntity } from '@/entity/app.entity'
+import { Common } from '@/entity/tb-common'
+import { CheckApplication } from '@/entity/tb-check-Application'
 import { hashSync } from 'bcryptjs'
 
 @Entity('tb-user')
-export class UserEntity extends CommonEntity {
+export class User extends Common {
 	@Column({ type: 'bigint', comment: 'uid', readonly: true })
 	uid: number
 
@@ -31,6 +31,6 @@ export class UserEntity extends CommonEntity {
 	})
 	password: string
 
-	@OneToMany(type => AppEntity, app => app.user)
-	app: AppEntity[]
+	@OneToMany(type => CheckApplication, app => app.user)
+	check: CheckApplication[]
 }

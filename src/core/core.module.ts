@@ -4,24 +4,17 @@ import { EntityService } from '@/core/entity.service'
 import { RedisService } from '@/core/redis.service'
 //entity
 import { TypeOrmModule } from '@nestjs/typeorm'
-import { UserEntity } from '@/entity/user.entity'
-import { AppEntity } from '@/entity/app.entity'
-import { RecordEntity } from '@/entity/record.entity'
+import { User } from '@/entity/tb-user'
+import { CheckApplication } from '@/entity/tb-check-application'
+import { CheckRecord } from '@/entity/tb-check-record'
 //module
-import { JobModule } from '@/module/job/job.module'
-import { UserModule } from '@/module/user/user.module'
-import { AppModule } from '@/module/app/app.module'
-import { SupervisorModule } from '@/module/supervisor/supervisor.module'
+import { JobModule } from '@/job-module/job.module'
+import { UserModule } from '@/user-module/user.module'
+import { CaptchaModule } from '@/captcha-module/captcha.module'
 
 @Global()
 @Module({
-	imports: [
-		TypeOrmModule.forFeature([UserEntity, AppEntity, RecordEntity]),
-		JobModule,
-		UserModule,
-		AppModule,
-		SupervisorModule
-	],
+	imports: [TypeOrmModule.forFeature([User, CheckApplication, CheckRecord]), JobModule, UserModule, CaptchaModule],
 	providers: [CoreService, EntityService, RedisService],
 	exports: [CoreService, EntityService, RedisService]
 })

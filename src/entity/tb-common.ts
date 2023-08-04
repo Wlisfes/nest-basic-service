@@ -1,7 +1,7 @@
 import { PrimaryGeneratedColumn, UpdateDateColumn, CreateDateColumn } from 'typeorm'
 import * as day from 'dayjs'
 
-export class CommonEntity {
+export class Common {
 	@PrimaryGeneratedColumn({ comment: '自增长主键' })
 	id: number
 

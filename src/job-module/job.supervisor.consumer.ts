@@ -22,7 +22,7 @@ export class JobSupervisorConsumer extends CoreService {
 		})
 		const { session, check } = job.data
 		if (check === 'NODE') {
-			await this.entity.recordModel.update({ session }, { check: 'INVALID' })
+			await this.entity.checkRecord.update({ session }, { check: 'INVALID' })
 			await job.update({ session, check: 'INVALID' })
 		}
 		await job.progress(100)
