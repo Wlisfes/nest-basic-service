@@ -1,6 +1,6 @@
 import { Entity, Column, OneToMany } from 'typeorm'
 import { Common } from '@/entity/tb-common'
-import { CheckApplication } from '@/entity/tb-check.entity'
+import { CaptchaApplication } from '@/entity/tb-captcha.entity'
 import { hashSync } from 'bcryptjs'
 
 @Entity('tb-user')
@@ -31,6 +31,6 @@ export class User extends Common {
 	})
 	password: string
 
-	@OneToMany(type => CheckApplication, app => app.user)
-	check: CheckApplication[]
+	@OneToMany(type => CaptchaApplication, app => app.user)
+	captcha: CaptchaApplication[]
 }

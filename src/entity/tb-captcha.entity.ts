@@ -1,9 +1,9 @@
-import { Entity, Column, ManyToOne, OneToMany  } from 'typeorm'
+import { Entity, Column, ManyToOne, OneToMany } from 'typeorm'
 import { Common } from '@/entity/tb-common'
 import { User } from '@/entity/tb-user.entity'
 
-@Entity('tb-check__application')
-export class CheckApplication extends Common {
+@Entity('tb-captcha__application')
+export class CaptchaApplication extends Common {
 	@Column({ type: 'bigint', comment: 'uid', readonly: true })
 	uid: number
 
@@ -34,15 +34,15 @@ export class CheckApplication extends Common {
 	})
 	bucket: string[]
 
-	@ManyToOne(type => User, user => user.check)
+	@ManyToOne(type => User, user => user.captcha)
 	user: User
 
-	@OneToMany(type => CheckRecord, record => record.app)
-	record: CheckRecord[]
+	@OneToMany(type => CaptchaRecord, record => record.app)
+	record: CaptchaRecord[]
 }
 
-@Entity('tb-check__record')
-export class CheckRecord extends Common {
+@Entity('tb-captcha__record')
+export class CaptchaRecord extends Common {
 	@Column({ type: 'bigint', comment: 'uid', readonly: true })
 	uid: number
 
@@ -83,6 +83,6 @@ export class CheckRecord extends Common {
 	@ManyToOne(type => User)
 	user: User
 
-	@ManyToOne(type => CheckApplication, app => app.record)
-	app: CheckApplication
+	@ManyToOne(type => CaptchaApplication, app => app.record)
+	app: CaptchaApplication
 }

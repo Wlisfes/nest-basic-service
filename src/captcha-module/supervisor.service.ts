@@ -18,7 +18,7 @@ export class SupervisorService extends CoreService {
 	public async httpReducer(props: http.Reducer, referer: string) {
 		return await this.RunCatch(async i18n => {
 			const app = await this.validator({
-				model: this.entity.checkApplication,
+				model: this.entity.captchaApplication,
 				name: '应用',
 				empty: { value: true },
 				close: { value: true },
@@ -35,7 +35,7 @@ export class SupervisorService extends CoreService {
 			const pinX = await this.createRandom(props.offset, props.width - props.offset - 20)
 			const pinY = await this.createRandom(20, props.height - props.offset - 20)
 			const job = await this.job.supervisor.add({ session, check: 'NODE' }, { delay: JOB_SUPERVISOR.delay })
-			const node = await this.entity.checkRecord.create({
+			const node = await this.entity.captchaRecord.create({
 				uid: Date.now(),
 				width: props.width,
 				height: props.height,
@@ -48,7 +48,7 @@ export class SupervisorService extends CoreService {
 				pinY,
 				pinX
 			})
-			return await this.entity.checkRecord.save(node).then(e => {
+			return await this.entity.captchaRecord.save(node).then(e => {
 				return { session, pinX, pinY }
 			})
 		})
@@ -58,7 +58,7 @@ export class SupervisorService extends CoreService {
 	public async httpAuthorize(props: http.Authorize, referer: string) {
 		return await this.RunCatch(async i18n => {
 			const { appKey, appSecret } = await this.validator({
-				model: this.entity.checkApplication,
+				model: this.entity.captchaApplication,
 				name: '应用',
 				empty: { value: true },
 				close: { value: true },
@@ -72,7 +72,7 @@ export class SupervisorService extends CoreService {
 				).then(e => data)
 			})
 			const { jobId, session } = await this.validator({
-				model: this.entity.checkRecord,
+				model: this.entity.captchaRecord,
 				name: 'session记录',
 				empty: { value: true },
 				options: { where: { session: props.session } }
@@ -82,7 +82,7 @@ export class SupervisorService extends CoreService {
 					throw new HttpException('session记录已失效', HttpStatus.BAD_REQUEST)
 				} else {
 					const token = await this.aesEncrypt({ referer, session, appKey }, appSecret, appKey)
-					await this.entity.checkRecord.update({ session }, { token })
+					await this.entity.captchaRecord.update({ session }, { token })
 					await job.update({ ...job.data, token })
 					return { token }
 				}
@@ -95,7 +95,7 @@ export class SupervisorService extends CoreService {
 		return await this.RunCatch(async i18n => {
 			console.log(props, referer)
 			await this.validator({
-				model: this.entity.checkApplication,
+				model: this.entity.captchaApplication,
 				name: '应用',
 				empty: { value: true, message: 'appKey、appSecret错误' },
 				close: { value: true },
@@ -109,7 +109,7 @@ export class SupervisorService extends CoreService {
 				).then(e => data)
 			})
 			const { jobId, session } = await this.validator({
-				model: this.entity.checkRecord,
+				model: this.entity.captchaRecord,
 				name: 'session记录',
 				empty: { value: true },
 				options: { where: { session: props.session } }
@@ -127,7 +127,7 @@ export class SupervisorService extends CoreService {
 					if (!job || job.data.check === 'INVALID') {
 						throw new HttpException('session记录已失效', HttpStatus.BAD_REQUEST)
 					} else {
-						await this.entity.checkRecord.update({ session }, { check: 'SUCCESS' })
+						await this.entity.captchaRecord.update({ session }, { check: 'SUCCESS' })
 						await job.update({ ...job.data, check: 'SUCCESS' })
 						await job.promote()
 					}
@@ -139,7 +139,7 @@ export class SupervisorService extends CoreService {
 	/**校验记录**/
 	public async httpColumnSupervisor(props: http.ColumnSupervisor) {
 		return await this.RunCatch(async i18n => {
-			const [list = [], total = 0] = await this.entity.checkRecord
+			const [list = [], total = 0] = await this.entity.captchaRecord
 				.createQueryBuilder('t')
 				.where(new Brackets(Q => {}))
 				.orderBy({ 't.createTime': 'DESC' })
