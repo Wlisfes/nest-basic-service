@@ -3,7 +3,7 @@ import { ApiTags } from '@nestjs/swagger'
 import { ApiDecorator } from '@/decorator/compute.decorator'
 import { ResultNotice } from '@/interface/common.interface'
 import { AppService } from './app.service'
-import * as http from './interface/app.interface'
+import * as http from '../interface/app.interface'
 
 @ApiTags('邮件应用模块')
 @Controller('mailer/app')

@@ -4,6 +4,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config'
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm'
 import { RedisModule } from '@nestjs-modules/ioredis'
 import { BullModule } from '@nestjs/bull'
+import { MailerModule } from '@nestjs-modules/mailer'
 import { I18nModule, HeaderResolver, I18nJsonLoader } from 'nestjs-i18n'
 import { TransformInterceptor } from '@/interceptor/transform.interceptor'
 import { HttpExceptionFilter } from '@/filter/http-exception.filter'
@@ -74,6 +75,21 @@ import * as path from 'path'
 					}
 				}
 			}
+		}),
+		MailerModule.forRootAsync({
+			inject: [ConfigService],
+			useFactory: (config: ConfigService) => ({
+				transport: {
+					host: '',
+					port: 465,
+					ignoreTLS: true,
+					secure: false,
+					auth: {
+						user: '',
+						pass: ''
+					}
+				}
+			})
 		}),
 		CoreModule
 	],
