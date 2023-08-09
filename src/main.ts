@@ -4,24 +4,29 @@ import { NestExpressApplication } from '@nestjs/platform-express'
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger'
 import { I18nValidationPipe } from 'nestjs-i18n'
 import { AppModule } from '@/app.module'
+import { SwaggerOption } from '@/config/swagger-config'
 import { join } from 'path'
 import * as express from 'express'
 import * as cookieParser from 'cookie-parser'
 
 async function useSwagger(app: NestExpressApplication) {
 	const options = new DocumentBuilder()
-		.setTitle('Nest-Captcha-Service')
-		.setDescription('Nest-Captcha-Service Api Documentation')
-		.setVersion('1.0')
-		// .addBearerAuth({ type: 'apiKey', name: APP_AUTH_TOKEN, in: 'header' }, APP_AUTH_TOKEN)
+		.setTitle(SwaggerOption.title)
+		.setDescription(SwaggerOption.document)
+		.setVersion(SwaggerOption.version)
+		// .addBearerAuth(
+		// 	{ type: 'apiKey', name: SwaggerOption.APP_AUTH_TOKEN, in: 'header' },
+		// 	SwaggerOption.APP_AUTH_TOKEN
+		// )
 		.build()
 	const document = SwaggerModule.createDocument(app, options)
 	SwaggerModule.setup('api-doc', app, document, {
-		customSiteTitle: '服务端API文档',
+		customSiteTitle: SwaggerOption.customSiteTitle,
 		swaggerOptions: {
-			defaultModelsExpandDepth: -1,
-			defaultModelExpandDepth: 5,
-			filter: true
+			defaultModelsExpandDepth: SwaggerOption.defaultModelsExpandDepth,
+			defaultModelExpandDepth: SwaggerOption.defaultModelExpandDepth,
+			filter: SwaggerOption.filter,
+			docExpansion: SwaggerOption.docExpansion
 		}
 	})
 	return app

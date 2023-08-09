@@ -1,6 +1,6 @@
 import { Injectable, HttpException, HttpStatus, Logger } from '@nestjs/common'
 import { usuCurrent } from '@/i18n'
-import { CoreRequest } from '@/interface/core.interface'
+import { CoreRequest, BatchRequest } from '@/interface/core.interface'
 import * as Nanoid from 'nanoid'
 import * as moment from 'dayjs'
 import * as crypto from 'crypto'
@@ -60,31 +60,6 @@ export class CoreService {
 		}
 	}
 
-	/**数组转树结构**/
-	public listToTree<T extends Record<string, any>>(
-		data: Array<T>,
-		status: Array<'disable' | 'enable' | 'delete'> = []
-	) {
-		const tree: Array<T> = []
-		const map: Object = data.reduce((curr: Object, next: T & { children: Array<T>; id: number }) => {
-			next.children = []
-			curr[next.id] = next
-			return curr
-		}, Object.assign({}))
-		data.forEach((node: T) => {
-			if (node.parent) {
-				if (status.length === 0 || status.includes(node.status)) {
-					map[node.parent].children.push(node)
-				}
-			} else {
-				if (status.length === 0 || status.includes(node.status)) {
-					tree.push(node)
-				}
-			}
-		})
-		return tree
-	}
-
 	/**数据验证处理**/
 	public async nodeValidator<T>(
 		option: { node: T; i18n: ReturnType<typeof usuCurrent> },
@@ -124,18 +99,9 @@ export class CoreService {
 	}
 
 	/**批量验证数据模型是否有效**/
-	public async batchValidator<T>(props: CoreRequest<T>): Promise<{ list: Array<T>; total: number }> {
+	public async batchValidator<T>(props: BatchRequest<T>): Promise<{ list: Array<T>; total: number }> {
 		return await this.RunCatch(async i18n => {
 			const [list = [], total = 0] = await props.model.findAndCount(props.options)
-			if (props.ids?.length > 0 && props.ids.length !== total) {
-				throw new HttpException(
-					{
-						message: i18n.t('http.NOT_ISSUE', { args: { name: props.message ?? props.name } }),
-						errors: props.ids.filter(id => list.some((x: any) => x.id !== id))
-					},
-					HttpStatus.BAD_REQUEST
-				)
-			}
 			return { list, total }
 		})
 	}

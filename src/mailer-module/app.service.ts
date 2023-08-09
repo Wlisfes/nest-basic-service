@@ -12,13 +12,13 @@ export class AppService extends CoreService {
 	/**创建应用**/
 	public async httpCreateApplication(props: http.CreateApplication) {
 		return await this.RunCatch(async i18n => {
-			const node = await this.entity.captchaApplication.create({
+			const node = await this.entity.mailerApplication.create({
 				uid: Date.now(),
 				name: props.name,
 				appKey: await this.createCustomByte(16),
 				appSecret: await this.createCustomByte(32)
 			})
-			return await this.entity.captchaApplication.save(node).then(async () => {
+			return await this.entity.mailerApplication.save(node).then(async () => {
 				return { message: '注册成功' }
 			})
 		})
@@ -28,13 +28,13 @@ export class AppService extends CoreService {
 	public async httpUpdateBucket(props: http.UpdateBucket) {
 		return await this.RunCatch(async i18n => {
 			await this.validator({
-				model: this.entity.captchaApplication,
+				model: this.entity.mailerApplication,
 				name: '应用',
 				empty: { value: true },
 				close: { value: true },
 				options: { where: { appKey: props.appKey } }
 			})
-			return await this.entity.captchaApplication
+			return await this.entity.mailerApplication
 				.update({ appKey: props.appKey }, { bucket: props.bucket })
 				.then(() => {
 					return { message: '编辑成功' }
@@ -46,7 +46,7 @@ export class AppService extends CoreService {
 	public async httpBasicApp(props: http.BasicApplication) {
 		return await this.RunCatch(async i18n => {
 			return await this.validator({
-				model: this.entity.captchaApplication,
+				model: this.entity.mailerApplication,
 				name: '应用',
 				empty: { value: true },
 				options: { where: { appKey: props.appKey } }
