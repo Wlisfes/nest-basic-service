@@ -22,7 +22,6 @@
 	},
 	"dependencies": {
 		"@nestjs-modules/ioredis": "^1.0.1",
-		"@nestjs-modules/mailer": "^1.9.1",
 		"@nestjs/bull": "^10.0.1",
 		"@nestjs/common": "^9.0.0",
 		"@nestjs/config": "^3.0.0",
