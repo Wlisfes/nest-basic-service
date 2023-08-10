@@ -6,7 +6,7 @@ import { EntityService } from '@/core/entity.service'
 import { JobService } from '@/job-module/job.service'
 import { divineHandler } from '@/utils/utils-common'
 import { JOB_SUPERVISOR } from '@/config/job-config'
-import * as http from './interface/supervisor.interface'
+import * as http from '../interface/supervisor.interface'
 
 @Injectable()
 export class SupervisorService extends CoreService {

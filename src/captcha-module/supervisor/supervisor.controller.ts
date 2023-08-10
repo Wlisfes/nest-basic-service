@@ -3,7 +3,7 @@ import { ApiTags } from '@nestjs/swagger'
 import { ApiDecorator } from '@/decorator/compute.decorator'
 import { ResultNotice } from '@/interface/common.interface'
 import { SupervisorService } from './supervisor.service'
-import * as http from './interface/supervisor.interface'
+import * as http from '../interface/supervisor.interface'
 
 @ApiTags('验证码校验模块')
 @Controller('captcha/supervisor')

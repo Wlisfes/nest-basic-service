@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { CoreService } from '@/core/core.service'
 import { EntityService } from '@/core/entity.service'
-import * as http from './interface/app.interface'
+import * as http from '../interface/app.interface'
 
 @Injectable()
 export class AppService extends CoreService {
