@@ -1,5 +1,5 @@
 import { NestFactory } from '@nestjs/core'
-import { ValidationPipe } from '@nestjs/common'
+import { ValidationPipe, Logger } from '@nestjs/common'
 import { NestExpressApplication } from '@nestjs/platform-express'
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger'
 import { I18nValidationPipe } from 'nestjs-i18n'
@@ -33,10 +33,9 @@ async function useSwagger(app: NestExpressApplication) {
 }
 
 async function bootstrap() {
-	const app = await NestFactory.create<NestExpressApplication>(AppModule, {
-		logger: ['debug']
-	})
+	const app = await NestFactory.create<NestExpressApplication>(AppModule)
 
+	app.useLogger(new Logger())
 	//允许跨域
 	app.enableCors()
 	app.use(cookieParser())
