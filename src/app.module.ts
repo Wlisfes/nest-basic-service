@@ -1,10 +1,11 @@
-import { Module } from '@nestjs/common'
+import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common'
 import { APP_INTERCEPTOR, APP_FILTER } from '@nestjs/core'
 import { ConfigModule, ConfigService } from '@nestjs/config'
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm'
 import { RedisModule } from '@nestjs-modules/ioredis'
 import { BullModule } from '@nestjs/bull'
 import { I18nModule, HeaderResolver, I18nJsonLoader } from 'nestjs-i18n'
+import { FairMiddleware } from '@/middleware/fair/fair.middleware'
 import { TransformInterceptor } from '@/interceptor/transform.interceptor'
 import { HttpExceptionFilter } from '@/filter/http-exception.filter'
 import { AppController } from '@/app.controller'
@@ -84,4 +85,8 @@ import * as path from 'path'
 		{ provide: APP_FILTER, useClass: HttpExceptionFilter }
 	]
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+	configure(consumer: MiddlewareConsumer) {
+		consumer.apply(FairMiddleware).forRoutes('/')
+	}
+}
