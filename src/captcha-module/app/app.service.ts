@@ -35,7 +35,7 @@ export class AppService extends CoreService {
 				options: { where: { appKey: props.appKey } }
 			})
 			return await this.entity.captchaApplication
-				.update({ appKey: props.appKey }, { bucket: props.bucket })
+				.update({ appKey: props.appKey }, { bucket: props.bucket, ip: props.ip })
 				.then(() => {
 					return { message: '编辑成功' }
 				})

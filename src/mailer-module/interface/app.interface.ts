@@ -16,18 +16,24 @@ export class MailerApplication extends PickType(RequestCommon, ['id', 'status'])
 	@IsNotEmpty({ message: '应用密钥 必填' })
 	appSecret: string
 
-	@ApiProperty({ description: '应用密钥', required: false })
+	@ApiProperty({ description: '授权地址', required: false })
 	@IsOptional()
 	@IsArray()
 	@IsString({ each: true })
 	bucket: string[]
+
+	@ApiProperty({ description: '授权IP', required: false })
+	@IsOptional()
+	@IsArray()
+	@IsString({ each: true })
+	ip: string[]
 }
 
 /**创建应用**/
 export class CreateApplication extends PickType(MailerApplication, ['name']) {}
 
 /**编辑授权地址**/
-export class UpdateBucket extends PickType(MailerApplication, ['bucket', 'appKey']) {}
+export class UpdateBucket extends PickType(MailerApplication, ['bucket', 'ip', 'appKey']) {}
 
 /**应用信息**/
 export class BasicApplication extends PickType(MailerApplication, ['appKey']) {}

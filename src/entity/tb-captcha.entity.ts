@@ -27,12 +27,18 @@ export class CaptchaApplication extends Common {
 		length: 2000,
 		comment: '授权地址',
 		nullable: true,
-		transformer: {
-			from: value => (value ?? '').split(','),
-			to: value => (value ?? []).join(',')
-		}
+		transformer: { from: value => (value ?? '').split(','), to: value => (value ?? []).join(',') }
 	})
 	bucket: string[]
+
+	@Column({
+		type: 'varchar',
+		length: 2000,
+		comment: '授权IP',
+		nullable: true,
+		transformer: { from: value => (value ?? '').split(','), to: value => (value ?? []).join(',') }
+	})
+	ip: string[]
 
 	@ManyToOne(type => User, user => user.captcha)
 	user: User
