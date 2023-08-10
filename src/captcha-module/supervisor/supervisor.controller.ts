@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Body, Headers, Query } from '@nestjs/common'
+import { Controller, Post, Get, Body, Query, Headers, Request } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { ApiDecorator } from '@/decorator/compute.decorator'
 import { ResultNotice } from '@/interface/common.interface'
@@ -42,7 +42,8 @@ export class SupervisorController {
 		operation: { summary: '校验记录' },
 		response: { status: 200, description: 'OK', type: ResultNotice }
 	})
-	public async httpColumnSupervisor(@Query() query: http.ColumnSupervisor) {
+	public async httpColumnSupervisor(@Request() request, @Query() query: http.ColumnSupervisor) {
+		console.log(request.ip)
 		return await this.supervisorService.httpColumnSupervisor(query)
 	}
 }
