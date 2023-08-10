@@ -33,7 +33,7 @@ export class SupervisorController {
 		operation: { summary: '校验凭证' },
 		response: { status: 200, description: 'OK', type: ResultNotice }
 	})
-	public async httpInspector(@Headers() headers, @Body() body: http.Inspector) {
+	public async httpInspector(@Headers() headers, @Request() request, @Body() body: http.Inspector) {
 		return await this.supervisorService.httpInspector(body, headers.origin)
 	}
 
@@ -43,7 +43,6 @@ export class SupervisorController {
 		response: { status: 200, description: 'OK', type: ResultNotice }
 	})
 	public async httpColumnSupervisor(@Request() request, @Query() query: http.ColumnSupervisor) {
-		console.log(request.ip)
 		return await this.supervisorService.httpColumnSupervisor(query)
 	}
 }

@@ -93,7 +93,6 @@ export class SupervisorService extends CoreService {
 	/**校验凭证**/
 	public async httpInspector(props: http.Inspector, referer: string) {
 		return await this.RunCatch(async i18n => {
-			console.log(props, referer)
 			await this.validator({
 				model: this.entity.captchaApplication,
 				name: '应用',
