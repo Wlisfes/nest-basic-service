@@ -1,6 +1,7 @@
-import { Entity, Column, ManyToOne, OneToMany } from 'typeorm'
+import { Entity, Column, ManyToOne, OneToMany, OneToOne } from 'typeorm'
 import { Common } from '@/entity/tb-common'
 import { User } from '@/entity/tb-user.entity'
+import * as day from 'dayjs'
 
 @Entity('tb-mailer__application')
 export class MailerApplication extends Common {
@@ -64,14 +65,75 @@ export class MailerService extends Common {
 	@Column({ comment: '登录用户密码', nullable: false })
 	password: string
 
-	@Column({ comment: '优先级', nullable: false, default: 1 })
-	priority: number
-
 	@Column({ comment: '状态: 禁用-disable、启用-enable', default: 'enable', nullable: false })
 	status: string
 
+	@Column({ comment: '优先级', nullable: false, default: 1 })
+	priority: number
+
+	@ManyToOne(type => User)
+	user: User
+
 	@ManyToOne(type => MailerApplication, type => type.service)
 	app: MailerApplication
+}
+
+@Entity('tb-mailer__template')
+export class MailerTemplate extends Common {
+	@Column({ comment: '模板名称', nullable: false })
+	name: string
+
+	@Column({
+		comment: '状态: 待审核-pending、审核中-loading、已审核-review、未通过-rejected、禁用-disable、删除-delete',
+		default: 'pending',
+		nullable: false
+	})
+	status: string
+
+	@Column({ type: 'text', comment: '模板内容', nullable: false })
+	content: string
+
+	@ManyToOne(type => User)
+	user: User
+}
+
+@Entity('tb-mailer__task')
+export class MailerTask extends Common {
+	@Column({ type: 'int', default: null, comment: '任务ID', readonly: true })
+	jobId: number
+
+	@Column({ comment: '任务名称', nullable: false })
+	name: string
+
+	@Column({ comment: '任务类型: 定时任务-schedule、即时任务-immediate', nullable: false })
+	type: string
+
+	@Column({ comment: '发送总数', nullable: false, default: 0 })
+	total: number
+
+	@Column({ comment: '成功数', nullable: true, default: 0 })
+	success: number
+
+	@Column({ comment: '失败数', nullable: true, default: 0 })
+	failure: number
+
+	@Column({
+		comment: '定时发送时间',
+		nullable: true,
+		default: null,
+		transformer: {
+			from: value => (value ? day(value).format('YYYY-MM-DD HH:mm:ss') : null),
+			to: value => (value ? value : null)
+		}
+	})
+	sendTime: Date
+
+	@Column({
+		comment: `状态: 等待发送-pending、发送中-loading、发送完成-fulfilled、发送失败-rejected、手动关闭-cancel、系统关闭-closure`,
+		default: 'pending',
+		nullable: false
+	})
+	status: string
 
 	@ManyToOne(type => User)
 	user: User
