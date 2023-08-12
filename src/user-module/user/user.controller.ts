@@ -3,7 +3,7 @@ import { ApiTags } from '@nestjs/swagger'
 import { ApiDecorator } from '@/decorator/compute.decorator'
 import { ResultNotice } from '@/interface/common.interface'
 import { UserService } from './user.service'
-import * as http from './interface/user.interface'
+import * as http from '../interface/user.interface'
 
 @ApiTags('用户模块')
 @Controller('user')

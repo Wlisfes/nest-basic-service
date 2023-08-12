@@ -20,8 +20,8 @@ export class MailerApplication extends Common {
 	@Column({ comment: '状态: 禁用-disable、启用-enable', default: 'enable', nullable: false })
 	status: string
 
-	@Column({ charset: 'utf8mb4', comment: '备注', nullable: true })
-	comment: string | null
+	@Column({ comment: '备注', nullable: true })
+	comment: string
 
 	@Column({
 		type: 'varchar',
@@ -108,6 +108,9 @@ export class MailerTask extends Common {
 	@Column({ comment: '任务类型: 定时任务-schedule、即时任务-immediate', nullable: false })
 	type: string
 
+	@Column({ comment: '发送类型: 模板发送-sample、自定义发送-customize', nullable: false })
+	supply: string
+
 	@Column({ comment: '发送总数', nullable: false, default: 0 })
 	total: number
 
@@ -117,23 +120,66 @@ export class MailerTask extends Common {
 	@Column({ comment: '失败数', nullable: true, default: 0 })
 	failure: number
 
+	@Column({ type: 'text', comment: '发送内容', nullable: false })
+	content: string
+
 	@Column({
+		type: 'timestamp',
 		comment: '定时发送时间',
 		nullable: true,
 		default: null,
 		transformer: {
 			from: value => (value ? day(value).format('YYYY-MM-DD HH:mm:ss') : null),
-			to: value => (value ? value : null)
+			to: value => (value ? new Date(value).getTime() : null)
 		}
 	})
 	sendTime: Date
 
 	@Column({
-		comment: `状态: 等待发送-pending、发送中-loading、发送完成-fulfilled、发送失败-rejected、手动关闭-cancel、系统关闭-closure`,
+		comment: `状态: 等待发送-pending、发送中-loading、发送完成-fulfilled、发送失败-rejected、手动关闭-initiative、系统关闭-automatic`,
 		default: 'pending',
 		nullable: false
 	})
 	status: string
+
+	@ManyToOne(type => MailerApplication)
+	app: MailerApplication
+
+	@ManyToOne(type => MailerTemplate)
+	sample: MailerTemplate
+
+	@ManyToOne(type => User)
+	user: User
+}
+
+@Entity('tb-mailer__record')
+export class MailerRecord extends Common {
+	@Column({ type: 'int', default: null, comment: '任务ID', readonly: true })
+	jobId: number
+
+	@Column({ comment: '任务名称', nullable: false })
+	name: string
+
+	@Column({ comment: '任务类型: 定时任务-schedule、即时任务-immediate', nullable: false })
+	type: string
+
+	@Column({ comment: '发送类型: 模板发送-sample、自定义发送-customize', nullable: false })
+	supply: string
+
+	@Column({ type: 'text', comment: '发送内容', nullable: false })
+	content: string
+
+	@Column({
+		comment: `状态: 发送完成-fulfilled、发送失败-rejected`,
+		nullable: false
+	})
+	status: string
+
+	@ManyToOne(type => MailerApplication)
+	app: MailerApplication
+
+	@ManyToOne(type => MailerTemplate)
+	sample: MailerTemplate
 
 	@ManyToOne(type => User)
 	user: User

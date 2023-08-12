@@ -38,3 +38,31 @@ export class User extends Common {
 	@OneToMany(type => MailerApplication, app => app.user)
 	mailer: MailerApplication[]
 }
+
+// @Entity('tb-user__suite')
+// export class UserSuite extends Common {
+// 	@Column({ comment: '订单ID', nullable: false, update: false })
+// 	orderId
+
+// 	@Column({ comment: '套餐ID', nullable: false })
+// 	suiteId: number
+
+// 	@Column({ comment: '套餐名称', nullable: false })
+// 	name: string
+
+// 	@Column({ type: 'bigint', comment: '套餐购买价格', unsigned: true, nullable: false, default: 0 })
+// 	price: number
+
+// 	@Column({ comment: '套餐总数', unsigned: true, nullable: false, default: 0 })
+// 	total: number
+
+// 	@Column({ comment: '套餐剩余数量', nullable: false, default: 0 })
+// 	surplus: number
+
+// 	@Column({
+// 		comment: `状态: 未支付-pending、已支付-effect、已过期-expired、已上架-defray、已下架-under、已售罄-soldout、已删除-delete`,
+// 		default: 'pending',
+// 		nullable: false
+// 	})
+// 	status: string
+// }
