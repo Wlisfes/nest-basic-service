@@ -1,7 +1,7 @@
 import { Controller, Post, Put, Get, Body, Request, Query } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { ApiDecorator } from '@/decorator/compute.decorator'
-import { ResultNotice } from '@/interface/common.interface'
+import { Notice } from '@/interface/common.interface'
 import { UserService } from './user.service'
 import * as http from '../interface/user.interface'
 
@@ -13,7 +13,7 @@ export class UserController {
 	@Post('/register')
 	@ApiDecorator({
 		operation: { summary: '注册用户' },
-		response: { status: 200, description: 'OK', type: ResultNotice }
+		response: { status: 200, description: 'OK', type: Notice }
 	})
 	public async httpRegister(@Body() body: http.Register) {
 		return await this.userService.httpRegister(body)

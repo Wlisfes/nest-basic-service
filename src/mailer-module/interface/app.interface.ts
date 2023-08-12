@@ -1,9 +1,9 @@
 import { ApiProperty, PickType } from '@nestjs/swagger'
 import { IsNotEmpty, IsString, IsArray } from 'class-validator'
 import { IsOptional } from '@/decorator/common.decorator'
-import { RequestCommon } from '@/interface/common.interface'
+import { Request } from '@/interface/common.interface'
 
-export class MailerApplication extends PickType(RequestCommon, ['id', 'status']) {
+export class MailerApplication extends PickType(Request, ['id', 'status']) {
 	@ApiProperty({ description: '应用名称', example: '猪头' })
 	@IsNotEmpty({ message: '应用名称 必填' })
 	name: string

@@ -2,9 +2,9 @@ import { ApiProperty, PickType, IntersectionType, PartialType } from '@nestjs/sw
 import { IsNotEmpty, Length, IsNumber, IsString, IsArray } from 'class-validator'
 import { Type, Transform } from 'class-transformer'
 import { IsOptional, IsMobile, TransferNumber } from '@/decorator/common.decorator'
-import { RequestCommon } from '@/interface/common.interface'
+import { Request } from '@/interface/common.interface'
 
-export class RequestApp extends PickType(RequestCommon, ['id', 'status']) {
+export class RequestApp extends PickType(Request, ['id', 'status']) {
 	@ApiProperty({ description: '应用名称', example: '猪头' })
 	@IsNotEmpty({ message: '应用名称 必填' })
 	name: string

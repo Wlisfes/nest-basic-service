@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger'
 import { IsNotEmpty, IsNumber, Min } from 'class-validator'
 import { Type } from 'class-transformer'
 
-export class RequestCommon {
+export class Request {
 	@ApiProperty({ description: 'ID', example: 1 })
 	@IsNotEmpty({ message: 'ID 必填' })
 	@IsNumber({}, { message: 'ID 必须是数字且不能小于1' })
@@ -49,7 +49,7 @@ export class RequestCommon {
 	message: string
 }
 
-export class ResultNotice {
+export class Notice {
 	@ApiProperty({ description: 'message', example: '接口提示' })
 	message: string
 }

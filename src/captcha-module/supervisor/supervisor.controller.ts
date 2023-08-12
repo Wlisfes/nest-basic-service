@@ -1,7 +1,7 @@
 import { Controller, Post, Get, Body, Query, Headers, Request } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { ApiDecorator } from '@/decorator/compute.decorator'
-import { ResultNotice } from '@/interface/common.interface'
+import { Notice } from '@/interface/common.interface'
 import { SupervisorService } from './supervisor.service'
 import * as http from '../interface/supervisor.interface'
 
@@ -31,7 +31,7 @@ export class SupervisorController {
 	@Post('/inspector')
 	@ApiDecorator({
 		operation: { summary: '校验凭证' },
-		response: { status: 200, description: 'OK', type: ResultNotice }
+		response: { status: 200, description: 'OK', type: Notice }
 	})
 	public async httpInspector(@Headers() headers, @Request() request, @Body() body: http.Inspector) {
 		return await this.supervisorService.httpInspector(body, headers.origin)
@@ -40,7 +40,7 @@ export class SupervisorController {
 	@Get('/column')
 	@ApiDecorator({
 		operation: { summary: '校验记录' },
-		response: { status: 200, description: 'OK', type: ResultNotice }
+		response: { status: 200, description: 'OK', type: Notice }
 	})
 	public async httpColumnSupervisor(@Request() request, @Query() query: http.ColumnSupervisor) {
 		return await this.supervisorService.httpColumnSupervisor(query)

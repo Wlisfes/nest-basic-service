@@ -1,9 +1,9 @@
 import { ApiProperty, PickType, IntersectionType, PartialType } from '@nestjs/swagger'
 import { IsNotEmpty } from 'class-validator'
 import { Type } from 'class-transformer'
-import { RequestCommon } from '@/interface/common.interface'
+import { Request } from '@/interface/common.interface'
 
-export class Supervisor extends PickType(RequestCommon, ['id', 'uid', 'createTime', 'updateTime']) {
+export class Supervisor extends PickType(Request, ['id', 'uid', 'createTime', 'updateTime']) {
 	@ApiProperty({ description: '图形宽度', example: 310 })
 	@IsNotEmpty({ message: '图形宽度 必填' })
 	@Type(type => Number)
@@ -60,7 +60,4 @@ export class ResultAuthorize extends PickType(Supervisor, ['token']) {}
 export class Inspector extends PickType(Supervisor, ['session', 'appKey', 'appSecret', 'token']) {}
 
 /**校验记录**/
-export class ColumnSupervisor extends IntersectionType(
-	PickType(RequestCommon, ['page', 'size']),
-	PickType(Supervisor, [])
-) {}
+export class ColumnSupervisor extends IntersectionType(PickType(Request, ['page', 'size']), PickType(Supervisor, [])) {}

@@ -3,7 +3,7 @@ import { IsNotEmpty, IsString, IsArray } from 'class-validator'
 import { IsOptional } from '@/decorator/common.decorator'
 import { Request } from '@/interface/common.interface'
 
-export class CaptchaApplication extends PickType(Request, ['id', 'status']) {
+export class MailerApplication extends PickType(Request, ['id', 'status']) {
 	@ApiProperty({ description: '应用名称', example: '猪头' })
 	@IsNotEmpty({ message: '应用名称 必填' })
 	name: string
@@ -28,12 +28,3 @@ export class CaptchaApplication extends PickType(Request, ['id', 'status']) {
 	@IsString({ each: true })
 	ip: string[]
 }
-
-/**创建应用**/
-export class CreateApplication extends PickType(CaptchaApplication, ['name']) {}
-
-/**编辑授权地址**/
-export class UpdateBucket extends PickType(CaptchaApplication, ['bucket', 'ip', 'appKey']) {}
-
-/**应用信息**/
-export class BasicApplication extends PickType(CaptchaApplication, ['appKey']) {}

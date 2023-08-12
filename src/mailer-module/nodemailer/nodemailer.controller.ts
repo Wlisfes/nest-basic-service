@@ -1,7 +1,7 @@
 import { Controller, Get } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { ApiDecorator } from '@/decorator/compute.decorator'
-import { ResultNotice } from '@/interface/common.interface'
+import { Notice } from '@/interface/common.interface'
 import { NodemailerService } from './nodemailer.service'
 
 @ApiTags('邮件服务模块')
@@ -12,7 +12,7 @@ export class NodemailerController {
 	@Get('/create')
 	@ApiDecorator({
 		operation: { summary: '创建应用' },
-		response: { status: 200, description: 'OK', type: ResultNotice }
+		response: { status: 200, description: 'OK', type: Notice }
 	})
 	public async httpCustomizeNodemailer() {
 		return await this.nodemailerService.httpCustomizeNodemailer()

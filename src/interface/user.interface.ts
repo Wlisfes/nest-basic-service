@@ -2,9 +2,9 @@ import { ApiProperty, PickType, IntersectionType, PartialType } from '@nestjs/sw
 import { IsNotEmpty, Length, IsNumber } from 'class-validator'
 import { Type, Transform } from 'class-transformer'
 import { IsOptional, IsMobile, TransferNumber } from '@/decorator/common.decorator'
-import { RequestCommon } from '@/interface/common.interface'
+import { Request } from '@/interface/common.interface'
 
-export class RequestUser extends PickType(RequestCommon, ['id', 'uid']) {
+export class RequestUser extends PickType(Request, ['id', 'uid']) {
 	@ApiProperty({ description: '昵称', example: '猪头' })
 	@IsNotEmpty({ message: '' })
 	nickname: string
@@ -41,6 +41,6 @@ export class RequestUpdateAuthorize extends PickType(RequestUser, ['uid']) {}
 
 /**用户列表**/
 export class RequestColumnUser extends IntersectionType(
-	PickType(RequestCommon, ['page', 'size']),
+	PickType(Request, ['page', 'size']),
 	PartialType(PickType(RequestUser, []))
 ) {}
