@@ -1,8 +1,8 @@
 import { Entity, Column } from 'typeorm'
 import { Common } from '@/entity/tb-common'
 
-@Entity('tb-mailer__suite')
-export class MailerSuite extends Common {
+@Entity('tb-mailer__package')
+export class MailerPackage extends Common {
 	@Column({ comment: '套餐名称', nullable: false })
 	name: string
 

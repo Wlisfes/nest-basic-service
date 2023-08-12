@@ -39,8 +39,8 @@ export class User extends Common {
 	mailer: MailerApplication[]
 }
 
-// @Entity('tb-user__suite')
-// export class UserSuite extends Common {
+// @Entity('tb-user__package')
+// export class UserPackage extends Common {
 // 	@Column({ comment: '订单ID', nullable: false, update: false })
 // 	orderId
 
