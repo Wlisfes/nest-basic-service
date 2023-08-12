@@ -10,7 +10,7 @@ export class PackageService extends CoreService {
 	}
 
 	/**创建邮件套餐包**/
-	public async httpCreateMailerPackage(props: http.CreateMailer) {
+	public async httpCreatePackage(props: http.CreateMailer) {
 		return await this.RunCatch(async i18n => {
 			const node = await this.entity.mailerPackage.create({
 				name: props.name,
@@ -32,7 +32,7 @@ export class PackageService extends CoreService {
 	}
 
 	/**邮件套餐包列表**/
-	public async httpColumnMailerPackage(props: http.ColumnMailer) {
+	public async httpColumnPackage(props: http.ColumnMailer) {
 		return await this.RunCatch(async i18n => {
 			return await this.batchValidator({
 				model: this.entity.mailerPackage,
@@ -45,4 +45,7 @@ export class PackageService extends CoreService {
 			}).then(({ list, total }) => ({ list, total, page: props.page, size: props.size }))
 		})
 	}
+
+	/**购买邮件套餐包**/
+	public async httpPackageSubscriber(props: http.Subscriber) {}
 }

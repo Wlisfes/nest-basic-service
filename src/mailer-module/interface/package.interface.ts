@@ -82,3 +82,5 @@ export class CreateMailer extends IntersectionType(
 ) {}
 
 export class ColumnMailer extends PickType(Request, ['page', 'size']) {}
+
+export class Subscriber extends PickType(Package, ['id']) {}
