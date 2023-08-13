@@ -6,7 +6,12 @@ import { hashSync } from 'bcryptjs'
 
 @Entity('tb-user')
 export class User extends Common {
-	@Column({ type: 'bigint', comment: 'uid', readonly: true })
+	@Column({
+		type: 'bigint',
+		comment: 'uid',
+		readonly: true,
+		transformer: { from: value => Number(value), to: value => value }
+	})
 	uid: number
 
 	@Column({ charset: 'utf8mb4', comment: '昵称', nullable: false })
@@ -25,10 +30,19 @@ export class User extends Common {
 	comment: string | null
 
 	@Column({
+		comment: '手机号',
+		transformer: { from: value => Number(value), to: value => value }
+	})
+	mobile: string
+
+	@Column({
 		comment: '密码',
 		select: false,
-		nullable: true,
-		transformer: { from: value => value, to: value => (value ? hashSync(value) : null) }
+		nullable: false,
+		transformer: {
+			from: value => value,
+			to: value => hashSync(value)
+		}
 	})
 	password: string
 

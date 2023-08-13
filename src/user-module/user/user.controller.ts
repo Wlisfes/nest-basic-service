@@ -1,4 +1,4 @@
-import { Controller, Post, Put, Get, Body, Request, Query } from '@nestjs/common'
+import { Controller, Post, Put, Get, Body, Request, Query, Headers } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { ApiDecorator } from '@/decorator/compute.decorator'
 import { Notice } from '@/interface/common.interface'
@@ -17,5 +17,24 @@ export class UserController {
 	})
 	public async httpRegister(@Body() body: http.Register) {
 		return await this.userService.httpRegister(body)
+	}
+
+	@Post('/authorize')
+	@ApiDecorator({
+		operation: { summary: '登录' },
+		response: { status: 200, description: 'OK' }
+	})
+	public async httpAuthorize(@Body() body: http.Authorize, @Headers() headers) {
+		return await this.userService.httpAuthorize(body, headers.origin)
+	}
+
+	@Get('/basic-authorize')
+	@ApiDecorator({
+		operation: { summary: '用户信息' },
+		response: { status: 200, description: 'OK', type: http.User },
+		authorize: { login: true, error: true }
+	})
+	public async httpBasicAuthorize(@Request() request: { user: http.BasicUser }) {
+		return await this.userService.httpBasicAuthorize(request.user.uid)
 	}
 }
