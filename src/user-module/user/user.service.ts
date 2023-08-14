@@ -27,10 +27,16 @@ export class UserService extends CoreService {
 		return await this.RunCatch(async i18n => {
 			const expire = Number(this.configService.get('JWT_EXPIRE') ?? 7200)
 			const secret = this.configService.get('JWT_SECRET')
-			return await this.jwtService.signAsync({...node}, {
-				secret,
-				expiresIn: `${expire}s`
-			}).then(token => ({ expire, token }))
+			return await this.jwtService.signAsync(
+				{
+					id: node.id,
+					uid: node.uid,
+					password: node.password,
+					status: node.status,
+					expire: Date.now() + expire * 1000 
+				}, { secret }).then(token => {
+					return { expire, token }
+			})
 		})
 	}
 
@@ -38,7 +44,12 @@ export class UserService extends CoreService {
 	public async untieJwtToken(token: string): Promise<User> {
 		return await this.RunCatch(async i18n => {
 			const secret = this.configService.get('JWT_SECRET')
-			return await this.jwtService.verifyAsync(token, { secret })
+			const node = await this.jwtService.verifyAsync(token, { secret })
+			return await divineHandler(Date.now() > node.expire, () => {
+				throw new HttpException('登录已失效', HttpStatus.UNAUTHORIZED)
+			}).then(() => {
+				return node
+			})
 		})
 	}
 
