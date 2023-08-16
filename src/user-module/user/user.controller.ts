@@ -31,7 +31,7 @@ export class UserController {
 	@Get('/basic-authorize')
 	@ApiDecorator({
 		operation: { summary: '用户信息' },
-		response: { status: 200, description: 'OK', type: http.User },
+		response: { status: 200, description: 'OK', type: http.ResultBasicUser },
 		authorize: { login: true, error: true }
 	})
 	public async httpBasicAuthorize(@Request() request: { user: http.BasicUser }) {

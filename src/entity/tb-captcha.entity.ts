@@ -19,8 +19,11 @@ export class CaptchaApplication extends Common {
 	@Column({ comment: '状态: 禁用-disable、启用-enable', default: 'enable', nullable: false })
 	status: string
 
-	@Column({ charset: 'utf8mb4', comment: '备注', nullable: true })
-	comment: string | null
+	@Column({ comment: '备注', nullable: true })
+	comment: string
+
+	@Column({ comment: '默认展示首页', nullable: false, default: 'hide' })
+	visible: string
 
 	@Column({
 		type: 'varchar',

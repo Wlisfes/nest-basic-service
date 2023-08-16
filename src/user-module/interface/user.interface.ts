@@ -45,6 +45,13 @@ export class Authorize extends PickType(User, ['mobile', 'password', 'session', 
 
 /**用户信息**/
 export class BasicUser extends PickType(User, ['uid']) {}
+export class ResultBasicUser extends User {
+	@ApiProperty({ description: '应用key', example: 'sFnFysvpL0DFGs6H' })
+	appKey: string
+
+	@ApiProperty({ description: '应用密钥' })
+	appSecret: string
+}
 
 /**编辑用户信息**/
 export class RequestUpdateUser extends PickType(User, ['uid']) {}
@@ -53,7 +60,4 @@ export class RequestUpdateUser extends PickType(User, ['uid']) {}
 export class RequestUpdateAuthorize extends PickType(User, ['uid']) {}
 
 /**用户列表**/
-export class RequestColumnUser extends IntersectionType(
-	PickType(Request, ['page', 'size']),
-	PartialType(PickType(User, []))
-) {}
+export class RequestColumnUser extends IntersectionType(PickType(Request, ['page', 'size']), PartialType(PickType(User, []))) {}

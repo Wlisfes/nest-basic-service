@@ -109,7 +109,7 @@ export class UserService extends CoreService {
 	/**获取用户信息**/
 	public async httpBasicAuthorize(uid: number) {
 		return await this.RunCatch(async i18n => {
-			return await this.validator({
+			const user = await this.validator({
 				model: this.entity.user,
 				name: '账号',
 				empty: { value: true },
@@ -121,6 +121,12 @@ export class UserService extends CoreService {
 						qb.where('tb.uid = :uid', { uid })
 					})
 				}
+			})
+			const captcha = await this.entity.captchaApplication.findOne({ where: { user, visible: 'show' } })
+
+			return Object.assign(user, {
+				appKey: captcha.appKey,
+				appSecret: captcha.appSecret
 			})
 		})
 	}
