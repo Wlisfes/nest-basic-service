@@ -4,9 +4,6 @@ import { User } from '@/entity/tb-user.entity'
 
 @Entity('tb-captcha__application')
 export class CaptchaApplication extends Common {
-	@Column({ type: 'bigint', comment: 'uid', readonly: true })
-	uid: number
-
 	@Column({ comment: '应用名称', nullable: false })
 	name: string
 

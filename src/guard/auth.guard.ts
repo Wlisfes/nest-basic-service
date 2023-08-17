@@ -8,6 +8,7 @@ export const APP_AUTH_INJECT = 'APP_AUTH_INJECT'
 export interface IBearer {
 	authorize: boolean
 	error: boolean
+	baseURL?: boolean
 }
 
 @Injectable()

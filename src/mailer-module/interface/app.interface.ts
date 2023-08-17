@@ -1,4 +1,4 @@
-import { ApiProperty, PickType } from '@nestjs/swagger'
+import { ApiProperty, PickType, IntersectionType } from '@nestjs/swagger'
 import { IsNotEmpty, IsString, IsArray } from 'class-validator'
 import { IsOptional } from '@/decorator/common.decorator'
 import { Request } from '@/interface/common.interface'
@@ -34,6 +34,9 @@ export class CreateApplication extends PickType(MailerApplication, ['name']) {}
 
 /**编辑授权地址**/
 export class UpdateBucket extends PickType(MailerApplication, ['bucket', 'ip', 'appKey']) {}
+
+/**应用列表**/
+export class ColumnApplication extends IntersectionType(PickType(Request, ['page', 'size']), PickType(MailerApplication, [])) {}
 
 /**应用信息**/
 export class BasicApplication extends PickType(MailerApplication, ['appKey']) {}

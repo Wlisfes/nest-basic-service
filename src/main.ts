@@ -14,10 +14,7 @@ async function useSwagger(app: NestExpressApplication) {
 		.setTitle(SwaggerOption.title)
 		.setDescription(SwaggerOption.document)
 		.setVersion(SwaggerOption.version)
-		// .addBearerAuth(
-		// 	{ type: 'apiKey', name: SwaggerOption.APP_AUTH_TOKEN, in: 'header' },
-		// 	SwaggerOption.APP_AUTH_TOKEN
-		// )
+		.addBearerAuth({ type: 'apiKey', name: SwaggerOption.APP_AUTH_TOKEN, in: 'header' }, SwaggerOption.APP_AUTH_TOKEN)
 		.build()
 	const document = SwaggerModule.createDocument(app, options)
 	SwaggerModule.setup('api-doc', app, document, {

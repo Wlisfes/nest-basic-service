@@ -1,21 +1,16 @@
-import { ApiOperationOptions, ApiResponseOptions, getSchemaPath } from '@nestjs/swagger'
+import { ApiOperationOptions, ApiResponseOptions, getSchemaPath, ApiExtraModels } from '@nestjs/swagger'
 import { ApiOperation, ApiConsumes, ApiProduces, ApiResponse, ApiBearerAuth } from '@nestjs/swagger'
-import { applyDecorators } from '@nestjs/common'
+import { applyDecorators, Type } from '@nestjs/common'
 import { ApiBearer } from '@/guard/auth.guard'
 import { SwaggerOption } from '@/config/swagger-config'
 
 interface Option {
 	operation: ApiOperationOptions
 	response: ApiResponseOptions
-	customize: ApiResponseOptions & { title?: string }
-	authorize: { login: boolean; error: boolean }
+	customize: { status: number; description: string; type: Type<unknown> }
+	authorize: { login: boolean; error: boolean; baseURL?: boolean }
 }
 
-/**
- *
- * @param option
- * @returns
- */
 export function ApiDecorator(option: Partial<Option> = {}) {
 	const decorator: Array<ClassDecorator | MethodDecorator | PropertyDecorator> = [
 		ApiOperation(option.operation),
@@ -25,11 +20,11 @@ export function ApiDecorator(option: Partial<Option> = {}) {
 
 	if (option.customize) {
 		decorator.push(
+			ApiExtraModels(option.customize.type),
 			ApiResponse({
 				status: option.customize.status,
 				description: option.customize.description,
 				schema: {
-					title: option.customize.title,
 					allOf: [
 						{
 							properties: {
@@ -38,7 +33,7 @@ export function ApiDecorator(option: Partial<Option> = {}) {
 								total: { type: 'number', default: 0 },
 								list: {
 									type: 'array',
-									items: { $ref: getSchemaPath((option.customize as any).type) }
+									items: { $ref: getSchemaPath(option.customize.type) }
 								}
 							}
 						}
@@ -56,7 +51,8 @@ export function ApiDecorator(option: Partial<Option> = {}) {
 			ApiBearerAuth(SwaggerOption.APP_AUTH_TOKEN),
 			ApiBearer({
 				authorize: option.authorize.login,
-				error: option.authorize.error
+				error: option.authorize.error,
+				baseURL: option.authorize.baseURL
 			})
 		)
 	}

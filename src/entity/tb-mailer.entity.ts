@@ -5,9 +5,6 @@ import * as day from 'dayjs'
 
 @Entity('tb-mailer__application')
 export class MailerApplication extends Common {
-	@Column({ type: 'bigint', comment: 'uid', readonly: true })
-	uid: number
-
 	@Column({ comment: '应用名称', nullable: false })
 	name: string
 
