@@ -1,10 +1,18 @@
-import { Entity, Column, ManyToOne, OneToMany, OneToOne } from 'typeorm'
+import { Entity, Column, ManyToOne, OneToMany } from 'typeorm'
 import { Common } from '@/entity/tb-common'
 import { User } from '@/entity/tb-user.entity'
 import * as day from 'dayjs'
 
 @Entity('tb-mailer__application')
 export class MailerApplication extends Common {
+	@Column({
+		type: 'bigint',
+		comment: 'uid',
+		readonly: true,
+		transformer: { from: value => Number(value), to: value => value }
+	})
+	uid: number
+
 	@Column({ comment: '应用名称', nullable: false })
 	name: string
 

@@ -4,6 +4,14 @@ import { User } from '@/entity/tb-user.entity'
 
 @Entity('tb-captcha__application')
 export class CaptchaApplication extends Common {
+	@Column({
+		type: 'bigint',
+		comment: 'uid',
+		readonly: true,
+		transformer: { from: value => Number(value), to: value => value }
+	})
+	uid: number
+
 	@Column({ comment: '应用名称', nullable: false })
 	name: string
 
@@ -49,9 +57,6 @@ export class CaptchaApplication extends Common {
 
 @Entity('tb-captcha__record')
 export class CaptchaRecord extends Common {
-	@Column({ type: 'bigint', comment: 'uid', readonly: true })
-	uid: number
-
 	@Column({ type: 'varchar', comment: 'session记录', readonly: true })
 	session: string
 

@@ -99,6 +99,7 @@ export class UserService extends CoreService {
 						throw new HttpException('密码错误', HttpStatus.BAD_REQUEST)
 					}
 				)
+				console.log(data)
 				return await this.newJwtToken(data).then(({ token, expire }) => {
 					return { token, expire, message: '登录成功' }
 				})

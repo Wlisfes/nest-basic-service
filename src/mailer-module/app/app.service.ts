@@ -13,7 +13,9 @@ export class AppService extends CoreService {
 	/**创建应用**/
 	public async httpCreateApplication(props: http.CreateApplication) {
 		return await this.RunCatch(async i18n => {
+			const random = (await this.createRandom(11111, 99999)).toString()
 			const node = await this.entity.mailerApplication.create({
+				uid: Number(Date.now() + random),
 				name: props.name,
 				appKey: await this.createCustomByte(16),
 				appSecret: await this.createCustomByte(32)
@@ -43,8 +45,9 @@ export class AppService extends CoreService {
 	/**应用列表**/
 	public async httpColumnApplication(props: http.ColumnApplication, uid: number) {
 		return await this.RunCatch(async i18n => {
+			console.log(uid)
 			return await this.batchValidator({
-				model: this.entity.captchaApplication,
+				model: this.entity.mailerApplication,
 				options: {
 					join: {
 						alias: 'tb',

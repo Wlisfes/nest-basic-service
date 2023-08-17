@@ -35,8 +35,9 @@ export class SupervisorService extends CoreService {
 			const pinX = await this.createRandom(props.offset, props.width - props.offset - 20)
 			const pinY = await this.createRandom(20, props.height - props.offset - 20)
 			const job = await this.job.supervisor.add({ session, check: 'NODE' }, { delay: JOB_SUPERVISOR.delay })
+			const random = (await this.createRandom(11111, 99999)).toString()
 			const node = await this.entity.captchaRecord.create({
-				uid: Date.now(),
+				uid: Number(Date.now() + random),
 				width: props.width,
 				height: props.height,
 				offset: props.offset,
@@ -120,18 +121,16 @@ export class SupervisorService extends CoreService {
 					}
 				).then(e => data)
 			})
-			return await this.job.supervisor
-				.getJob(jobId)
-				.then(async (job: Job<{ session: string; check: string }>) => {
-					if (!job || job.data.check === 'INVALID') {
-						throw new HttpException('session记录已失效', HttpStatus.BAD_REQUEST)
-					} else {
-						await this.entity.captchaRecord.update({ session }, { check: 'SUCCESS' })
-						await job.update({ ...job.data, check: 'SUCCESS' })
-						await job.promote()
-					}
-					return { message: '验证成功' }
-				})
+			return await this.job.supervisor.getJob(jobId).then(async (job: Job<{ session: string; check: string }>) => {
+				if (!job || job.data.check === 'INVALID') {
+					throw new HttpException('session记录已失效', HttpStatus.BAD_REQUEST)
+				} else {
+					await this.entity.captchaRecord.update({ session }, { check: 'SUCCESS' })
+					await job.update({ ...job.data, check: 'SUCCESS' })
+					await job.promote()
+				}
+				return { message: '验证成功' }
+			})
 		})
 	}
 
