@@ -35,9 +35,7 @@ export class SupervisorService extends CoreService {
 			const pinX = await this.createRandom(props.offset, props.width - props.offset - 20)
 			const pinY = await this.createRandom(20, props.height - props.offset - 20)
 			const job = await this.job.supervisor.add({ session, check: 'NODE' }, { delay: JOB_SUPERVISOR.delay })
-			const random = (await this.createRandom(11111, 99999)).toString()
 			const node = await this.entity.captchaRecord.create({
-				uid: Number(Date.now() + random),
 				width: props.width,
 				height: props.height,
 				offset: props.offset,

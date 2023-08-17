@@ -12,9 +12,8 @@ export class AppService extends CoreService {
 	/**创建应用**/
 	public async httpCreateApplication(props: http.CreateApplication) {
 		return await this.RunCatch(async i18n => {
-			const random = (await this.createRandom(11111, 99999)).toString()
 			const node = await this.entity.captchaApplication.create({
-				uid: Number(Date.now() + random),
+				uid: await this.createCustomUidByte(),
 				name: props.name,
 				appKey: await this.createCustomByte(16),
 				appSecret: await this.createCustomByte(32)

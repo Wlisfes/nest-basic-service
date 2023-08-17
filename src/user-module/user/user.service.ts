@@ -56,9 +56,8 @@ export class UserService extends CoreService {
 	/**注册用户**/
 	public async httpRegister(props: http.Register) {
 		return await this.RunCatch(async i18n => {
-			const random = (await this.createRandom(11111, 99999)).toString()
 			const node = await this.entity.user.create({
-				uid: Number(Date.now() + random),
+				uid: await this.createCustomUidByte(),
 				nickname: props.nickname,
 				password: props.password
 			})
