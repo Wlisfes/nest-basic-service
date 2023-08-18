@@ -16,20 +16,14 @@ export class JobSupervisorConsumer extends CoreService {
 	/**队列开始执行**/
 	@Process()
 	async process(job: Job<{ session: string; check: string }>) {
-		this.logger.log('process---队列开始执行:', {
-			jobId: job.id,
-			data: job.data
-		})
+		this.logger.log('process---队列开始执行:', `jobId: ${job.id}`)
 		const { session, check } = job.data
 		if (check === 'NODE') {
 			await this.entity.captchaRecord.update({ session }, { check: 'INVALID' })
 			await job.update({ session, check: 'INVALID' })
 		}
 		await job.progress(100)
-		this.logger.log('process---队列执行完毕:', {
-			jobId: job.id,
-			data: job.data
-		})
+		this.logger.log('process---队列执行完毕:', `jobId: ${job.id}`)
 		return await job.discard()
 		// return this.event.emit(JOB_SUPERVISOR.event.process, job)
 	}

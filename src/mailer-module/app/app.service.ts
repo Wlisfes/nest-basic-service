@@ -44,7 +44,6 @@ export class AppService extends CoreService {
 	/**应用列表**/
 	public async httpColumnApplication(props: http.ColumnApplication, uid: number) {
 		return await this.RunCatch(async i18n => {
-			console.log(uid)
 			return await this.batchValidator({
 				model: this.entity.mailerApplication,
 				options: {
