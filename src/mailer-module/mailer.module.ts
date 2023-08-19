@@ -5,9 +5,11 @@ import { NodemailerService } from './nodemailer/nodemailer.service'
 import { NodemailerController } from './nodemailer/nodemailer.controller'
 import { PackageService } from './package/package.service'
 import { PackageController } from './package/package.controller'
+import { ScheduleService } from './schedule/schedule.service';
+import { ScheduleController } from './schedule/schedule.controller';
 
 @Module({
-	controllers: [AppController, NodemailerController, PackageController],
-	providers: [AppService, NodemailerService, PackageService]
+	controllers: [AppController, NodemailerController, PackageController, ScheduleController],
+	providers: [AppService, NodemailerService, PackageService, ScheduleService]
 })
 export class MailerModule {}
