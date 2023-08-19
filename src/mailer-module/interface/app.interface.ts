@@ -70,6 +70,12 @@ export class ColumnApplication extends IntersectionType(PickType(Request, ['page
 /**应用信息**/
 export class BasicApplication extends PickType(MailerApplication, ['appKey']) {}
 
+/**修改应用名称**/
+export class UpdateNameApplication extends PickType(MailerApplication, ['appKey', 'name']) {}
+
+/**重置appSecret**/
+export class ResetMailerAppSecret extends PickType(MailerApplication, ['appKey']) {}
+
 /**添加、修改应用SMTP服务**/
 export class UpdateMailerService extends IntersectionType(
 	PickType(MailerApplication, ['appKey']),
