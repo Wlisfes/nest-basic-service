@@ -2,7 +2,7 @@ import { Module, Global } from '@nestjs/common'
 import { EventEmitterModule } from '@nestjs/event-emitter'
 import { BullModule } from '@nestjs/bull'
 import { JobService } from './job.service'
-import { JobSupervisorConsumer } from './job.supervisor.consumer'
+import { JobCaptchaSupervisorConsumer } from './job-captcha.supervisor.consumer'
 import { JobMailerScheduleConsumer } from './job-mailer.schedule.consumer'
 import * as job from '@/config/job-config'
 
@@ -10,11 +10,11 @@ import * as job from '@/config/job-config'
 @Module({
 	imports: [
 		BullModule.registerQueue({
-			name: job.JOB_SUPERVISOR.name,
-			limiter: job.JOB_SUPERVISOR.limiter,
+			name: job.JOB_CAPTCHA_SUPERVISOR.name,
+			limiter: job.JOB_CAPTCHA_SUPERVISOR.limiter,
 			defaultJobOptions: {
-				removeOnComplete: job.JOB_SUPERVISOR.removeOnComplete,
-				removeOnFail: job.JOB_SUPERVISOR.removeOnFail
+				removeOnComplete: job.JOB_CAPTCHA_SUPERVISOR.removeOnComplete,
+				removeOnFail: job.JOB_CAPTCHA_SUPERVISOR.removeOnFail
 			}
 		}),
 		BullModule.registerQueue({
@@ -27,7 +27,7 @@ import * as job from '@/config/job-config'
 		}),
 		EventEmitterModule.forRoot()
 	],
-	providers: [JobService, JobSupervisorConsumer, JobMailerScheduleConsumer],
+	providers: [JobService, JobCaptchaSupervisorConsumer, JobMailerScheduleConsumer],
 	exports: [JobService]
 })
 export class JobModule {}

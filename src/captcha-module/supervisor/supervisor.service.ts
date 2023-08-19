@@ -5,7 +5,7 @@ import { CoreService } from '@/core/core.service'
 import { EntityService } from '@/core/entity.service'
 import { JobService } from '@/job-module/job.service'
 import { divineHandler } from '@/utils/utils-common'
-import { JOB_SUPERVISOR } from '@/config/job-config'
+import { JOB_CAPTCHA_SUPERVISOR } from '@/config/job-config'
 import * as http from '../interface/supervisor.interface'
 
 @Injectable()
@@ -34,7 +34,7 @@ export class SupervisorService extends CoreService {
 			const session = (await this.createCustomByte()).toUpperCase()
 			const pinX = await this.createRandom(props.offset, props.width - props.offset - 20)
 			const pinY = await this.createRandom(20, props.height - props.offset - 20)
-			const job = await this.job.supervisor.add({ session, check: 'NODE' }, { delay: JOB_SUPERVISOR.delay })
+			const job = await this.job.supervisor.add({ session, check: 'NODE' }, { delay: JOB_CAPTCHA_SUPERVISOR.delay })
 			const node = await this.entity.captchaRecord.create({
 				width: props.width,
 				height: props.height,

@@ -4,11 +4,11 @@ import { Job } from 'bull'
 import { EventEmitter2 } from '@nestjs/event-emitter'
 import { CoreService } from '@/core/core.service'
 import { EntityService } from '@/core/entity.service'
-import { JOB_SUPERVISOR } from '@/config/job-config'
+import { JOB_CAPTCHA_SUPERVISOR } from '@/config/job-config'
 
-@Processor({ name: JOB_SUPERVISOR.name })
-export class JobSupervisorConsumer extends CoreService {
-	private readonly logger = new Logger(JobSupervisorConsumer.name)
+@Processor({ name: JOB_CAPTCHA_SUPERVISOR.name })
+export class JobCaptchaSupervisorConsumer extends CoreService {
+	private readonly logger = new Logger(JobCaptchaSupervisorConsumer.name)
 	constructor(private readonly event: EventEmitter2, private readonly entity: EntityService) {
 		super()
 	}

@@ -1,5 +1,5 @@
 /**验证服务队列配置**/
-export const JOB_SUPERVISOR = {
+export const JOB_CAPTCHA_SUPERVISOR = {
 	name: 'supervisor',
 	delay: 5 * 60 * 1000, //300秒
 	limiter: {
