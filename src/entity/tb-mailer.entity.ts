@@ -1,4 +1,4 @@
-import { Entity, Column, ManyToOne, OneToMany } from 'typeorm'
+import { Entity, Column, ManyToOne, OneToMany, OneToOne, JoinColumn } from 'typeorm'
 import { Common } from '@/entity/tb-common'
 import { User } from '@/entity/tb-user.entity'
 import * as day from 'dayjs'
@@ -22,7 +22,11 @@ export class MailerApplication extends Common {
 	@Column({ comment: '应用密钥', nullable: false })
 	appSecret: string
 
-	@Column({ comment: '状态: 禁用-disable、启用-enable', default: 'enable', nullable: false })
+	@Column({
+		comment: '状态: inactivated-未激活、activated-已激活、已禁用-disable、已删除-delete',
+		default: 'inactivated',
+		nullable: false
+	})
 	status: string
 
 	@Column({ comment: '备注', nullable: true })
@@ -33,7 +37,10 @@ export class MailerApplication extends Common {
 		length: 2000,
 		comment: '授权地址',
 		nullable: true,
-		transformer: { from: value => (value ?? '').split(','), to: value => (value ?? []).join(',') }
+		transformer: {
+			from: value => (value ? (value ?? '').split(',') : []),
+			to: value => (value ?? []).join(',')
+		}
 	})
 	bucket: string[]
 
@@ -42,11 +49,15 @@ export class MailerApplication extends Common {
 		length: 2000,
 		comment: '授权IP',
 		nullable: true,
-		transformer: { from: value => (value ?? '').split(','), to: value => (value ?? []).join(',') }
+		transformer: {
+			from: value => (value ? (value ?? '').split(',') : []),
+			to: value => (value ?? []).join(',')
+		}
 	})
 	ip: string[]
 
-	@OneToMany(type => MailerService, app => app.app)
+	@OneToOne(type => MailerService, app => app.app)
+	@JoinColumn()
 	service: MailerService[]
 
 	@ManyToOne(type => User, user => user.mailer)
@@ -70,16 +81,13 @@ export class MailerService extends Common {
 	@Column({ comment: '登录用户密码', nullable: false })
 	password: string
 
-	@Column({ comment: '状态: 禁用-disable、启用-enable', default: 'enable', nullable: false })
-	status: string
-
-	@Column({ comment: '优先级', nullable: false, default: 1 })
-	priority: number
+	@Column({ comment: '服务类型', nullable: false, default: 'QQ' })
+	type: string
 
 	@ManyToOne(type => User)
 	user: User
 
-	@ManyToOne(type => MailerApplication, type => type.service)
+	@OneToOne(type => MailerApplication, type => type.service)
 	app: MailerApplication
 }
 
