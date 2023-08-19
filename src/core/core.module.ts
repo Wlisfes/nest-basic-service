@@ -7,7 +7,11 @@ import { TypeOrmModule } from '@nestjs/typeorm'
 import { User } from '@/entity/tb-user.entity'
 import { MailerPackage } from '@/entity/tb-package.entity'
 import { CaptchaRecord, CaptchaApplication } from '@/entity/tb-captcha.entity'
-import { MailerApplication, MailerService, MailerTemplate, MailerTask, MailerRecord } from '@/entity/tb-mailer.entity'
+import { tbMailerApplication } from '@/entity/tb-mailer__application.entity'
+import { tbMailerService } from '@/entity/tb-mailer__service.entity'
+import { tbMailerTemplate } from '@/entity/tb-mailer__template.entity'
+import { tbMailerSchedule } from '@/entity/tb-mailer__schedule.entity'
+import { tbMailerRecord } from '@/entity/tb-mailer__record.entity'
 //module
 import { JobModule } from '@/job-module/job.module'
 import { UserModule } from '@/user-module/user.module'
@@ -22,11 +26,11 @@ import { MailerModule } from '@/mailer-module/mailer.module'
 			MailerPackage,
 			CaptchaApplication,
 			CaptchaRecord,
-			MailerApplication,
-			MailerService,
-			MailerTemplate,
-			MailerTask,
-			MailerRecord
+			tbMailerApplication,
+			tbMailerService,
+			tbMailerTemplate,
+			tbMailerSchedule,
+			tbMailerRecord
 		]),
 		JobModule,
 		UserModule,

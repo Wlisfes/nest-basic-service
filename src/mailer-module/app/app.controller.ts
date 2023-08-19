@@ -46,4 +46,14 @@ export class AppController {
 	public async httpBasicApplication(@Query() query: http.BasicApplication) {
 		return await this.appService.httpBasicApplication(query)
 	}
+
+	@Post('/update/service')
+	@ApiDecorator({
+		operation: { summary: '添加、修改应用SMTP服务' },
+		response: { status: 200, description: 'OK', type: Notice },
+		authorize: { login: true, error: true }
+	})
+	public async httpUpdateMailerService(@Request() request, @Body() body: http.UpdateMailerService) {
+		return await this.appService.httpUpdateMailerService(body, request.user.uid)
+	}
 }

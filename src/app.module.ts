@@ -68,6 +68,7 @@ import * as path from 'path'
 			inject: [ConfigService],
 			useFactory: (config: ConfigService) => {
 				return {
+					prefix: process.env.NODE_ENV.trim(),
 					redis: {
 						host: config.get('REDIS_HOST'),
 						port: parseInt(config.get('REDIS_PORT')),

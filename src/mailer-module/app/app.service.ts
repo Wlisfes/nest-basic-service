@@ -1,7 +1,8 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common'
 import { Brackets } from 'typeorm'
 import { CoreService } from '@/core/core.service'
 import { EntityService } from '@/core/entity.service'
+import { divineHandler } from '@/utils/utils-common'
 import * as http from '../interface/app.interface'
 
 @Injectable()
@@ -49,7 +50,10 @@ export class AppService extends CoreService {
 				options: {
 					join: {
 						alias: 'tb',
-						leftJoinAndSelect: { user: 'tb.user' }
+						leftJoinAndSelect: {
+							user: 'tb.user'
+							// service: 'tb.service'
+						}
 					},
 					where: new Brackets(qb => {
 						qb.where('user.uid = :uid', { uid })
@@ -73,6 +77,36 @@ export class AppService extends CoreService {
 				empty: { value: true },
 				options: { where: { appKey: props.appKey } }
 			})
+		})
+	}
+
+	/**添加、修改应用SMTP服务**/
+	public async httpUpdateMailerService(props: http.UpdateMailerService, uid: number) {
+		return await this.RunCatch(async i18n => {
+			const app = await this.validator({
+				model: this.entity.mailerApplication,
+				name: '应用',
+				empty: { value: true },
+				options: {
+					where: { appKey: props.appKey },
+					relations: ['user', 'service']
+				}
+			}).then(async data => {
+				await divineHandler(
+					() => !data.user || data.user.uid !== uid,
+					() => {
+						throw new HttpException('appKey不存在', HttpStatus.BAD_REQUEST)
+					}
+				)
+
+				if (data.service) {
+					await this.entity.mailerService.update({ id: data.service.id }, {})
+				}
+			})
+			console.log(app)
+			console.log(props, uid)
+
+			return {}
 		})
 	}
 }

@@ -1,7 +1,7 @@
 import { Entity, Column, OneToMany } from 'typeorm'
 import { Common } from '@/entity/tb-common'
 import { CaptchaApplication } from '@/entity/tb-captcha.entity'
-import { MailerApplication } from '@/entity/tb-mailer.entity'
+import { tbMailerApplication } from '@/entity/tb-mailer__application.entity'
 import { hashSync } from 'bcryptjs'
 
 @Entity('tb-user')
@@ -49,8 +49,8 @@ export class User extends Common {
 	@OneToMany(type => CaptchaApplication, app => app.user)
 	captcha: CaptchaApplication[]
 
-	@OneToMany(type => MailerApplication, app => app.user)
-	mailer: MailerApplication[]
+	@OneToMany(type => tbMailerApplication, app => app.user)
+	mailer: tbMailerApplication[]
 }
 
 // @Entity('tb-user__package')

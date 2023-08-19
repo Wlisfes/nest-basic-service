@@ -4,7 +4,11 @@ import { Repository } from 'typeorm'
 import { User } from '@/entity/tb-user.entity'
 import { MailerPackage } from '@/entity/tb-package.entity'
 import { CaptchaApplication, CaptchaRecord } from '@/entity/tb-captcha.entity'
-import { MailerApplication, MailerService, MailerTemplate, MailerTask, MailerRecord } from '@/entity/tb-mailer.entity'
+import { tbMailerApplication } from '@/entity/tb-mailer__application.entity'
+import { tbMailerService } from '@/entity/tb-mailer__service.entity'
+import { tbMailerTemplate } from '@/entity/tb-mailer__template.entity'
+import { tbMailerSchedule } from '@/entity/tb-mailer__schedule.entity'
+import { tbMailerRecord } from '@/entity/tb-mailer__record.entity'
 
 @Injectable()
 export class EntityService {
@@ -13,10 +17,10 @@ export class EntityService {
 		@InjectRepository(MailerPackage) public readonly mailerPackage: Repository<MailerPackage>,
 		@InjectRepository(CaptchaApplication) public readonly captchaApplication: Repository<CaptchaApplication>,
 		@InjectRepository(CaptchaRecord) public readonly captchaRecord: Repository<CaptchaRecord>,
-		@InjectRepository(MailerApplication) public readonly mailerApplication: Repository<MailerApplication>,
-		@InjectRepository(MailerService) public readonly mailerService: Repository<MailerService>,
-		@InjectRepository(MailerTemplate) public readonly mailerTemplate: Repository<MailerTemplate>,
-		@InjectRepository(MailerTask) public readonly mailerTask: Repository<MailerTask>,
-		@InjectRepository(MailerRecord) public readonly mailerRecord: Repository<MailerRecord>
+		@InjectRepository(tbMailerApplication) public readonly mailerApplication: Repository<tbMailerApplication>,
+		@InjectRepository(tbMailerService) public readonly mailerService: Repository<tbMailerService>,
+		@InjectRepository(tbMailerTemplate) public readonly mailerTemplate: Repository<tbMailerTemplate>,
+		@InjectRepository(tbMailerSchedule) public readonly mailerSchedule: Repository<tbMailerSchedule>,
+		@InjectRepository(tbMailerRecord) public readonly mailerRecord: Repository<tbMailerRecord>
 	) {}
 }
