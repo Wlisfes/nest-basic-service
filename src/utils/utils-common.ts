@@ -19,3 +19,13 @@ export async function divineHandler(fn: boolean | Function, handler: Function) {
 	}
 	return undefined
 }
+
+/**单位转换**/
+export function divineTransfer(value: number, option: { reverse: boolean; scale?: number } = { reverse: true, scale: 2 }) {
+	if (option.reverse) {
+		const scale = Number('1'.padEnd((option.scale ?? 2) + 1, '0'))
+		return (Math.floor((value / 1000) * scale) / scale).toFixed(option.scale)
+	} else {
+		return (value * 1000).toFixed(0)
+	}
+}

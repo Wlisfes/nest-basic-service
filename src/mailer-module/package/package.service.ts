@@ -4,22 +4,23 @@ import { EntityService } from '@/core/entity.service'
 import * as http from '../interface/package.interface'
 
 @Injectable()
-export class PackageService extends CoreService {
+export class MailerPackageService extends CoreService {
 	constructor(private readonly entity: EntityService) {
 		super()
 	}
 
 	/**创建邮件套餐包**/
-	public async httpCreatePackage(props: http.CreateMailer) {
+	public async httpCreateMailerPackage(props: http.CreateMailerPackage) {
 		return await this.RunCatch(async i18n => {
 			const node = await this.entity.mailerPackage.create({
 				name: props.name,
+				type: props.type,
 				comment: props.comment ?? null,
 				expire: props.expire,
 				total: props.total,
 				stock: props.stock,
 				surplus: props.surplus,
-				maxBuy: props.maxBuy,
+				max: props.max,
 				price: props.price,
 				discount: props.discount,
 				label: props.label ?? null,
@@ -32,7 +33,7 @@ export class PackageService extends CoreService {
 	}
 
 	/**邮件套餐包列表**/
-	public async httpColumnPackage(props: http.ColumnMailer) {
+	public async httpColumnMailerPackage(props: http.ColumnMailerPackage) {
 		return await this.RunCatch(async i18n => {
 			return await this.batchValidator({
 				model: this.entity.mailerPackage,
@@ -47,5 +48,5 @@ export class PackageService extends CoreService {
 	}
 
 	/**购买邮件套餐包**/
-	public async httpPackageSubscriber(props: http.Subscriber) {}
+	public async httpMailerPackageSubscriber(props: http.MailerPackageSubscriber) {}
 }

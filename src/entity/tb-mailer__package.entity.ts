@@ -6,6 +6,9 @@ export class tbMailerPackage extends Common {
 	@Column({ comment: '套餐名称', nullable: false })
 	name: string
 
+	@Column({ comment: '套餐类型：small-小额套餐、large-大额套餐', nullable: false })
+	type: string
+
 	@Column({ comment: '套餐备注', nullable: true })
 	comment: string
 
@@ -22,7 +25,10 @@ export class tbMailerPackage extends Common {
 	surplus: number
 
 	@Column({ comment: '套餐最大购买数量：0-不限制', unsigned: true, default: 0, nullable: false })
-	maxBuy: number
+	max: number
+
+	@Column({ comment: '套餐标签', nullable: true })
+	label: string
 
 	@Column({
 		type: 'bigint',
@@ -49,9 +55,6 @@ export class tbMailerPackage extends Common {
 		}
 	})
 	discount: number
-
-	@Column({ comment: '套餐标签', nullable: true })
-	label: string
 
 	@Column({
 		comment: `状态: 待生效-pending、已上架-upper、已下架-under、已过期-expired、已售罄-soldout、已删除-delete`,

@@ -1,13 +1,17 @@
 import { ApiProperty, PickType, IntersectionType } from '@nestjs/swagger'
-import { IsNotEmpty, IsNumber, IsString, IsArray, Min, Max } from 'class-validator'
+import { IsNotEmpty, IsNumber, Min, Max } from 'class-validator'
 import { Type } from 'class-transformer'
 import { IsOptional } from '@/decorator/common.decorator'
 import { Request } from '@/interface/common.interface'
 
-export class Package extends PickType(Request, ['id']) {
+export class MailerPackage extends PickType(Request, ['id']) {
 	@ApiProperty({ description: '套餐名称', example: '套餐名称' })
 	@IsNotEmpty({ message: '套餐名称 必填' })
 	name: string
+
+	@ApiProperty({ description: '套餐类型：small-小额套餐、large-大额套餐', example: 'small' })
+	@IsNotEmpty({ message: '套餐类型 必填' })
+	type: string
 
 	@ApiProperty({ description: '套餐备注', required: false })
 	@IsOptional()
@@ -46,7 +50,7 @@ export class Package extends PickType(Request, ['id']) {
 	@IsNotEmpty({ message: '套餐最大购买数量 必填' })
 	@Min(0)
 	@Type(type => Number)
-	maxBuy: number
+	max: number
 
 	@ApiProperty({ description: '套餐价格', example: 1000, default: 0 })
 	@IsNotEmpty({ message: '套餐价格 必填' })
@@ -76,11 +80,11 @@ export class Package extends PickType(Request, ['id']) {
 	status: string
 }
 
-export class CreateMailer extends IntersectionType(
-	PickType(Package, ['name', 'comment', 'expire', 'total', 'stock', 'surplus']),
-	PickType(Package, ['maxBuy', 'price', 'discount', 'label', 'status'])
+export class CreateMailerPackage extends IntersectionType(
+	PickType(MailerPackage, ['name', 'type', 'comment', 'expire', 'total', 'stock', 'surplus']),
+	PickType(MailerPackage, ['max', 'price', 'discount', 'label', 'status'])
 ) {}
 
-export class ColumnMailer extends PickType(Request, ['page', 'size']) {}
+export class ColumnMailerPackage extends PickType(Request, ['page', 'size']) {}
 
-export class Subscriber extends PickType(Package, ['id']) {}
+export class MailerPackageSubscriber extends PickType(MailerPackage, ['id']) {}
