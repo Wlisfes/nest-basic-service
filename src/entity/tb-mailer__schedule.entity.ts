@@ -2,12 +2,11 @@ import { Entity, Column, ManyToOne } from 'typeorm'
 import { Common } from '@/entity/tb-common'
 import { User } from '@/entity/tb-user.entity'
 import { tbMailerApplication } from '@/entity/tb-mailer__application.entity'
-import { tbMailerTemplate } from '@/entity/tb-mailer__template.entity'
 import * as day from 'dayjs'
 
 @Entity('tb-mailer__schedule')
 export class tbMailerSchedule extends Common {
-	@Column({ type: 'int', default: null, comment: '任务ID', readonly: true })
+	@Column({ type: 'int', comment: '任务ID', nullable: true })
 	jobId: number
 
 	@Column({ comment: '任务名称', nullable: false })
@@ -17,7 +16,7 @@ export class tbMailerSchedule extends Common {
 	type: string
 
 	@Column({ comment: '发送类型: 模板发送-sample、自定义发送-customize', nullable: false })
-	supply: string
+	super: string
 
 	@Column({ comment: '发送总数', nullable: false, default: 0 })
 	total: number
@@ -28,6 +27,12 @@ export class tbMailerSchedule extends Common {
 	@Column({ comment: '失败数', nullable: true, default: 0 })
 	failure: number
 
+	@Column({ comment: '模板ID', nullable: true })
+	columnId: string
+
+	@Column({ comment: '模板名称', nullable: true })
+	columnName: string
+
 	@Column({ type: 'text', comment: '发送内容', nullable: false })
 	content: string
 
@@ -37,8 +42,8 @@ export class tbMailerSchedule extends Common {
 		nullable: true,
 		default: null,
 		transformer: {
-			from: value => (value ? day(value).format('YYYY-MM-DD HH:mm:ss') : null),
-			to: value => (value ? new Date(value).getTime() : null)
+			from: value => day(value).format('YYYY-MM-DD HH:mm:ss'),
+			to: value => value
 		}
 	})
 	sendTime: Date
@@ -52,9 +57,6 @@ export class tbMailerSchedule extends Common {
 
 	@ManyToOne(type => tbMailerApplication)
 	app: tbMailerApplication
-
-	@ManyToOne(type => tbMailerTemplate)
-	sample: tbMailerTemplate
 
 	@ManyToOne(type => User)
 	user: User

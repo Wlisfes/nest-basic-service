@@ -6,11 +6,11 @@ import { User } from '@/entity/tb-user.entity'
 export class CaptchaApplication extends Common {
 	@Column({
 		type: 'bigint',
-		comment: 'uid',
+		comment: 'App ID',
 		readonly: true,
 		transformer: { from: value => Number(value), to: value => value }
 	})
-	uid: number
+	appId: number
 
 	@Column({ comment: '应用名称', nullable: false })
 	name: string

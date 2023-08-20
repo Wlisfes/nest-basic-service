@@ -15,7 +15,7 @@ export class AppService extends CoreService {
 	public async httpCreateApplication(props: http.CreateApplication) {
 		return await this.RunCatch(async i18n => {
 			const node = await this.entity.mailerApplication.create({
-				uid: await this.createCustomUidByte(),
+				appId: await this.createCustomUidByte(),
 				name: props.name,
 				appKey: await this.createCustomByte(16),
 				appSecret: await this.createCustomByte(32)
