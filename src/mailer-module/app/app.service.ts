@@ -29,14 +29,14 @@ export class AppService extends CoreService {
 	/**编辑授权地址**/
 	public async httpUpdateBucket(props: http.UpdateBucket) {
 		return await this.RunCatch(async i18n => {
-			await this.validator({
+			return await this.validator({
 				model: this.entity.mailerApplication,
 				name: '应用',
 				empty: { value: true },
 				close: { value: true },
-				options: { where: { appKey: props.appKey } }
-			})
-			return await this.entity.mailerApplication.update({ appKey: props.appKey }, { bucket: props.bucket, ip: props.ip }).then(() => {
+				options: { where: { appId: props.appId } }
+			}).then(async data => {
+				await this.entity.mailerApplication.update({ appId: data.appId }, { bucket: props.bucket, ip: props.ip })
 				return { message: '编辑成功' }
 			})
 		})
@@ -75,7 +75,7 @@ export class AppService extends CoreService {
 				model: this.entity.mailerApplication,
 				name: '应用',
 				empty: { value: true },
-				options: { where: { appKey: props.appKey } }
+				options: { where: { appId: props.appId } }
 			})
 		})
 	}
@@ -93,7 +93,7 @@ export class AppService extends CoreService {
 						leftJoinAndSelect: { user: 'tb.user' }
 					},
 					where: new Brackets(qb => {
-						qb.where('tb.appKey = :appKey', { appKey: props.appKey })
+						qb.where('tb.appId = :appId', { appId: props.appId })
 						qb.andWhere('user.uid = :uid', { uid })
 					})
 				}
@@ -113,11 +113,10 @@ export class AppService extends CoreService {
 							})
 						}
 					},
-					node => node.appKey !== props.appKey
+					node => node.appId !== props.appId
 				)
-				return await this.entity.mailerApplication.update({ appKey: data.appKey }, { name: props.name }).then(() => {
-					return { message: '编辑成功' }
-				})
+				await this.entity.mailerApplication.update({ appId: data.appId }, { name: props.name })
+				return { message: '编辑成功' }
 			})
 		})
 	}
@@ -135,16 +134,13 @@ export class AppService extends CoreService {
 						leftJoinAndSelect: { user: 'tb.user' }
 					},
 					where: new Brackets(qb => {
-						qb.where('tb.appKey = :appKey', { appKey: props.appKey })
+						qb.where('tb.appId = :appId', { appId: props.appId })
 						qb.andWhere('user.uid = :uid', { uid })
 					})
 				}
 			}).then(async data => {
-				return await this.entity.mailerApplication
-					.update({ appKey: data.appKey }, { appSecret: await this.createCustomByte(32) })
-					.then(() => {
-						return { message: '重置成功' }
-					})
+				await this.entity.mailerApplication.update({ appId: data.appId }, { appSecret: await this.createCustomByte(32) })
+				return { message: '重置成功' }
 			})
 		})
 	}
@@ -157,14 +153,14 @@ export class AppService extends CoreService {
 				name: '应用',
 				empty: { value: true },
 				options: {
-					where: { appKey: props.appKey },
+					where: { appId: props.appId },
 					relations: ['user', 'service']
 				}
 			}).then(async data => {
 				await divineHandler(
 					() => !data.user || data.user.uid !== uid,
 					() => {
-						throw new HttpException('appKey不存在', HttpStatus.BAD_REQUEST)
+						throw new HttpException('AppID不存在', HttpStatus.BAD_REQUEST)
 					}
 				)
 				if (data.service) {
@@ -179,9 +175,8 @@ export class AppService extends CoreService {
 							type: props.type ?? data.service.type
 						}
 					)
-					return await this.entity.mailerApplication.update({ id: data.id }, { status: 'activated' }).then(() => {
-						return { message: '激活成功' }
-					})
+					await this.entity.mailerApplication.update({ id: data.id }, { status: 'activated' })
+					return { message: '激活成功' }
 				}
 				const node = await this.entity.mailerService.create({
 					host: props.host,
@@ -194,9 +189,8 @@ export class AppService extends CoreService {
 					user: await this.entity.user.findOne({ where: { uid } })
 				})
 				await this.entity.mailerService.save(node)
-				return await this.entity.mailerApplication.update({ id: data.id }, { status: 'activated' }).then(() => {
-					return { message: '编辑成功' }
-				})
+				await this.entity.mailerApplication.update({ id: data.id }, { status: 'activated' })
+				return { message: '编辑成功' }
 			})
 		})
 	}

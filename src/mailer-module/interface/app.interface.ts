@@ -33,6 +33,11 @@ export class MailerService extends PickType(Request, ['id']) {
 }
 
 export class MailerApplication extends PickType(Request, ['id', 'status']) {
+	@ApiProperty({ description: 'App ID', example: 1692282119673627 })
+	@IsNotEmpty({ message: 'App ID 必填' })
+	@Type(type => Number)
+	appId: number
+
 	@ApiProperty({ description: '应用名称', example: '猪头' })
 	@IsNotEmpty({ message: '应用名称 必填' })
 	name: string
@@ -62,22 +67,22 @@ export class MailerApplication extends PickType(Request, ['id', 'status']) {
 export class CreateApplication extends PickType(MailerApplication, ['name']) {}
 
 /**编辑授权地址**/
-export class UpdateBucket extends PickType(MailerApplication, ['bucket', 'ip', 'appKey']) {}
+export class UpdateBucket extends PickType(MailerApplication, ['bucket', 'ip', 'appId']) {}
 
 /**应用列表**/
 export class ColumnApplication extends IntersectionType(PickType(Request, ['page', 'size']), PickType(MailerApplication, [])) {}
 
 /**应用信息**/
-export class BasicApplication extends PickType(MailerApplication, ['appKey']) {}
+export class BasicApplication extends PickType(MailerApplication, ['appId']) {}
 
 /**修改应用名称**/
-export class UpdateNameApplication extends PickType(MailerApplication, ['appKey', 'name']) {}
+export class UpdateNameApplication extends PickType(MailerApplication, ['appId', 'name']) {}
 
 /**重置appSecret**/
-export class ResetMailerAppSecret extends PickType(MailerApplication, ['appKey']) {}
+export class ResetMailerAppSecret extends PickType(MailerApplication, ['appId']) {}
 
 /**添加、修改应用SMTP服务**/
 export class UpdateMailerService extends IntersectionType(
-	PickType(MailerApplication, ['appKey']),
+	PickType(MailerApplication, ['appId']),
 	PickType(MailerService, ['host', 'port', 'secure', 'type', 'username', 'password'])
 ) {}
