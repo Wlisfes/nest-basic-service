@@ -67,8 +67,9 @@ import * as path from 'path'
 		BullModule.forRootAsync({
 			inject: [ConfigService],
 			useFactory: (config: ConfigService) => {
+				const prefix = process.env.NODE_ENV.trim() === 'development' ? 'development' : ''
 				return {
-					prefix: process.env.NODE_ENV.trim(),
+					prefix: prefix,
 					redis: {
 						host: config.get('REDIS_HOST'),
 						port: parseInt(config.get('REDIS_PORT')),
