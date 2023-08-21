@@ -7,9 +7,8 @@ import { compareSync } from 'bcryptjs'
 import { CoreService } from '@/core/core.service'
 import { EntityService } from '@/core/entity.service'
 import { User } from '@/entity/tb-user.entity'
-import { divineHandler } from '@/utils/utils-common'
+import { divineHandler, divineResult, divineTransfer } from '@/utils/utils-common'
 import * as http from '../interface/user.interface'
-import * as uuid from 'uuid'
 
 @Injectable()
 export class UserService extends CoreService {
@@ -22,21 +21,22 @@ export class UserService extends CoreService {
 		super()
 	}
 
-	/**创建token、2小时有效期**/ //prettier-ignore
+	/**创建token、2小时有效期**/
 	public async newJwtToken(node: User) {
 		return await this.RunCatch(async i18n => {
 			const expire = Number(this.configService.get('JWT_EXPIRE') ?? 7200)
 			const secret = this.configService.get('JWT_SECRET')
-			return await this.jwtService.signAsync(
+			const token = await this.jwtService.signAsync(
 				{
 					id: node.id,
 					uid: node.uid,
 					password: node.password,
 					status: node.status,
-					expire: Date.now() + expire * 1000 
-				}, { secret }).then(token => {
-					return { expire, token }
-			})
+					expire: Date.now() + expire * 1000
+				},
+				{ secret }
+			)
+			return await divineResult({ expire, token })
 		})
 	}
 
@@ -45,11 +45,59 @@ export class UserService extends CoreService {
 		return await this.RunCatch(async i18n => {
 			const secret = this.configService.get('JWT_SECRET')
 			const node = await this.jwtService.verifyAsync(token, { secret })
-			return await divineHandler(Date.now() > node.expire, () => {
+			await divineHandler(Date.now() > node.expire, () => {
 				throw new HttpException('登录已失效', HttpStatus.UNAUTHORIZED)
-			}).then(() => {
-				return node
 			})
+			return await divineResult(node)
+		})
+	}
+
+	/**用户配置**/
+	public async httpBasicConfigur(uid: number) {
+		return await this.validator({
+			model: this.entity.userConfigur,
+			name: '用户',
+			empty: { value: true },
+			options: { where: { userId: uid } }
+		})
+	}
+
+	/**验证余额**/
+	public async checkBalance(uid: number, value: number) {
+		const { credit, balance, current } = await this.httpBasicConfigur(uid)
+		await divineHandler(credit + balance < value, () => {
+			throw new HttpException('余额不足', HttpStatus.BAD_REQUEST)
+		})
+		return await divineResult({ credit, balance, current })
+	}
+
+	/**执行扣费、写入扣费记录**/
+	public async executeDeduction(
+		uid: number,
+		opt: {
+			current: number
+			credit: number
+			balance: number
+			cost: number
+			name: string
+			bundle: number
+			type: 'captcha' | 'message' | 'email'
+		}
+	) {
+		const balance = opt.credit + opt.balance - opt.cost - opt.credit
+		await this.entity.userConfigur.update({ userId: uid }, { balance })
+		const consumer = await this.entity.userConsumer.create({
+			orderId: await this.createCustomUidByte(),
+			userId: uid,
+			name: opt.name,
+			bundle: opt.bundle,
+			type: opt.type,
+			status: 'effect',
+			deduct: opt.cost
+		})
+		const data = await await this.entity.userConsumer.save(consumer)
+		return await divineResult({
+			...data
 		})
 	}
 
@@ -61,16 +109,26 @@ export class UserService extends CoreService {
 				nickname: props.nickname,
 				password: props.password
 			})
-			return await this.entity.user.save(node).then(async () => {
-				return { message: '注册成功' }
+			const { uid } = await await this.entity.user.save(node)
+			//初始化用户配置
+			const configur = await this.entity.userConfigur.create({
+				userId: uid,
+				authorize: 'initialize',
+				balance: 0,
+				credit: divineTransfer(200, { reverse: false }),
+				current: divineTransfer(200, { reverse: false })
+			})
+			await this.entity.userConfigur.save(configur)
+			return await divineResult({
+				message: '注册成功'
 			})
 		})
 	}
 
-	/**登录**/ //prettier-ignore
+	/**登录**/
 	public async httpAuthorize(props: http.Authorize, origin: string) {
 		return await this.RunCatch(async i18n => {
-			await this.httpService.axiosRef.request({
+			const response = await this.httpService.axiosRef.request({
 				url: `https://api.lisfes.cn/api-basic/captcha/supervisor/inspector`,
 				method: 'POST',
 				headers: { origin },
@@ -80,27 +138,26 @@ export class UserService extends CoreService {
 					token: props.token,
 					session: props.session
 				}
-			}).then(async ({ data }) => {
-				return await divineHandler(data.code !== 200, () => {
-						throw new HttpException(data.message, HttpStatus.BAD_REQUEST)
-					}
-				).then(e => data)
 			})
-			return await this.validator({
+			await divineHandler(response.data.code !== 200, () => {
+				throw new HttpException(response.data.message, HttpStatus.BAD_REQUEST)
+			})
+			const user = await this.validator({
 				model: this.entity.user,
 				name: '账号',
 				empty: { value: true },
 				close: { value: true },
 				delete: { value: true },
 				options: { where: { mobile: props.mobile }, select: ['id', 'uid', 'status', 'password'] }
-			}).then(async data => {
-				await divineHandler(() => !compareSync(props.password, data.password), () => {
-						throw new HttpException('密码错误', HttpStatus.BAD_REQUEST)
-					}
-				)
-				return await this.newJwtToken(data).then(({ token, expire }) => {
-					return { token, expire, message: '登录成功' }
-				})
+			})
+			await divineHandler(!compareSync(props.password, user.password), () => {
+				throw new HttpException('密码错误', HttpStatus.BAD_REQUEST)
+			})
+			const { token, expire } = await this.newJwtToken(user)
+			return await divineResult({
+				token,
+				expire,
+				message: '登录成功'
 			})
 		})
 	}
@@ -121,11 +178,18 @@ export class UserService extends CoreService {
 					})
 				}
 			})
-			const captcha = await this.entity.captchaApplication.findOne({ where: { user, visible: 'show' } })
-
+			const captcha = await this.entity.captchaApplication.findOne({
+				where: { user, visible: 'show' }
+			})
+			const configur = await this.entity.userConfigur.findOne({
+				where: { userId: user.uid }
+			})
 			return Object.assign(user, {
 				appKey: captcha.appKey,
-				appSecret: captcha.appSecret
+				appSecret: captcha.appSecret,
+				authorize: configur.authorize,
+				credit: configur.credit,
+				balance: configur.balance
 			})
 		})
 	}

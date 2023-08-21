@@ -53,21 +53,80 @@ export class User extends Common {
 	mailer: tbMailerApplication[]
 }
 
+@Entity('tb-user__configur')
+export class tbUserConfigur extends Common {
+	@Column({
+		type: 'bigint',
+		comment: '用户UID',
+		readonly: true,
+		transformer: { from: value => Number(value), to: value => value }
+	})
+	userId: number
+
+	@Column({
+		comment: '套餐名称：未认证-initialize、认证中-processer、认证成功-success、认证失败-failure',
+		nullable: false,
+		default: 'initialize'
+	})
+	authorize: string
+
+	@Column({
+		type: 'bigint',
+		comment: '信用额度',
+		unsigned: true,
+		nullable: false,
+		default: 0,
+		transformer: { from: value => Number(value ?? 0), to: value => value }
+	})
+	credit: number
+
+	@Column({
+		type: 'bigint',
+		comment: '当前账号信用额度',
+		unsigned: true,
+		nullable: false,
+		default: 0,
+		transformer: { from: value => Number(value ?? 0), to: value => value }
+	})
+	current: number
+
+	@Column({
+		type: 'bigint',
+		comment: '余额',
+		unsigned: false,
+		nullable: false,
+		default: 0,
+		transformer: { from: value => Number(value ?? 0), to: value => value }
+	})
+	balance: number
+}
+
 @Entity('tb-user__consumer')
 export class tbUserConsumer extends Common {
 	@Column({
 		type: 'bigint',
-		comment: 'Order ID',
+		comment: '用户UID',
 		readonly: true,
+		transformer: { from: value => Number(value), to: value => value }
+	})
+	userId: number
+
+	@Column({
+		type: 'bigint',
+		comment: 'Order ID',
+		nullable: true,
 		transformer: { from: value => Number(value), to: value => value }
 	})
 	orderId: number
 
+	@Column({ comment: '扣费类型：message-短信、email-邮件、人机验证-captcha', nullable: false })
+	type: string
+
 	@Column({ comment: '套餐名称', nullable: false })
-	packageName: string
+	name: string
 
 	@Column({ comment: '原套餐包ID', nullable: false })
-	packageId: number
+	bundle: number
 
 	@Column({
 		comment: `状态: 有效-effect、退款-refund、禁用-disable`,
@@ -88,8 +147,4 @@ export class tbUserConsumer extends Common {
 		}
 	})
 	deduct: number
-
-	@OneToOne(type => User)
-	@JoinColumn()
-	user: User
 }

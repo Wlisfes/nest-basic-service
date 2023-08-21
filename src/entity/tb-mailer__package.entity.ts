@@ -4,6 +4,14 @@ import * as day from 'dayjs'
 
 @Entity('tb-mailer__package')
 export class tbMailerPackage extends Common {
+	@Column({
+		type: 'bigint',
+		comment: '套餐ID',
+		readonly: true,
+		transformer: { from: value => Number(value), to: value => value }
+	})
+	bundle: number
+
 	@Column({ comment: '套餐名称', nullable: false })
 	name: string
 
@@ -75,11 +83,11 @@ export class tbUserMailerPackage extends Common {
 	})
 	userId: number
 
-	@Column({ comment: '订单ID', nullable: false })
+	@Column({ comment: '扣费订单ID', nullable: false })
 	orderId: number
 
 	@Column({ comment: '原套餐包ID', nullable: false })
-	packageId: number
+	bundle: number
 
 	@Column({ comment: '套餐名称', nullable: false })
 	name: string

@@ -1,13 +1,14 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common'
-import { Brackets } from 'typeorm'
+import { Brackets, In } from 'typeorm'
 import { CoreService } from '@/core/core.service'
 import { EntityService } from '@/core/entity.service'
+import { UserService } from '@/user-module/user/user.service'
 import { divineResult, divineHandler } from '@/utils/utils-common'
 import * as http from '../interface/package.interface'
 
 @Injectable()
 export class MailerPackageService extends CoreService {
-	constructor(private readonly entity: EntityService) {
+	constructor(private readonly entity: EntityService, private readonly userService: UserService) {
 		super()
 	}
 
@@ -74,6 +75,7 @@ export class MailerPackageService extends CoreService {
 					})
 				}
 			}).then(async data => {
+				const cost = data.price - data.discount
 				await divineHandler(data.status === 'under', () => {
 					throw new HttpException('套餐已下架', HttpStatus.BAD_REQUEST)
 				})
@@ -83,8 +85,24 @@ export class MailerPackageService extends CoreService {
 				await divineHandler(data.status === 'soldout', () => {
 					throw new HttpException('套餐已售罄', HttpStatus.BAD_REQUEST)
 				})
+				await divineHandler(data.max > 0, async () => {
+					const [counts, count = 0] = await this.entity.userMailerPackage.findAndCount({
+						where: {
+							userId: uid,
+							bundle: data.bundle,
+							status: In(['effect', 'disable'])
+						}
+					})
+					await divineHandler(count >= data.max, () => {
+						throw new HttpException(`套餐限购${data.max}份`, HttpStatus.BAD_REQUEST)
+					})
+					const { credit, balance, current } = await this.userService.checkBalance(uid, cost)
 
-				const payPrice = data.price - data.discount
+					// await this.userService.executeDeduction()
+				})
+
+				const newPackage = await this.entity
+				console.log(data)
 
 				return data
 			})
