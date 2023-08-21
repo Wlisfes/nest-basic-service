@@ -4,7 +4,7 @@ import { Repository } from 'typeorm'
 import { User } from '@/entity/tb-user.entity'
 import { CaptchaApplication, CaptchaRecord } from '@/entity/tb-captcha.entity'
 import { tbMailerApplication } from '@/entity/tb-mailer__application.entity'
-import { tbMailerPackage } from '@/entity/tb-mailer__package.entity'
+import { tbMailerPackage, tbUserMailerPackage } from '@/entity/tb-mailer__package.entity'
 import { tbMailerService } from '@/entity/tb-mailer__service.entity'
 import { tbMailerTemplate } from '@/entity/tb-mailer__template.entity'
 import { tbMailerSchedule } from '@/entity/tb-mailer__schedule.entity'
@@ -18,6 +18,7 @@ export class EntityService {
 		@InjectRepository(CaptchaRecord) public readonly captchaRecord: Repository<CaptchaRecord>,
 		@InjectRepository(tbMailerApplication) public readonly mailerApplication: Repository<tbMailerApplication>,
 		@InjectRepository(tbMailerPackage) public readonly mailerPackage: Repository<tbMailerPackage>,
+		@InjectRepository(tbUserMailerPackage) public readonly userMailerPackage: Repository<tbUserMailerPackage>,
 		@InjectRepository(tbMailerService) public readonly mailerService: Repository<tbMailerService>,
 		@InjectRepository(tbMailerTemplate) public readonly mailerTemplate: Repository<tbMailerTemplate>,
 		@InjectRepository(tbMailerSchedule) public readonly mailerSchedule: Repository<tbMailerSchedule>,

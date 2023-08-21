@@ -6,7 +6,7 @@ import { RedisService } from '@/core/redis.service'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { User } from '@/entity/tb-user.entity'
 import { CaptchaRecord, CaptchaApplication } from '@/entity/tb-captcha.entity'
-import { tbMailerPackage } from '@/entity/tb-mailer__package.entity'
+import { tbMailerPackage, tbUserMailerPackage } from '@/entity/tb-mailer__package.entity'
 import { tbMailerApplication } from '@/entity/tb-mailer__application.entity'
 import { tbMailerService } from '@/entity/tb-mailer__service.entity'
 import { tbMailerTemplate } from '@/entity/tb-mailer__template.entity'
@@ -27,6 +27,7 @@ import { MailerModule } from '@/mailer-module/mailer.module'
 			CaptchaRecord,
 			tbMailerApplication,
 			tbMailerPackage,
+			tbUserMailerPackage,
 			tbMailerService,
 			tbMailerTemplate,
 			tbMailerSchedule,

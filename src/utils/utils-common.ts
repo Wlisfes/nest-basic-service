@@ -1,3 +1,16 @@
+/**返回包装**/
+export async function divineResult<
+	T = {
+		message: string
+		list: Array<unknown>
+		total: number
+		page: number
+		size: number
+	}
+>(data: T): Promise<T> {
+	return data
+}
+
 /**延时方法**/
 export function divineDelay(delay = 100, handler?: Function) {
 	return new Promise(resolve => {

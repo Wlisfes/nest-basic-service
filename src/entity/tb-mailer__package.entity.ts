@@ -1,5 +1,6 @@
 import { Entity, Column } from 'typeorm'
 import { Common } from '@/entity/tb-common'
+import * as day from 'dayjs'
 
 @Entity('tb-mailer__package')
 export class tbMailerPackage extends Common {
@@ -62,4 +63,71 @@ export class tbMailerPackage extends Common {
 		nullable: false
 	})
 	status: string
+}
+
+@Entity('tb-user__mailer__package')
+export class tbUserMailerPackage extends Common {
+	@Column({
+		type: 'bigint',
+		comment: '用户UID',
+		readonly: true,
+		transformer: { from: value => Number(value), to: value => value }
+	})
+	userId: number
+
+	@Column({ comment: '订单ID', nullable: false })
+	orderId: number
+
+	@Column({ comment: '原套餐包ID', nullable: false })
+	packageId: number
+
+	@Column({ comment: '套餐名称', nullable: false })
+	name: string
+
+	@Column({ comment: '套餐类型：small-小额套餐、large-大额套餐', nullable: false })
+	type: string
+
+	@Column({ comment: '套餐备注', nullable: true })
+	comment: string
+
+	@Column({ comment: '套餐有效期：单位为月份', nullable: true })
+	expire: number
+
+	@Column({ comment: '套餐总数', unsigned: true, nullable: false, default: 0 })
+	total: number
+
+	@Column({ comment: '套餐标签', nullable: true })
+	label: string
+
+	@Column({
+		comment: `状态: 有效-effect、失效-invalid、退款-refund、禁用-disable`,
+		default: 'effect',
+		nullable: false
+	})
+	status: string
+
+	@Column({
+		type: 'timestamp',
+		comment: '过期时间',
+		nullable: false,
+		default: null,
+		transformer: {
+			from: value => day(value).format('YYYY-MM-DD HH:mm:ss'),
+			to: value => value
+		}
+	})
+	expireTime: Date
+
+	@Column({
+		type: 'bigint',
+		comment: '实付价',
+		unsigned: true,
+		nullable: false,
+		default: 0,
+		transformer: {
+			from: value => Number(value ?? 0),
+			to: value => value
+		}
+	})
+	payPrice: number
 }

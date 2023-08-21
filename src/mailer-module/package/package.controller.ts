@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Query } from '@nestjs/common'
+import { Controller, Get, Post, Body, Query, Request } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { ApiDecorator } from '@/decorator/compute.decorator'
 import { Notice } from '@/interface/common.interface'
@@ -32,9 +32,10 @@ export class MailerPackageController {
 	@Post('/mailer/subscriber')
 	@ApiDecorator({
 		operation: { summary: '购买邮件套餐包' },
-		response: { status: 200, description: 'OK', type: Notice }
+		response: { status: 200, description: 'OK', type: Notice },
+		authorize: { login: true, error: true }
 	})
-	public async httpMailerPackageSubscriber(@Body() body: http.MailerPackageSubscriber) {
-		return await this.packageService.httpMailerPackageSubscriber(body)
+	public async httpMailerPackageSubscriber(@Request() request, @Body() body: http.MailerPackageSubscriber) {
+		return await this.packageService.httpMailerPackageSubscriber(body, request.user.uid)
 	}
 }
