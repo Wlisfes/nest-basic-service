@@ -1,4 +1,4 @@
-import { Entity, Column, OneToMany } from 'typeorm'
+import { Entity, Column, OneToMany, OneToOne, JoinColumn } from 'typeorm'
 import { Common } from '@/entity/tb-common'
 import { CaptchaApplication } from '@/entity/tb-captcha.entity'
 import { tbMailerApplication } from '@/entity/tb-mailer__application.entity'
@@ -53,30 +53,43 @@ export class User extends Common {
 	mailer: tbMailerApplication[]
 }
 
-// @Entity('tb-user__package')
-// export class UserPackage extends Common {
-// 	@Column({ comment: '订单ID', nullable: false, update: false })
-// 	orderId
+@Entity('tb-user__consumer')
+export class tbUserConsumer extends Common {
+	@Column({
+		type: 'bigint',
+		comment: 'Order ID',
+		readonly: true,
+		transformer: { from: value => Number(value), to: value => value }
+	})
+	orderId: number
 
-// 	@Column({ comment: '套餐ID', nullable: false })
-// 	suiteId: number
+	@Column({ comment: '套餐名称', nullable: false })
+	packageName: string
 
-// 	@Column({ comment: '套餐名称', nullable: false })
-// 	name: string
+	@Column({ comment: '原套餐包ID', nullable: false })
+	packageId: number
 
-// 	@Column({ type: 'bigint', comment: '套餐购买价格', unsigned: true, nullable: false, default: 0 })
-// 	price: number
+	@Column({
+		comment: `状态: 有效-effect、退款-refund、禁用-disable`,
+		default: 'effect',
+		nullable: false
+	})
+	status: string
 
-// 	@Column({ comment: '套餐总数', unsigned: true, nullable: false, default: 0 })
-// 	total: number
+	@Column({
+		type: 'bigint',
+		comment: '扣除金额',
+		unsigned: true,
+		nullable: false,
+		default: 0,
+		transformer: {
+			from: value => Number(value ?? 0),
+			to: value => value
+		}
+	})
+	deduct: number
 
-// 	@Column({ comment: '套餐剩余数量', nullable: false, default: 0 })
-// 	surplus: number
-
-// 	@Column({
-// 		comment: `状态: 未支付-pending、已支付-effect、已过期-expired、已上架-defray、已下架-under、已售罄-soldout、已删除-delete`,
-// 		default: 'pending',
-// 		nullable: false
-// 	})
-// 	status: string
-// }
+	@OneToOne(type => User)
+	@JoinColumn()
+	user: User
+}

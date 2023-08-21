@@ -84,6 +84,8 @@ export class MailerPackageService extends CoreService {
 					throw new HttpException('套餐已售罄', HttpStatus.BAD_REQUEST)
 				})
 
+				const payPrice = data.price - data.discount
+
 				return data
 			})
 			return { message: '购买成功' }

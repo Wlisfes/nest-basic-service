@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
-import { User } from '@/entity/tb-user.entity'
+import { User, tbUserConsumer } from '@/entity/tb-user.entity'
 import { CaptchaApplication, CaptchaRecord } from '@/entity/tb-captcha.entity'
 import { tbMailerApplication } from '@/entity/tb-mailer__application.entity'
 import { tbMailerPackage, tbUserMailerPackage } from '@/entity/tb-mailer__package.entity'
@@ -14,6 +14,7 @@ import { tbMailerRecord } from '@/entity/tb-mailer__record.entity'
 export class EntityService {
 	constructor(
 		@InjectRepository(User) public readonly user: Repository<User>,
+		@InjectRepository(tbUserConsumer) public readonly userConsumer: Repository<tbUserConsumer>,
 		@InjectRepository(CaptchaApplication) public readonly captchaApplication: Repository<CaptchaApplication>,
 		@InjectRepository(CaptchaRecord) public readonly captchaRecord: Repository<CaptchaRecord>,
 		@InjectRepository(tbMailerApplication) public readonly mailerApplication: Repository<tbMailerApplication>,

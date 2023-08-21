@@ -4,7 +4,7 @@ import { EntityService } from '@/core/entity.service'
 import { RedisService } from '@/core/redis.service'
 //entity
 import { TypeOrmModule } from '@nestjs/typeorm'
-import { User } from '@/entity/tb-user.entity'
+import { User, tbUserConsumer } from '@/entity/tb-user.entity'
 import { CaptchaRecord, CaptchaApplication } from '@/entity/tb-captcha.entity'
 import { tbMailerPackage, tbUserMailerPackage } from '@/entity/tb-mailer__package.entity'
 import { tbMailerApplication } from '@/entity/tb-mailer__application.entity'
@@ -23,6 +23,7 @@ import { MailerModule } from '@/mailer-module/mailer.module'
 	imports: [
 		TypeOrmModule.forFeature([
 			User,
+			tbUserConsumer,
 			CaptchaApplication,
 			CaptchaRecord,
 			tbMailerApplication,
