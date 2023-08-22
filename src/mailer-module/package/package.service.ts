@@ -3,7 +3,7 @@ import { Brackets, In } from 'typeorm'
 import { CoreService } from '@/core/core.service'
 import { EntityService } from '@/core/entity.service'
 import { UserService } from '@/user-module/user/user.service'
-import { moment, divineResult, divineHandler, divineDeduction } from '@/utils/utils-common'
+import { moment, divineResult, divineHandler, divineTransfer } from '@/utils/utils-common'
 import * as http from '../interface/package.interface'
 
 @Injectable()
@@ -40,6 +40,7 @@ export class MailerPackageService extends CoreService {
 	public async httpCreateMailerPackage(props: http.CreateMailerPackage) {
 		return await this.RunCatch(async i18n => {
 			const node = await this.entity.mailerPackage.create({
+				bundle: await this.createCustomUidByte(),
 				name: props.name,
 				type: props.type,
 				comment: props.comment ?? null,
@@ -48,8 +49,8 @@ export class MailerPackageService extends CoreService {
 				stock: props.stock,
 				surplus: props.surplus,
 				max: props.max,
-				price: props.price,
-				discount: props.discount,
+				price: divineTransfer(25, { reverse: false }),
+				discount: divineTransfer(5, { reverse: false }),
 				label: props.label ?? null,
 				status: 'pending'
 			})
@@ -70,7 +71,7 @@ export class MailerPackageService extends CoreService {
 					where: new Brackets(qb => {
 						qb.andWhere('tb.status IN(:...status)', { status: ['upper'] })
 					}),
-					order: { createTime: 'DESC' },
+					order: { total: 'ASC', createTime: 'DESC' },
 					skip: (props.page - 1) * props.size,
 					take: props.size
 				}

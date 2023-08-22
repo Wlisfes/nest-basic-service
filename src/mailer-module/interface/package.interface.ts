@@ -87,7 +87,7 @@ export class MailerPackage extends PickType(Request, ['id']) {
 
 export class CreateMailerPackage extends IntersectionType(
 	PickType(MailerPackage, ['name', 'type', 'comment', 'expire', 'total', 'stock', 'surplus']),
-	PickType(MailerPackage, ['max', 'price', 'discount', 'label', 'status'])
+	PickType(MailerPackage, ['max', 'price', 'discount', 'label'])
 ) {}
 
 export class ColumnMailerPackage extends PickType(Request, ['page', 'size']) {}
