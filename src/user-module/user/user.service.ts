@@ -7,7 +7,7 @@ import { compareSync } from 'bcryptjs'
 import { CoreService } from '@/core/core.service'
 import { EntityService } from '@/core/entity.service'
 import { User } from '@/entity/tb-user.entity'
-import { divineHandler, divineResult, divineTransfer } from '@/utils/utils-common'
+import { divineHandler, divineResult, divineTransfer, divineDeduction } from '@/utils/utils-common'
 import * as http from '../interface/user.interface'
 
 @Injectable()
@@ -74,7 +74,7 @@ export class UserService extends CoreService {
 	/**执行扣费、写入扣费记录**/
 	public async executeDeduction(
 		uid: number,
-		opt: {
+		option: {
 			current: number
 			credit: number
 			balance: number
@@ -84,16 +84,17 @@ export class UserService extends CoreService {
 			type: 'captcha' | 'message' | 'email'
 		}
 	) {
-		const balance = opt.credit + opt.balance - opt.cost - opt.credit
-		await this.entity.userConfigur.update({ userId: uid }, { balance })
+		await divineDeduction(option.cost, { credit: option.credit, balance: option.balance }).then(async ({ credit, balance }) => {
+			return await this.entity.userConfigur.update({ userId: uid }, { credit, balance })
+		})
 		const consumer = await this.entity.userConsumer.create({
 			orderId: await this.createCustomUidByte(),
 			userId: uid,
-			name: opt.name,
-			bundle: opt.bundle,
-			type: opt.type,
+			name: option.name,
+			bundle: option.bundle,
+			type: option.type,
 			status: 'effect',
-			deduct: opt.cost
+			deduct: option.cost
 		})
 		const data = await await this.entity.userConsumer.save(consumer)
 		return await divineResult({

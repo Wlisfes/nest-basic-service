@@ -42,3 +42,14 @@ export function divineTransfer(value: number, option: { reverse: boolean; scale?
 		return parseInt((value * 1000).toFixed(0))
 	}
 }
+
+export async function divineDeduction(value: number, option: { credit: number; balance: number }) {
+	if (option.balance >= value) {
+		const balance = option.balance - value
+		return { balance, credit: option.credit }
+	} else {
+		const balance = option.credit + option.balance - value - option.credit
+		const credit = option.credit + option.balance - value
+		return { balance, credit }
+	}
+}
