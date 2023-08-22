@@ -3,13 +3,37 @@ import { Brackets, In } from 'typeorm'
 import { CoreService } from '@/core/core.service'
 import { EntityService } from '@/core/entity.service'
 import { UserService } from '@/user-module/user/user.service'
-import { divineResult, divineHandler } from '@/utils/utils-common'
+import { moment, divineResult, divineHandler, divineDeduction } from '@/utils/utils-common'
 import * as http from '../interface/package.interface'
 
 @Injectable()
 export class MailerPackageService extends CoreService {
 	constructor(private readonly entity: EntityService, private readonly userService: UserService) {
 		super()
+	}
+
+	/**卖出套餐包**/
+	private async sellMailerPackage(bundle: number) {
+		return await this.RunCatch(async i18n => {
+			return await this.validator({
+				name: '套餐',
+				model: this.entity.mailerPackage,
+				empty: { value: true },
+				options: {
+					join: { alias: 'tb' },
+					where: new Brackets(qb => {
+						qb.where('tb.bundle = :bundle', { bundle })
+					})
+				}
+			}).then(async data => {
+				const surplus = data.surplus - 1
+				if (surplus <= 0) {
+					return await this.entity.mailerPackage.update({ bundle }, { surplus, status: 'soldout' })
+				} else {
+					return await this.entity.mailerPackage.update({ bundle }, { surplus })
+				}
+			})
+		})
 	}
 
 	/**创建邮件套餐包**/
@@ -70,22 +94,22 @@ export class MailerPackageService extends CoreService {
 				options: {
 					join: { alias: 'tb' },
 					where: new Brackets(qb => {
-						qb.where('tb.id = :id', { id: props.id })
+						qb.where('tb.bundle = :bundle', { bundle: props.bundle })
 						qb.andWhere('tb.status IN(:...status)', { status: ['upper', 'under', 'expired', 'soldout'] })
 					})
 				}
 			}).then(async data => {
-				const cost = data.price - data.discount
+				const expense = data.price - data.discount
 				await divineHandler(data.status === 'under', () => {
 					throw new HttpException('套餐已下架', HttpStatus.BAD_REQUEST)
 				})
 				await divineHandler(data.status === 'expired', () => {
 					throw new HttpException('套餐已过期', HttpStatus.BAD_REQUEST)
 				})
-				await divineHandler(data.status === 'soldout', () => {
+				await divineHandler(data.status === 'soldout' || data.surplus <= 0, () => {
 					throw new HttpException('套餐已售罄', HttpStatus.BAD_REQUEST)
 				})
-				await divineHandler(data.max > 0, async () => {
+				const { credit, balance, current } = await divineHandler(data.max > 0, async () => {
 					const [counts, count = 0] = await this.entity.userMailerPackage.findAndCount({
 						where: {
 							userId: uid,
@@ -96,17 +120,34 @@ export class MailerPackageService extends CoreService {
 					await divineHandler(count >= data.max, () => {
 						throw new HttpException(`套餐限购${data.max}份`, HttpStatus.BAD_REQUEST)
 					})
-					const { credit, balance, current } = await this.userService.checkBalance(uid, cost)
-
-					// await this.userService.executeDeduction()
+					return await this.userService.checkBalance(uid, expense)
 				})
-
-				const newPackage = await this.entity
-				console.log(data)
-
-				return data
+				const { orderId } = await this.userService.executeDeduction(uid, {
+					credit: credit,
+					balance: balance,
+					cost: expense,
+					name: data.name,
+					bundle: data.bundle,
+					type: 'email'
+				})
+				await this.sellMailerPackage(data.bundle)
+				const userPackage = await this.entity.userMailerPackage.create({
+					orderId: orderId,
+					userId: uid,
+					bundle: data.bundle,
+					name: data.name,
+					type: data.type,
+					comment: data.comment,
+					expire: data.expire,
+					total: data.total,
+					label: data.label,
+					expense: expense,
+					status: 'effect',
+					expireTime: new Date(moment().add(data.expire, 'month').valueOf())
+				})
+				return await this.entity.userMailerPackage.save(userPackage)
 			})
-			return { message: '购买成功' }
+			return await divineResult({ message: '购买成功' })
 		})
 	}
 }

@@ -119,14 +119,19 @@ export class tbUserConsumer extends Common {
 	})
 	orderId: number
 
+	@Column({
+		type: 'bigint',
+		comment: '原套餐包ID',
+		readonly: true,
+		transformer: { from: value => Number(value), to: value => value }
+	})
+	bundle: number
+
 	@Column({ comment: '扣费类型：message-短信、email-邮件、人机验证-captcha', nullable: false })
 	type: string
 
 	@Column({ comment: '套餐名称', nullable: false })
 	name: string
-
-	@Column({ comment: '原套餐包ID', nullable: false })
-	bundle: number
 
 	@Column({
 		comment: `状态: 有效-effect、退款-refund、禁用-disable`,

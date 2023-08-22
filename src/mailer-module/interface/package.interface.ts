@@ -5,6 +5,11 @@ import { IsOptional } from '@/decorator/common.decorator'
 import { Request } from '@/interface/common.interface'
 
 export class MailerPackage extends PickType(Request, ['id']) {
+	@ApiProperty({ description: '套餐 ID', example: 1692282099925375 })
+	@IsNotEmpty({ message: '套餐 必填' })
+	@Type(type => Number)
+	bundle: number
+
 	@ApiProperty({ description: '套餐名称', example: '套餐名称' })
 	@IsNotEmpty({ message: '套餐名称 必填' })
 	name: string
@@ -87,4 +92,4 @@ export class CreateMailerPackage extends IntersectionType(
 
 export class ColumnMailerPackage extends PickType(Request, ['page', 'size']) {}
 
-export class MailerPackageSubscriber extends PickType(MailerPackage, ['id']) {}
+export class MailerPackageSubscriber extends PickType(MailerPackage, ['bundle']) {}

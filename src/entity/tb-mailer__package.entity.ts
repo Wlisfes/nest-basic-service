@@ -83,11 +83,21 @@ export class tbUserMailerPackage extends Common {
 	})
 	userId: number
 
-	@Column({ comment: '扣费订单ID', nullable: false })
-	orderId: number
-
-	@Column({ comment: '原套餐包ID', nullable: false })
+	@Column({
+		type: 'bigint',
+		comment: '原套餐包ID',
+		readonly: true,
+		transformer: { from: value => Number(value), to: value => value }
+	})
 	bundle: number
+
+	@Column({
+		type: 'bigint',
+		comment: 'Order ID',
+		nullable: true,
+		transformer: { from: value => Number(value), to: value => value }
+	})
+	orderId: number
 
 	@Column({ comment: '套餐名称', nullable: false })
 	name: string
@@ -137,5 +147,5 @@ export class tbUserMailerPackage extends Common {
 			to: value => value
 		}
 	})
-	payPrice: number
+	expense: number
 }

@@ -75,7 +75,6 @@ export class UserService extends CoreService {
 	public async executeDeduction(
 		uid: number,
 		option: {
-			current: number
 			credit: number
 			balance: number
 			cost: number
@@ -84,9 +83,11 @@ export class UserService extends CoreService {
 			type: 'captcha' | 'message' | 'email'
 		}
 	) {
-		await divineDeduction(option.cost, { credit: option.credit, balance: option.balance }).then(async ({ credit, balance }) => {
-			return await this.entity.userConfigur.update({ userId: uid }, { credit, balance })
+		const { credit, balance } = await divineDeduction(option.cost, {
+			credit: option.credit,
+			balance: option.balance
 		})
+		await this.entity.userConfigur.update({ userId: uid }, { credit, balance })
 		const consumer = await this.entity.userConsumer.create({
 			orderId: await this.createCustomUidByte(),
 			userId: uid,
@@ -96,10 +97,7 @@ export class UserService extends CoreService {
 			status: 'effect',
 			deduct: option.cost
 		})
-		const data = await await this.entity.userConsumer.save(consumer)
-		return await divineResult({
-			...data
-		})
+		return await await this.entity.userConsumer.save(consumer)
 	}
 
 	/**注册用户**/

@@ -1,3 +1,6 @@
+import * as dayjs from 'dayjs'
+export const moment = dayjs
+
 /**返回包装**/
 export async function divineResult<
 	T = {
@@ -25,10 +28,10 @@ export function divineDelay(delay = 100, handler?: Function) {
 export async function divineHandler(fn: boolean | Function, handler: Function) {
 	if (typeof fn === 'function') {
 		if (fn()) {
-			return handler && handler()
+			return handler && (await handler())
 		}
 	} else if (!!fn) {
-		return handler && handler()
+		return handler && (await handler())
 	}
 	return undefined
 }
