@@ -18,6 +18,10 @@ export class ScheduleService extends CoreService {
 		super()
 	}
 
+	public async httpBasicSchedule() {
+		return await this.nodemailerService.readCustomize()
+	}
+
 	/**自定义发送队列**/
 	public async httpScheduleCustomizeReducer(props: http.ScheduleCustomizeReducer, uid: number) {
 		return await this.RunCatch(async i18n => {

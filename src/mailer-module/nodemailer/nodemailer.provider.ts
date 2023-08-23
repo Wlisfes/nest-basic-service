@@ -45,8 +45,7 @@ export function customNodemailer(transporter: any, mailOption: CustomizeOption) 
 
 /**读取自定义模板**/
 export async function readNodemailer(option: Record<string, any> = {}) {
-	const register = handlebar.compile(
-		fs.readFileSync(path.join(process.cwd(), './public/template/register.mjml'), 'utf8')
-	)
+	// return fs.readFileSync(path.join(process.cwd(), './public/template/index.html'), 'utf8')
+	const register = handlebar.compile(fs.readFileSync(path.join(process.cwd(), './public/template/test.mjml'), 'utf8'))
 	return mjml(register(option)).html
 }

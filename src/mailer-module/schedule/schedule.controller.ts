@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Put, Body, Query, Request } from '@nestjs/common'
+import { Controller, Post, Get, Put, Body, Query, Request, Response } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { ApiDecorator } from '@/decorator/compute.decorator'
 import { Notice } from '@/interface/common.interface'
@@ -9,6 +9,17 @@ import * as http from '../interface/schedule.interface'
 @Controller('schedule')
 export class ScheduleController {
 	constructor(private readonly scheduleService: ScheduleService) {}
+
+	@Get('/basic')
+	@ApiDecorator({
+		operation: { summary: '模板预览' },
+		response: { status: 200, description: 'OK', type: Notice }
+	})
+	public async httpBasicSchedule(@Response() response) {
+		const html = await this.scheduleService.httpBasicSchedule()
+		// response.type('text/html')
+		response.send(html)
+	}
 
 	@Post('/reducer')
 	@ApiDecorator({

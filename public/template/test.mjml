@@ -1,0 +1,138 @@
+<mjml>
+	<mj-body>
+		<mj-section background-color="#f0f0f0">
+			<mj-column>
+				<mj-text font-style="italic" font-size="20px" color="#626262"> My Company </mj-text>
+			</mj-column>
+		</mj-section>
+		<mj-section>
+			<mj-column>
+				<mj-text>Content 1 </mj-text>
+			</mj-column>
+			<mj-column>
+				<mj-text>Content 2 </mj-text>
+			</mj-column>
+			<mj-column>
+				<mj-text>Content 3 </mj-text>
+			</mj-column>
+		</mj-section>
+		<mj-section>
+			<mj-column>
+				<mj-text>Content 1 </mj-text>
+			</mj-column>
+			<mj-column>
+				<mj-text>Content 2 </mj-text>
+			</mj-column>
+		</mj-section>
+		<mj-section background-color="#fafafa">
+			<mj-column width="400px">
+				<mj-text font-style="italic" font-size="20px" font-family="Helvetica Neue" color="#626262">My Awesome Text </mj-text>
+				<mj-image src="https://grapesjs.com/img/team3.jpg"> </mj-image>
+				<mj-image src="https://grapesjs.com/img/phone-app.png"> </mj-image>
+				<mj-text color="#525252">
+					Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin rutrum enim eget magna efficitur, eu semper augue semper.
+					Aliquam erat volutpat. Cras id dui lectus. Vestibulum sed finibus lectus, sit amet suscipit nibh. Proin nec commodo
+					purus. Sed eget nulla elit. Nulla aliquet mollis faucibus.
+				</mj-text>
+				<mj-button background-color="#F45E43" href="#">Learn more </mj-button>
+			</mj-column>
+		</mj-section>
+		<mj-section
+			background-url="http://1.bp.blogspot.com/-TPrfhxbYpDY/Uh3Refzk02I/AAAAAAAALw8/5sUJ0UUGYuw/s1600/New+York+in+The+1960's+-+70's+(2).jpg"
+			background-size="cover"
+			background-repeat="no-repeat"
+		>
+			<mj-column>
+				<mj-text align="center" color="#fff" font-size="40px" font-family="Helvetica Neue">Slogan here </mj-text>
+				<mj-button background-color="#F63A4D" href="#"> Promotion </mj-button>
+				<mj-button>Button </mj-button>
+			</mj-column>
+		</mj-section>
+		<mj-raw> </mj-raw>
+		<mj-hero
+			mode="fixed-height"
+			height="469px"
+			background-width="600px"
+			background-height="469px"
+			background-url="https://cloud.githubusercontent.com/assets/1830348/15354890/1442159a-1cf0-11e6-92b1-b861dadf1750.jpg"
+			background-color="#2a3448"
+			padding="100px 0px"
+		>
+			<mj-text
+				padding="20px"
+				color="#ffffff"
+				font-family="Helvetica"
+				align="center"
+				font-size="45px"
+				line-height="45px"
+				font-weight="900"
+			>
+				GO TO SPACE
+			</mj-text>
+			<mj-button href="https://mjml.io/"> ORDER YOUR TICKET NOW </mj-button>
+		</mj-hero>
+		<mj-wrapper border="1px solid #000000" padding="50px 30px">
+			<mj-section border-top="1px solid #aaaaaa" border-left="1px solid #aaaaaa" border-right="1px solid #aaaaaa" padding="20px">
+				<mj-column>
+					<mj-image padding="0" src="https://oss.lisfes.cn/cloud/photo/2022-06/1692758385264.jpg"> </mj-image>
+				</mj-column>
+			</mj-section>
+			<mj-section border-left="1px solid #aaaaaa" border-right="1px solid #aaaaaa" padding="20px" border-bottom="1px solid #aaaaaa">
+				<mj-column border="1px solid #dddddd">
+					<mj-text padding="20px"> First line of text </mj-text>
+				</mj-column>
+			</mj-section>
+		</mj-wrapper>
+		<mj-section background-color="white">
+			<mj-column>
+				<mj-social font-size="12px" icon-size="24px" border-radius="12px" mode="horizontal">
+					<mj-social-element name="facebook"> </mj-social-element>
+					<mj-social-element name="google"> </mj-social-element>
+					<mj-social-element name="twitter"> </mj-social-element>
+				</mj-social>
+				<mj-image width="200px" src="https://designspell.files.wordpress.com/2012/01/sciolino-paris-bw.jpg"> </mj-image>
+			</mj-column>
+			<mj-column>
+				<mj-text font-style="italic" font-size="20px" font-family="Helvetica Neue" color="#626262"> Find amazing places </mj-text>
+				<mj-text color="#525252">
+					Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin rutrum enim eget magna efficitur, eu semper augue semper.
+					Aliquam erat volutpat. Cras id dui lectus. Vestibulum sed finibus lectus.
+				</mj-text>
+				<mj-image src="https://oss.lisfes.cn/cloud/photo/2022-06/1692758385264.jpg"> </mj-image>
+			</mj-column>
+		</mj-section>
+		<mj-section>
+			<mj-column>
+				<mj-text>Content 1 </mj-text>
+			</mj-column>
+			<mj-column>
+				<mj-text>Content 2 </mj-text>
+			</mj-column>
+			<mj-column>
+				<mj-text>Content 3 </mj-text>
+			</mj-column>
+		</mj-section>
+		<mj-section>
+			<mj-column>
+				<mj-text>Content 1 </mj-text>
+			</mj-column>
+			<mj-column>
+				<mj-text>Content 2 </mj-text>
+			</mj-column>
+			<mj-column>
+				<mj-text>Content 3 </mj-text>
+			</mj-column>
+		</mj-section>
+		<mj-section background-color="#fbfbfb">
+			<mj-column>
+				<mj-image width="100px" src="https://grapesjs.com/img/team3.jpg"> </mj-image>
+			</mj-column>
+			<mj-column>
+				<mj-image width="100px" src="https://grapesjs.com/img/team3.jpg"> </mj-image>
+			</mj-column>
+			<mj-column>
+				<mj-image width="100px" src="https://grapesjs.com/img/team3.jpg"> </mj-image>
+			</mj-column>
+		</mj-section>
+	</mj-body>
+</mjml>

@@ -14,7 +14,9 @@ export class NodemailerService extends CoreService {
 	}
 
 	/**读取自定义模板**/
-	public async readCustomize() {}
+	public async readCustomize() {
+		return await readNodemailer({ code: '896543' })
+	}
 
 	/**发送邮件**/
 	public async httpCustomizeNodemailer(props: CustomizeNodemailer) {
