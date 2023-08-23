@@ -6,11 +6,11 @@ import { MailerPackageService } from './package.service'
 import * as http from '../interface/package.interface'
 
 @ApiTags('邮件套餐包模块')
-@Controller('package')
+@Controller('package/mailer')
 export class MailerPackageController {
 	constructor(private readonly packageService: MailerPackageService) {}
 
-	@Post('/mailer/create')
+	@Post('/create')
 	@ApiDecorator({
 		operation: { summary: '创建邮件套餐包' },
 		response: { status: 200, description: 'OK', type: Notice }
@@ -19,7 +19,7 @@ export class MailerPackageController {
 		return await this.packageService.httpCreateMailerPackage(body)
 	}
 
-	@Get('/mailer/column')
+	@Get('/column')
 	@ApiDecorator({
 		operation: { summary: '邮件套餐包列表' },
 		// response: { status: 200, description: 'OK', type: Notice }
@@ -29,7 +29,7 @@ export class MailerPackageController {
 		return await this.packageService.httpColumnMailerPackage(query)
 	}
 
-	@Post('/mailer/subscriber')
+	@Post('/subscriber')
 	@ApiDecorator({
 		operation: { summary: '购买邮件套餐包' },
 		response: { status: 200, description: 'OK', type: Notice },
@@ -37,5 +37,15 @@ export class MailerPackageController {
 	})
 	public async httpMailerPackageSubscriber(@Request() request, @Body() body: http.MailerPackageSubscriber) {
 		return await this.packageService.httpMailerPackageSubscriber(body, request.user.uid)
+	}
+
+	@Get('/compute')
+	@ApiDecorator({
+		operation: { summary: '资源包统计' },
+		response: { status: 200, description: 'OK', type: Notice },
+		authorize: { login: true, error: true }
+	})
+	public async httpUserComputeMailer(@Request() request) {
+		return await this.packageService.httpUserComputeMailer(request.user.uid)
 	}
 }

@@ -151,4 +151,22 @@ export class MailerPackageService extends CoreService {
 			return await divineResult({ message: '购买成功' })
 		})
 	}
+
+	/**统计当前用户套餐包余量**/
+	public async httpUserComputeMailer(uid: number) {
+		return await this.RunCatch(async i18n => {
+			const { total } = await this.useCustomize(this.entity.userMailerPackage, {
+				where: new Brackets(qb => {
+					qb.where('tb.userId = :uid', { uid: 1692282119362688 })
+				})
+			}).then(async tb => {
+				await tb.select('SUM(tb.total)', 'total')
+				return await tb.getRawOne()
+			})
+
+			return await divineResult({
+				total: Number(total)
+			})
+		})
+	}
 }

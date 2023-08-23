@@ -1,4 +1,5 @@
 import { Injectable, HttpException, HttpStatus, Logger } from '@nestjs/common'
+import { Repository, SelectQueryBuilder, Brackets } from 'typeorm'
 import { usuCurrent } from '@/i18n'
 import { CoreRequest, BatchRequest } from '@/interface/core.interface'
 import * as Nanoid from 'nanoid'
@@ -100,6 +101,23 @@ export class CoreService {
 		return await this.RunCatch(async i18n => {
 			const [list = [], total = 0] = await props.model.findAndCount(props.options)
 			return { list, total }
+		})
+	}
+
+	/**自定义查询**/
+	public async useCustomize<T>(
+		model: Repository<T>,
+		props: {
+			where: Brackets
+			join?: (e: SelectQueryBuilder<T>) => SelectQueryBuilder<T>
+		}
+	) {
+		return await this.RunCatch(async i18n => {
+			const tb: SelectQueryBuilder<T> = model.createQueryBuilder('tb')
+			if (props.join) {
+				await props.join(tb)
+			}
+			return tb.where(props.where)
 		})
 	}
 

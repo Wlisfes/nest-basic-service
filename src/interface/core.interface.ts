@@ -11,7 +11,6 @@ export interface CoreRequest<T> {
 	options?: FindOneOptions<T>
 }
 
-
 export type BatchRequest<T> = {
 	model: Repository<T>
 	options?: FindOneOptions<T> | FindManyOptions<T>
