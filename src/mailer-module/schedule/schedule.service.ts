@@ -2,14 +2,64 @@ import { Injectable, HttpException, HttpStatus } from '@nestjs/common'
 import { Brackets } from 'typeorm'
 import { CoreService } from '@/core/core.service'
 import { EntityService } from '@/core/entity.service'
+import { NodemailerService } from '@/mailer-module/nodemailer/nodemailer.service'
 import { JobService } from '@/job-module/job.service'
 import { divineHandler } from '@/utils/utils-common'
 import { JOB_MAILER_SCHEDULE } from '@/config/job-config'
+import * as http from '../interface/schedule.interface'
 
 @Injectable()
 export class ScheduleService extends CoreService {
-	constructor(private readonly entity: EntityService, private readonly job: JobService) {
+	constructor(
+		private readonly entity: EntityService,
+		private readonly job: JobService,
+		private readonly nodemailerService: NodemailerService
+	) {
 		super()
+	}
+
+	/**自定义发送队列**/
+	public async httpScheduleCustomizeReducer(props: http.ScheduleCustomizeReducer, uid: number) {
+		return await this.RunCatch(async i18n => {
+			return await this.validator({
+				model: this.entity.mailerApplication,
+				name: '应用',
+				empty: { value: true },
+				options: {
+					join: {
+						alias: 'tb',
+						leftJoinAndSelect: {
+							user: 'tb.user',
+							service: 'tb.service'
+						}
+					},
+					where: new Brackets(qb => {
+						qb.where('tb.appId = :appId', { appId: props.appId })
+						qb.andWhere('tb.status IN(:...status)', { status: ['inactivated', 'activated', 'disable'] })
+						qb.andWhere('user.uid = :uid', { uid })
+					})
+				}
+			}).then(async data => {
+				await divineHandler(data.status === 'inactivated', () => {
+					throw new HttpException('应用未激活', HttpStatus.BAD_REQUEST)
+				})
+				await divineHandler(data.status === 'disable', () => {
+					throw new HttpException('应用已禁用', HttpStatus.BAD_REQUEST)
+				})
+				return await this.nodemailerService.httpCustomizeNodemailer({
+					appId: data.appId,
+					host: data.service.host,
+					port: data.service.port,
+					secure: data.service.secure,
+					user: data.service.username,
+					password: data.service.password,
+					from: `"妖雨纯" <${data.service.username}>`,
+					to: 'limvcfast@gmail.com',
+					subject: '温馨提示',
+					html: ''
+				})
+			})
+		})
 	}
 
 	/**创建发送队列**/

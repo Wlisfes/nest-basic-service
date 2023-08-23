@@ -18,4 +18,14 @@ export class ScheduleController {
 	public async httpScheduleReducer(@Body() body) {
 		return await this.scheduleService.httpScheduleReducer()
 	}
+
+	@Post('/customize/reducer')
+	@ApiDecorator({
+		operation: { summary: '创建自定义发送队列' },
+		response: { status: 200, description: 'OK', type: Notice },
+		authorize: { login: true, error: true }
+	})
+	public async httpScheduleCustomizeReducer(@Request() request, @Body() body: http.ScheduleCustomizeReducer) {
+		return await this.scheduleService.httpScheduleCustomizeReducer(body, request.user.uid)
+	}
 }

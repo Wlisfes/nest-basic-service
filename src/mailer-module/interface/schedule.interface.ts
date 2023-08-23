@@ -4,4 +4,12 @@ import { Type } from 'class-transformer'
 import { IsOptional } from '@/decorator/common.decorator'
 import { Request } from '@/interface/common.interface'
 
-export class MailerSchedule {}
+export class MailerSchedule {
+	@ApiProperty({ description: 'App ID', example: 1692282119673627 })
+	@IsNotEmpty({ message: 'App ID 必填' })
+	@Type(type => Number)
+	appId: number
+}
+
+/**自定义发送**/
+export class ScheduleCustomizeReducer extends PickType(MailerSchedule, ['appId']) {}
