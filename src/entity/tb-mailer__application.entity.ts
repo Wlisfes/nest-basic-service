@@ -16,9 +16,6 @@ export class tbMailerApplication extends Common {
 	@Column({ comment: '应用名称', nullable: false })
 	name: string
 
-	@Column({ comment: '应用key', nullable: false })
-	appKey: string
-
 	@Column({ comment: '应用密钥', nullable: false })
 	appSecret: string
 

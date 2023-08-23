@@ -17,7 +17,6 @@ export class AppService extends CoreService {
 			const node = await this.entity.mailerApplication.create({
 				appId: await this.createCustomUidByte(),
 				name: props.name,
-				appKey: await this.createCustomByte(16),
 				appSecret: await this.createCustomByte(32)
 			})
 			return await this.entity.mailerApplication.save(node).then(async () => {

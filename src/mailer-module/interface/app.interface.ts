@@ -42,10 +42,6 @@ export class MailerApplication extends PickType(Request, ['id', 'status']) {
 	@IsNotEmpty({ message: '应用名称 必填' })
 	name: string
 
-	@ApiProperty({ description: '应用key', example: 'sFnFysvpL0DFGs6H' })
-	@IsNotEmpty({ message: '应用key 必填' })
-	appKey: string
-
 	@ApiProperty({ description: '应用密钥' })
 	@IsNotEmpty({ message: '应用密钥 必填' })
 	appSecret: string
