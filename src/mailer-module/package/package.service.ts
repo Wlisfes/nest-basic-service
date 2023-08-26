@@ -62,7 +62,7 @@ export class MailerPackageService extends CoreService {
 	}
 
 	/**邮件套餐包列表**/
-	public async httpColumnMailerPackage(props: http.ColumnMailerPackage) {
+	public async httpColumnBundleMailer() {
 		return await this.RunCatch(async i18n => {
 			const { list, total } = await this.batchValidator({
 				model: this.entity.mailerPackage,
@@ -71,17 +71,10 @@ export class MailerPackageService extends CoreService {
 					where: new Brackets(qb => {
 						qb.andWhere('tb.status IN(:...status)', { status: ['upper'] })
 					}),
-					order: { total: 'ASC', createTime: 'DESC' },
-					skip: (props.page - 1) * props.size,
-					take: props.size
+					order: { total: 'ASC', createTime: 'DESC' }
 				}
 			})
-			return await divineResult({
-				list,
-				total,
-				page: props.page,
-				size: props.size
-			})
+			return await divineResult({ list, total })
 		})
 	}
 
@@ -157,7 +150,7 @@ export class MailerPackageService extends CoreService {
 		return await this.RunCatch(async i18n => {
 			const { total } = await this.useCustomize(this.entity.userMailerPackage, {
 				where: new Brackets(qb => {
-					qb.where('tb.userId = :uid', { uid: 1692282119362688 })
+					qb.where('tb.userId = :uid', { uid })
 				})
 			}).then(async tb => {
 				await tb.select('SUM(tb.total)', 'total')
@@ -167,6 +160,25 @@ export class MailerPackageService extends CoreService {
 			return await divineResult({
 				total: Number(total)
 			})
+		})
+	}
+
+	/**用户已购套餐列表**/
+	public async httpColumnUserMailer(props: http.ColumnUserMailer, uid: number) {
+		return await this.RunCatch(async i18n => {
+			const { list, total } = await this.batchValidator({
+				model: this.entity.mailerPackage,
+				options: {
+					join: { alias: 'tb' },
+					where: new Brackets(qb => {
+						qb.andWhere('tb.status IN(:...status)', { status: ['upper'] })
+					}),
+					order: { total: 'ASC', createTime: 'DESC' },
+					skip: (props.page - 1) * props.size,
+					take: props.size
+				}
+			})
+			return await divineResult({ list, total, page: props.page, size: props.size })
 		})
 	}
 }

@@ -22,11 +22,10 @@ export class MailerPackageController {
 	@Get('/column')
 	@ApiDecorator({
 		operation: { summary: '邮件套餐包列表' },
-		// response: { status: 200, description: 'OK', type: Notice }
 		customize: { status: 200, description: 'OK', type: Notice }
 	})
-	public async httpColumnMailerPackage(@Query() query: http.ColumnMailerPackage) {
-		return await this.packageService.httpColumnMailerPackage(query)
+	public async httpColumnBundleMailer() {
+		return await this.packageService.httpColumnBundleMailer()
 	}
 
 	@Post('/subscriber')
@@ -47,5 +46,15 @@ export class MailerPackageController {
 	})
 	public async httpUserComputeMailer(@Request() request) {
 		return await this.packageService.httpUserComputeMailer(request.user.uid)
+	}
+
+	@Get('/user/column')
+	@ApiDecorator({
+		operation: { summary: '用户资源包列表' },
+		response: { status: 200, description: 'OK', type: Notice },
+		authorize: { login: true, error: true }
+	})
+	public async httpColumnUserMailer(@Request() request, @Query() query: http.ColumnUserMailer) {
+		return await this.packageService.httpColumnUserMailer(query, request.user.uid)
 	}
 }

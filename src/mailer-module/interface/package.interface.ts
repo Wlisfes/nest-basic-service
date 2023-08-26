@@ -90,6 +90,7 @@ export class CreateMailerPackage extends IntersectionType(
 	PickType(MailerPackage, ['max', 'price', 'discount', 'label'])
 ) {}
 
-export class ColumnMailerPackage extends PickType(Request, ['page', 'size']) {}
-
 export class MailerPackageSubscriber extends PickType(MailerPackage, ['bundle']) {}
+
+/**用户资源包列表**/
+export class ColumnUserMailer extends PickType(Request, ['page', 'size']) {}
