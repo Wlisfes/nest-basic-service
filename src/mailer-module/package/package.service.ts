@@ -151,6 +151,7 @@ export class MailerPackageService extends CoreService {
 			const { total } = await this.useCustomize(this.entity.userMailerPackage, {
 				where: new Brackets(qb => {
 					qb.where('tb.userId = :uid', { uid })
+					qb.andWhere('tb.status IN(:...status)', { status: ['effect'] })
 				})
 			}).then(async tb => {
 				await tb.select('SUM(tb.total)', 'total')
@@ -167,11 +168,11 @@ export class MailerPackageService extends CoreService {
 	public async httpColumnUserMailer(props: http.ColumnUserMailer, uid: number) {
 		return await this.RunCatch(async i18n => {
 			const { list, total } = await this.batchValidator({
-				model: this.entity.mailerPackage,
+				model: this.entity.userMailerPackage,
 				options: {
 					join: { alias: 'tb' },
 					where: new Brackets(qb => {
-						qb.andWhere('tb.status IN(:...status)', { status: ['upper'] })
+						qb.andWhere('tb.userId = :uid', { uid })
 					}),
 					order: { total: 'ASC', createTime: 'DESC' },
 					skip: (props.page - 1) * props.size,
