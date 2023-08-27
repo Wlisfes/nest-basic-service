@@ -114,6 +114,9 @@ export class tbUserMailerPackage extends Common {
 	@Column({ comment: '套餐总数', unsigned: true, nullable: false, default: 0 })
 	total: number
 
+	@Column({ comment: '套餐消耗', unsigned: true, nullable: false, default: 0 })
+	consume: number
+
 	@Column({ comment: '套餐标签', nullable: true })
 	label: string
 
