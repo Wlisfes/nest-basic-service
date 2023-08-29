@@ -1,4 +1,4 @@
-import { ApiProperty, PickType } from '@nestjs/swagger'
+import { ApiProperty, PickType, IntersectionType } from '@nestjs/swagger'
 import { IsNotEmpty, IsString, IsArray } from 'class-validator'
 import { Type } from 'class-transformer'
 import { IsOptional } from '@/decorator/common.decorator'
@@ -36,6 +36,9 @@ export class CreateApplication extends PickType(CaptchaApplication, ['name']) {}
 
 /**编辑授权地址**/
 export class UpdateBucket extends PickType(CaptchaApplication, ['bucket', 'ip', 'appId']) {}
+
+/**应用列表**/
+export class ColumnApplication extends IntersectionType(PickType(Request, ['page', 'size']), PickType(CaptchaApplication, [])) {}
 
 /**应用信息**/
 export class BasicApplication extends PickType(CaptchaApplication, ['appId']) {}

@@ -1,17 +1,13 @@
-import { Entity, Column, OneToMany, OneToOne, JoinColumn } from 'typeorm'
+import { Entity, Column, OneToMany } from 'typeorm'
 import { Common } from '@/entity/tb-common'
-import { CaptchaApplication } from '@/entity/tb-captcha.entity'
+import { tbCaptchaApplication } from '@/entity/tb-captcha__application.entity'
 import { tbMailerApplication } from '@/entity/tb-mailer__application.entity'
 import { hashSync } from 'bcryptjs'
+import { UUIDTransformer } from '@/utils/utils-entity'
 
 @Entity('tb-user')
 export class User extends Common {
-	@Column({
-		type: 'bigint',
-		comment: 'uid',
-		readonly: true,
-		transformer: { from: value => Number(value), to: value => value }
-	})
+	@Column({ type: 'bigint', comment: 'uid', readonly: true, transformer: UUIDTransformer })
 	uid: number
 
 	@Column({ charset: 'utf8mb4', comment: '昵称', nullable: false })
@@ -29,10 +25,7 @@ export class User extends Common {
 	@Column({ charset: 'utf8mb4', comment: '备注', nullable: true })
 	comment: string | null
 
-	@Column({
-		comment: '手机号',
-		transformer: { from: value => Number(value), to: value => value }
-	})
+	@Column({ comment: '手机号', transformer: UUIDTransformer })
 	mobile: string
 
 	@Column({
@@ -46,8 +39,8 @@ export class User extends Common {
 	})
 	password: string
 
-	@OneToMany(type => CaptchaApplication, app => app.user)
-	captcha: CaptchaApplication[]
+	@OneToMany(type => tbCaptchaApplication, app => app.user)
+	captcha: tbCaptchaApplication[]
 
 	@OneToMany(type => tbMailerApplication, app => app.user)
 	mailer: tbMailerApplication[]

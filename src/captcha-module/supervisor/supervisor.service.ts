@@ -36,12 +36,14 @@ export class SupervisorService extends CoreService {
 			const pinY = await this.createRandom(20, props.height - props.offset - 20)
 			const job = await this.job.supervisor.add({ session, check: 'NODE' }, { delay: JOB_CAPTCHA_SUPERVISOR.delay })
 			const node = await this.entity.captchaRecord.create({
+				appId: app.appId,
+				name: app.name,
+				userId: app.user.uid,
+				nickname: app.user.nickname,
 				width: props.width,
 				height: props.height,
 				offset: props.offset,
 				jobId: job.id as number,
-				user: app.user || null,
-				app,
 				session,
 				referer,
 				pinY,

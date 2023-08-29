@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Body, Query } from '@nestjs/common'
+import { Controller, Post, Get, Body, Query, Request } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { ApiDecorator } from '@/decorator/compute.decorator'
 import { Notice } from '@/interface/common.interface'
@@ -26,6 +26,16 @@ export class AppController {
 	})
 	public async httpUpdateBucket(@Body() body: http.UpdateBucket) {
 		return await this.appService.httpUpdateBucket(body)
+	}
+
+	@Get('/column')
+	@ApiDecorator({
+		operation: { summary: '应用列表' },
+		customize: { status: 200, description: 'OK', type: http.CaptchaApplication },
+		authorize: { login: true, error: true }
+	})
+	public async httpColumnApplication(@Request() request, @Query() query: http.ColumnApplication) {
+		return await this.appService.httpColumnApplication(query, request.user.uid)
 	}
 
 	@Get('/basic')
