@@ -19,9 +19,10 @@ export class Supervisor extends PickType(Request, ['id', 'uid', 'createTime', 'u
 	@Type(type => Number)
 	offset: number
 
-	@ApiProperty({ description: '应用key', example: 'sFnFysvpL0DFGs6H' })
-	@IsNotEmpty({ message: '应用key 必填' })
-	appKey: string
+	@ApiProperty({ description: 'App ID', example: 1692282119673627 })
+	@IsNotEmpty({ message: 'App ID 必填' })
+	@Type(type => Number)
+	appId: number
 
 	@ApiProperty({ description: '应用密钥' })
 	@IsNotEmpty({ message: '应用密钥 必填' })
@@ -49,15 +50,15 @@ export class Supervisor extends PickType(Request, ['id', 'uid', 'createTime', 'u
 }
 
 /**注册验证码配置**/
-export class Reducer extends PickType(Supervisor, ['width', 'height', 'offset', 'appKey']) {}
+export class Reducer extends PickType(Supervisor, ['width', 'height', 'offset', 'appId']) {}
 export class ResultReducer extends PickType(Supervisor, ['pinX', 'pinX']) {}
 
 /**生成校验凭证**/
-export class Authorize extends PickType(Supervisor, ['session', 'appKey']) {}
+export class Authorize extends PickType(Supervisor, ['session', 'appId']) {}
 export class ResultAuthorize extends PickType(Supervisor, ['token']) {}
 
 /**校验凭证**/
-export class Inspector extends PickType(Supervisor, ['session', 'appKey', 'appSecret', 'token']) {}
+export class Inspector extends PickType(Supervisor, ['session', 'appId', 'appSecret', 'token']) {}
 
 /**校验记录**/
 export class ColumnSupervisor extends IntersectionType(PickType(Request, ['page', 'size']), PickType(Supervisor, [])) {}

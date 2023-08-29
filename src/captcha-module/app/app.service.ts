@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { CoreService } from '@/core/core.service'
 import { EntityService } from '@/core/entity.service'
+import { moment, divineResult, divineHandler } from '@/utils/utils-common'
 import * as http from '../interface/app.interface'
 
 @Injectable()
@@ -15,12 +16,11 @@ export class AppService extends CoreService {
 			const node = await this.entity.captchaApplication.create({
 				appId: await this.createCustomUidByte(),
 				name: props.name,
-				appKey: await this.createCustomByte(16),
+				iv: await this.createCustomByte(16),
 				appSecret: await this.createCustomByte(32)
 			})
-			return await this.entity.captchaApplication.save(node).then(async () => {
-				return { message: '注册成功' }
-			})
+			await this.entity.captchaApplication.save(node)
+			return await divineResult({ message: '注册成功' })
 		})
 	}
 
@@ -32,13 +32,10 @@ export class AppService extends CoreService {
 				name: '应用',
 				empty: { value: true },
 				close: { value: true },
-				options: { where: { appKey: props.appKey } }
+				options: { where: { appId: props.appId } }
 			})
-			return await this.entity.captchaApplication
-				.update({ appKey: props.appKey }, { bucket: props.bucket, ip: props.ip })
-				.then(() => {
-					return { message: '编辑成功' }
-				})
+			await this.entity.captchaApplication.update({ appId: props.appId }, { bucket: props.bucket, ip: props.ip })
+			return await divineResult({ message: '编辑成功' })
 		})
 	}
 
@@ -49,7 +46,7 @@ export class AppService extends CoreService {
 				model: this.entity.captchaApplication,
 				name: '应用',
 				empty: { value: true },
-				options: { where: { appKey: props.appKey } }
+				options: { where: { appId: props.appId } }
 			})
 		})
 	}

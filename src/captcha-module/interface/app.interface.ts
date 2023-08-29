@@ -1,16 +1,18 @@
 import { ApiProperty, PickType } from '@nestjs/swagger'
 import { IsNotEmpty, IsString, IsArray } from 'class-validator'
+import { Type } from 'class-transformer'
 import { IsOptional } from '@/decorator/common.decorator'
 import { Request } from '@/interface/common.interface'
 
 export class CaptchaApplication extends PickType(Request, ['id', 'status']) {
+	@ApiProperty({ description: 'App ID', example: 1692282119673627 })
+	@IsNotEmpty({ message: 'App ID 必填' })
+	@Type(type => Number)
+	appId: number
+
 	@ApiProperty({ description: '应用名称', example: '猪头' })
 	@IsNotEmpty({ message: '应用名称 必填' })
 	name: string
-
-	@ApiProperty({ description: '应用key', example: 'sFnFysvpL0DFGs6H' })
-	@IsNotEmpty({ message: '应用key 必填' })
-	appKey: string
 
 	@ApiProperty({ description: '应用密钥' })
 	@IsNotEmpty({ message: '应用密钥 必填' })
@@ -33,7 +35,7 @@ export class CaptchaApplication extends PickType(Request, ['id', 'status']) {
 export class CreateApplication extends PickType(CaptchaApplication, ['name']) {}
 
 /**编辑授权地址**/
-export class UpdateBucket extends PickType(CaptchaApplication, ['bucket', 'ip', 'appKey']) {}
+export class UpdateBucket extends PickType(CaptchaApplication, ['bucket', 'ip', 'appId']) {}
 
 /**应用信息**/
-export class BasicApplication extends PickType(CaptchaApplication, ['appKey']) {}
+export class BasicApplication extends PickType(CaptchaApplication, ['appId']) {}

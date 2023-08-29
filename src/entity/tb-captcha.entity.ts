@@ -1,4 +1,5 @@
 import { Entity, Column, ManyToOne, OneToMany } from 'typeorm'
+import { isEmpty } from 'class-validator'
 import { Common } from '@/entity/tb-common'
 import { User } from '@/entity/tb-user.entity'
 
@@ -16,12 +17,12 @@ export class CaptchaApplication extends Common {
 	name: string
 
 	@Column({ comment: '应用key', nullable: false })
-	appKey: string
+	iv: string
 
 	@Column({ comment: '应用密钥', nullable: false })
 	appSecret: string
 
-	@Column({ comment: '状态: 禁用-disable、启用-enable', default: 'enable', nullable: false })
+	@Column({ comment: '状态: activated-已激活、已禁用-disable、已删除-delete', default: 'activated', nullable: false })
 	status: string
 
 	@Column({ comment: '备注', nullable: true })
@@ -35,7 +36,10 @@ export class CaptchaApplication extends Common {
 		length: 2000,
 		comment: '授权地址',
 		nullable: true,
-		transformer: { from: value => (value ?? '').split(','), to: value => (value ?? []).join(',') }
+		transformer: {
+			from: value => (isEmpty(value) ? null : value.toString().split(',')),
+			to: value => (isEmpty(value) ? [] : value.toString().join(','))
+		}
 	})
 	bucket: string[]
 
@@ -44,7 +48,10 @@ export class CaptchaApplication extends Common {
 		length: 2000,
 		comment: '授权IP',
 		nullable: true,
-		transformer: { from: value => (value ?? '').split(','), to: value => (value ?? []).join(',') }
+		transformer: {
+			from: value => (isEmpty(value) ? null : value.toString().split(',')),
+			to: value => (isEmpty(value) ? [] : value.toString().join(','))
+		}
 	})
 	ip: string[]
 

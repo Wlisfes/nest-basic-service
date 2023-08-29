@@ -22,7 +22,7 @@ export class SupervisorService extends CoreService {
 				name: '应用',
 				empty: { value: true },
 				close: { value: true },
-				options: { where: { appKey: props.appKey }, relations: ['user'] }
+				options: { where: { appId: props.appId }, relations: ['user'] }
 			}).then(async data => {
 				return await divineHandler(
 					() => !(data.bucket.includes('*') || data.bucket.includes(referer)),
@@ -56,12 +56,12 @@ export class SupervisorService extends CoreService {
 	/**生成校验凭证**/
 	public async httpAuthorize(props: http.Authorize, referer: string) {
 		return await this.RunCatch(async i18n => {
-			const { appKey, appSecret } = await this.validator({
+			const { appId, appSecret, iv } = await this.validator({
 				model: this.entity.captchaApplication,
 				name: '应用',
 				empty: { value: true },
 				close: { value: true },
-				options: { where: { appKey: props.appKey } }
+				options: { where: { appId: props.appId } }
 			}).then(async data => {
 				return await divineHandler(
 					() => !(data.bucket.includes('*') || data.bucket.includes(referer)),
@@ -80,7 +80,7 @@ export class SupervisorService extends CoreService {
 				if (!job || job.data.check === 'INVALID') {
 					throw new HttpException('session记录已失效', HttpStatus.BAD_REQUEST)
 				} else {
-					const token = await this.aesEncrypt({ referer, session, appKey }, appSecret, appKey)
+					const token = await this.aesEncrypt({ referer, session, appId }, appSecret, iv)
 					await this.entity.captchaRecord.update({ session }, { token })
 					await job.update({ ...job.data, token })
 					return { token }
@@ -95,9 +95,9 @@ export class SupervisorService extends CoreService {
 			await this.validator({
 				model: this.entity.captchaApplication,
 				name: '应用',
-				empty: { value: true, message: 'appKey、appSecret错误' },
+				empty: { value: true, message: 'appId、appSecret错误' },
 				close: { value: true },
-				options: { where: { appKey: props.appKey, appSecret: props.appSecret } }
+				options: { where: { appId: props.appId, appSecret: props.appSecret } }
 			}).then(async data => {
 				return await divineHandler(
 					() => !(data.bucket.includes('*') || data.bucket.includes(referer)),

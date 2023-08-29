@@ -184,7 +184,7 @@ export class UserService extends CoreService {
 				where: { userId: user.uid }
 			})
 			return Object.assign(user, {
-				appKey: captcha.appKey,
+				appId: captcha.appId,
 				appSecret: captcha.appSecret,
 				authorize: configur.authorize,
 				credit: configur.credit,
