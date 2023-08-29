@@ -1,5 +1,4 @@
 import { Entity, Column, ManyToOne } from 'typeorm'
-import { isEmpty } from 'class-validator'
 import { Common } from '@/entity/tb-common'
 import { UUIDTransformer, StrArraytransformer } from '@/utils/utils-entity'
 import { User } from '@/entity/tb-user.entity'
