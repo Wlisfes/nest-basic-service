@@ -128,12 +128,12 @@ export class UserService extends CoreService {
 	public async httpAuthorize(props: http.Authorize, origin: string) {
 		return await this.RunCatch(async i18n => {
 			const response = await this.httpService.axiosRef.request({
-				url: `https://api.lisfes.cn/api-basic/captcha/supervisor/inspector`,
+				url: `http://localhost:5002/api-basic/captcha/supervisor/inspector`,
 				method: 'POST',
 				headers: { origin },
 				data: {
-					appSecret: 'KB91uw5vzwpDwp5E2q3CAr67y7A7t2un',
-					appKey: 'sFnFysvpL0DFGs6H',
+					appSecret: 'E5C9GrE3qpsv2Lqryr0zsA3zsts12IsM',
+					appId: 1692282119372458,
 					token: props.token,
 					session: props.session
 				}

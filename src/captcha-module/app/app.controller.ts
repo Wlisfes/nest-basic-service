@@ -13,16 +13,18 @@ export class AppController {
 	@Post('/create')
 	@ApiDecorator({
 		operation: { summary: '创建应用' },
-		response: { status: 200, description: 'OK', type: Notice }
+		response: { status: 200, description: 'OK', type: Notice },
+		authorize: { login: true, error: true }
 	})
-	public async httpCreateApplication(@Body() body: http.CreateApplication) {
-		return await this.appService.httpCreateApplication(body)
+	public async httpCreateApplication(@Request() request, @Body() body: http.CreateApplication) {
+		return await this.appService.httpCreateApplication(body, request.user.uid)
 	}
 
 	@Post('/update/bucket')
 	@ApiDecorator({
 		operation: { summary: '编辑授权地址' },
-		response: { status: 200, description: 'OK', type: Notice }
+		response: { status: 200, description: 'OK', type: Notice },
+		authorize: { login: true, error: true }
 	})
 	public async httpUpdateBucket(@Body() body: http.UpdateBucket) {
 		return await this.appService.httpUpdateBucket(body)
@@ -41,7 +43,8 @@ export class AppController {
 	@Get('/basic')
 	@ApiDecorator({
 		operation: { summary: '应用信息' },
-		response: { status: 200, description: 'OK', type: Notice }
+		response: { status: 200, description: 'OK', type: Notice },
+		authorize: { login: true, error: true }
 	})
 	public async httpBasicApp(@Query() query: http.BasicApplication) {
 		return await this.appService.httpBasicApp(query)
