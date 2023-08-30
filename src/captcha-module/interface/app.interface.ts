@@ -42,3 +42,6 @@ export class ColumnApplication extends IntersectionType(PickType(Request, ['page
 
 /**应用信息**/
 export class BasicApplication extends PickType(CaptchaApplication, ['appId']) {}
+
+/**修改应用名称**/
+export class UpdateNameApplication extends PickType(CaptchaApplication, ['appId', 'name']) {}

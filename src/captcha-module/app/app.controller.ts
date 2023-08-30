@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Body, Query, Request } from '@nestjs/common'
+import { Controller, Post, Get, Put, Body, Query, Request } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { ApiDecorator } from '@/decorator/compute.decorator'
 import { Notice } from '@/interface/common.interface'
@@ -48,5 +48,15 @@ export class AppController {
 	})
 	public async httpBasicApp(@Query() query: http.BasicApplication) {
 		return await this.appService.httpBasicApp(query)
+	}
+
+	@Put('/update/name')
+	@ApiDecorator({
+		operation: { summary: '修改应用名称' },
+		response: { status: 200, description: 'OK', type: Notice },
+		authorize: { login: true, error: true }
+	})
+	public async httpUpdateNameApplication(@Request() request, @Body() body: http.UpdateNameApplication) {
+		return await this.appService.httpUpdateNameApplication(body, request.user.uid)
 	}
 }
