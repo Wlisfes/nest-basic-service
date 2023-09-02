@@ -60,7 +60,7 @@ export class ScheduleService extends CoreService {
 					from: `"妖雨纯" <${data.service.username}>`,
 					to: 'limvcfast@gmail.com',
 					subject: '温馨提示',
-					html: ''
+					html: await this.nodemailerService.readCustomize()
 				})
 			})
 		})
