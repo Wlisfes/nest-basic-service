@@ -56,3 +56,13 @@ export async function divineDeduction(value: number, option: { credit: number; b
 		return { balance, credit }
 	}
 }
+
+/**邮件模板JSON转换**/
+export function divineJsonTransfer(data: Record<string, any>) {
+	return {
+		attributes: data.attributes ?? {},
+		tagName: data.tagName ?? '',
+		content: data.content ?? '',
+		children: (data.children ?? []).map(item => divineJsonTransfer(item))
+	}
+}

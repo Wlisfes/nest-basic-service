@@ -15,3 +15,13 @@ export const StrArraytransformer = {
 		return isEmpty(value) ? null : value.join(',')
 	}
 }
+
+/**字符串转换JSON**/
+export const JsonTransformer = {
+	from: value => {
+		return isEmpty(value) ? null : JSON.parse(value ?? '{}')
+	},
+	to: value => {
+		return isEmpty(value) ? null : JSON.stringify(value ?? {})
+	}
+}

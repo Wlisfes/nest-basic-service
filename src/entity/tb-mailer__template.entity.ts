@@ -1,4 +1,5 @@
 import { Entity, Column, ManyToOne } from 'typeorm'
+import { JsonTransformer } from '@/utils/utils-entity'
 import { Common } from '@/entity/tb-common'
 import { User } from '@/entity/tb-user.entity'
 
@@ -14,8 +15,12 @@ export class tbMailerTemplate extends Common {
 	})
 	status: string
 
-	@Column({ type: 'text', comment: '模板内容', nullable: false })
-	content: string
+	@Column({
+		type: 'text',
+		comment: '模板内容-MJML',
+		nullable: false
+	})
+	mjml: string
 
 	@ManyToOne(type => User)
 	user: User
