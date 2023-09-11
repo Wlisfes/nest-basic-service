@@ -36,6 +36,9 @@ export class MailerTemplate extends PickType(Request, ['id']) {
 /**创建模板**/
 export class CreateTemplate extends PickType(MailerTemplate, ['name', 'mjml', 'json']) {}
 
+/**编辑模板**/
+export class UpdateTemplate extends PickType(MailerTemplate, ['id', 'name', 'mjml', 'json']) {}
+
 /**模板列表**/
 export class ColumnTemplate extends IntersectionType(PickType(Request, ['page', 'size']), PickType(MailerTemplate, [])) {}
 

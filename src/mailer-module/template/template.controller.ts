@@ -20,6 +20,16 @@ export class TemplateController {
 		return await this.templateService.httpCreateMailerTemplate(body, request.user.uid)
 	}
 
+	@Put('/update')
+	@ApiDecorator({
+		operation: { summary: '编辑邮件模板' },
+		response: { status: 200, description: 'OK', type: Notice },
+		authorize: { login: true, error: true }
+	})
+	public async httpUpdateMailerTemplate(@Request() request, @Body() body: http.UpdateTemplate) {
+		return await this.templateService.httpUpdateMailerTemplate(body, request.user.uid)
+	}
+
 	@Get('/column')
 	@ApiDecorator({
 		operation: { summary: '邮件模板列表' },

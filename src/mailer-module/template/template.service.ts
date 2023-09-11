@@ -34,6 +34,37 @@ export class TemplateService extends CoreService {
 		})
 	}
 
+	/**编辑邮件模板**/
+	public async httpUpdateMailerTemplate(props: http.UpdateTemplate, uid: number) {
+		return await this.RunCatch(async i18n => {
+			await this.validator({
+				model: this.entity.mailerTemplate,
+				name: '模板',
+				empty: { value: true },
+				close: { value: true },
+				delete: { value: true },
+				options: {
+					where: { id: props.id },
+					relations: ['user']
+				}
+			}).then(async data => {
+				await divineHandler(data.user.uid !== uid, () => {
+					throw new HttpException(`模板不存在`, HttpStatus.BAD_REQUEST)
+				})
+				return data
+			})
+			await this.entity.mailerTemplate.update(
+				{ id: props.id },
+				{
+					name: props.name,
+					json: props.json,
+					mjml: props.mjml
+				}
+			)
+			return await divineResult({ message: '编辑成功' })
+		})
+	}
+
 	/**邮件模板列表**/
 	public async httpColumnMailerTemplate(props: http.ColumnTemplate, uid: number) {
 		return await this.RunCatch(async i18n => {
