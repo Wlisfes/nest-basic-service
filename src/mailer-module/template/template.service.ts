@@ -25,6 +25,7 @@ export class TemplateService extends CoreService {
 			const node = await this.entity.mailerTemplate.create({
 				name: props.name,
 				mjml: props.mjml,
+				json: props.json,
 				user
 			})
 			return await this.entity.mailerTemplate.save(node).then(async () => {

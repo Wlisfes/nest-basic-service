@@ -22,6 +22,6 @@ export const JsonTransformer = {
 		return isEmpty(value) ? null : JSON.parse(value ?? '{}')
 	},
 	to: value => {
-		return isEmpty(value) ? null : JSON.stringify(value ?? {})
+		return isEmpty(value) ? null : value
 	}
 }

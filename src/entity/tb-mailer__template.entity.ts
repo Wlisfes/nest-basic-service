@@ -15,11 +15,10 @@ export class tbMailerTemplate extends Common {
 	})
 	status: string
 
-	@Column({
-		type: 'text',
-		comment: '模板内容-MJML',
-		nullable: false
-	})
+	@Column({ type: 'simple-json', comment: '模板内容-JSON', nullable: false, default: null })
+	json: Object
+
+	@Column({ type: 'text', comment: '模板内容-MJML', nullable: false })
 	mjml: string
 
 	@ManyToOne(type => User)
