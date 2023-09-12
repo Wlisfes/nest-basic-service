@@ -1,5 +1,4 @@
 import { Entity, Column, ManyToOne } from 'typeorm'
-import { JsonTransformer } from '@/utils/utils-entity'
 import { Common } from '@/entity/tb-common'
 import { User } from '@/entity/tb-user.entity'
 
@@ -7,6 +6,9 @@ import { User } from '@/entity/tb-user.entity'
 export class tbMailerTemplate extends Common {
 	@Column({ comment: '模板名称', nullable: false })
 	name: string
+
+	@Column({ comment: '模板宽度', nullable: false, default: 640 })
+	width: number
 
 	@Column({
 		comment: '状态: 待审核-pending、审核中-loading、已审核-review、未通过-rejected、禁用-disable、删除-delete',

@@ -14,6 +14,11 @@ export class MailerTemplate extends PickType(Request, ['id']) {
 	@IsNotEmpty({ message: '模板名称 必填' })
 	name: string
 
+	@ApiProperty({ description: '模板宽度', example: 640 })
+	@IsNotEmpty({ message: '模板宽度 必填' })
+	@Type(type => Number)
+	width: number
+
 	@ApiProperty({ description: '模板内容-MJML' })
 	@IsNotEmpty({ message: '模板内容-MJML 必填' })
 	mjml: string
@@ -34,10 +39,10 @@ export class MailerTemplate extends PickType(Request, ['id']) {
 }
 
 /**创建模板**/
-export class CreateTemplate extends PickType(MailerTemplate, ['name', 'mjml', 'json']) {}
+export class CreateTemplate extends PickType(MailerTemplate, ['name', 'mjml', 'json', 'width']) {}
 
 /**编辑模板**/
-export class UpdateTemplate extends PickType(MailerTemplate, ['id', 'name', 'mjml', 'json']) {}
+export class UpdateTemplate extends PickType(MailerTemplate, ['id', 'name', 'mjml', 'json', 'width']) {}
 
 /**模板列表**/
 export class ColumnTemplate extends IntersectionType(PickType(Request, ['page', 'size']), PickType(MailerTemplate, [])) {}

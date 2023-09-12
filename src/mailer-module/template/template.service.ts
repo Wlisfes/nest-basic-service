@@ -24,6 +24,7 @@ export class TemplateService extends CoreService {
 			})
 			const node = await this.entity.mailerTemplate.create({
 				name: props.name,
+				width: props.width,
 				mjml: props.mjml,
 				json: props.json,
 				user
@@ -57,6 +58,7 @@ export class TemplateService extends CoreService {
 				{ id: props.id },
 				{
 					name: props.name,
+					width: props.width,
 					json: props.json,
 					mjml: props.mjml
 				}
