@@ -37,9 +37,7 @@ import { MailerModule } from '@/mailer-module/mailer.module'
 			tbMailerSchedule,
 			tbMailerRecord
 		]),
-		AliyunModule.register({
-			OSS_ENDPOINT: process.env.JWT_SECRET
-		}),
+		AliyunModule,
 		JobModule,
 		UserModule,
 		CaptchaModule,
