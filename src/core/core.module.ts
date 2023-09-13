@@ -14,6 +14,7 @@ import { tbMailerTemplate } from '@/entity/tb-mailer__template.entity'
 import { tbMailerSchedule } from '@/entity/tb-mailer__schedule.entity'
 import { tbMailerRecord } from '@/entity/tb-mailer__record.entity'
 //module
+import { AliyunModule } from '@/aliyun-module/aliyun.module'
 import { JobModule } from '@/job-module/job.module'
 import { UserModule } from '@/user-module/user.module'
 import { CaptchaModule } from '@/captcha-module/captcha.module'
@@ -36,6 +37,9 @@ import { MailerModule } from '@/mailer-module/mailer.module'
 			tbMailerSchedule,
 			tbMailerRecord
 		]),
+		AliyunModule.register({
+			OSS_ENDPOINT: process.env.JWT_SECRET
+		}),
 		JobModule,
 		UserModule,
 		CaptchaModule,
