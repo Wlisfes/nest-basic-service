@@ -1,9 +1,9 @@
-import { Injectable, Inject } from '@nestjs/common'
+import { Injectable, Inject, HttpException, HttpStatus } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { CoreService } from '@/core/core.service'
 import { EntityService } from '@/core/entity.service'
 import { OSS_CLIENT, OSS_STS_CLIENT } from './aliyun-oss.provider'
-import { divineResult, divineHandler } from '@/utils/utils-common'
+import { moment, divineResult, divineHandler } from '@/utils/utils-common'
 import * as Client from 'ali-oss'
 
 @Injectable()
@@ -20,15 +20,17 @@ export class AliyunOssService extends CoreService {
 	/**创建临时授权**/
 	public async httpCreateAuthorize() {
 		return await this.RunCatch(async i18n => {
-			const { credentials } = await this.stsClient.assumeRole(
-				this.configService.get('OSS_ROLEARN'),
-				'',
-				3600,
-				this.configService.get('OSS_SESSIONNAME')
-			)
-
+			const rolearn = this.configService.get('OSS_ROLEARN')
+			const sessionname = this.configService.get('OSS_SESSIONNAME')
+			const result = await this.stsClient.assumeRole(rolearn, '', 7200, sessionname)
+			await divineHandler(result.res.statusCode !== 200, () => {
+				throw new HttpException(`授权失败`, HttpStatus.NOT_IMPLEMENTED)
+			})
 			return await divineResult({
-				token: credentials.SecurityToken
+				accessKeyId: result.credentials.AccessKeyId,
+				accessKeySecret: result.credentials.AccessKeySecret,
+				token: result.credentials.SecurityToken,
+				expire: moment(result.credentials.Expiration).format('YYYY-MM-DD HH:mm:ss')
 			})
 		})
 	}
