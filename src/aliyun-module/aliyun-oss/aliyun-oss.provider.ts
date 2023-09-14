@@ -9,6 +9,7 @@ export function createOssProvider() {
 		inject: [ConfigService],
 		useFactory: function ossProvider(config: ConfigService) {
 			return new Client({
+				region: config.get('OSS_REGION'),
 				endpoint: config.get('OSS_ENDPOINT'),
 				accessKeyId: config.get('OSS_ACCESSKEYID'),
 				accessKeySecret: config.get('OSS_ACCESSKEYSECRET'),
