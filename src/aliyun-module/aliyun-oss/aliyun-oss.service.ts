@@ -27,6 +27,9 @@ export class AliyunOssService extends CoreService {
 				throw new HttpException(`授权失败`, HttpStatus.NOT_IMPLEMENTED)
 			})
 			return await divineResult({
+				interval: 7000,
+				bucket: this.configService.get('OSS_BUCKET'),
+				region: this.configService.get('OSS_REGION'),
 				accessKeyId: result.credentials.AccessKeyId,
 				accessKeySecret: result.credentials.AccessKeySecret,
 				token: result.credentials.SecurityToken,
