@@ -9,11 +9,11 @@ import { AliyunOssService } from '@/aliyun-module/aliyun-oss/aliyun-oss.service'
 export class AliyunOssController {
 	constructor(private readonly aliyunOssService: AliyunOssService) {}
 
-	@Get('/create/authorize')
+	@Post('/create/authorize')
 	@ApiDecorator({
-		operation: { summary: '创建STS临时鉴权' },
-		response: { status: 200, description: 'OK' }
-		// authorize: { login: true, error: true }
+		operation: { summary: '创建OSS-STS临时鉴权' },
+		response: { status: 200, description: 'OK' },
+		authorize: { login: true, error: true }
 	})
 	public async httpCreateAuthorize() {
 		return await this.aliyunOssService.httpCreateAuthorize()
