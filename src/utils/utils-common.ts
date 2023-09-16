@@ -14,6 +14,11 @@ export async function divineResult<
 	return data
 }
 
+/**条件值返回**/
+export function divineWherer<T>(where: boolean, value: T, defaultValue: T = undefined): T {
+	return where ? value : defaultValue
+}
+
 /**延时方法**/
 export function divineDelay(delay = 100, handler?: Function) {
 	return new Promise(resolve => {

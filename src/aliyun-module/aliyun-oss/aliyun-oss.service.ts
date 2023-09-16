@@ -17,6 +17,13 @@ export class AliyunOssService extends CoreService {
 		super()
 	}
 
+	/**删除文件**/
+	public async deleteFiler(path: string) {
+		return await this.RunCatch(async i18n => {
+			return await this.client.delete(path)
+		})
+	}
+
 	/**创建临时授权**/
 	public async httpCreateAuthorize() {
 		return await this.RunCatch(async i18n => {
@@ -28,6 +35,7 @@ export class AliyunOssService extends CoreService {
 			})
 			return await divineResult({
 				interval: 7000,
+				endpoint: this.configService.get('OSS_ENDPOINT'),
 				bucket: this.configService.get('OSS_BUCKET'),
 				region: this.configService.get('OSS_REGION'),
 				accessKeyId: result.credentials.AccessKeyId,

@@ -2,13 +2,14 @@ import { Injectable, HttpException, HttpStatus } from '@nestjs/common'
 import { Brackets, In } from 'typeorm'
 import { CoreService } from '@/core/core.service'
 import { EntityService } from '@/core/entity.service'
-import { moment, divineResult, divineHandler, divineJsonTransfer } from '@/utils/utils-common'
+import { AliyunOssService } from '@/aliyun-module/aliyun-oss/aliyun-oss.service'
+import { divineResult, divineHandler, divineWherer } from '@/utils/utils-common'
 import * as mjml from 'mjml'
 import * as http from '@/mailer-module/interface/template.interface'
 
 @Injectable()
 export class TemplateService extends CoreService {
-	constructor(private readonly entity: EntityService) {
+	constructor(private readonly entity: EntityService, private readonly aliyunOssService: AliyunOssService) {
 		super()
 	}
 
@@ -27,6 +28,7 @@ export class TemplateService extends CoreService {
 				width: props.width,
 				mjml: props.mjml,
 				json: props.json,
+				status: divineWherer(props.status === 'sketch', 'sketch', 'pending'),
 				user
 			})
 			return await this.entity.mailerTemplate.save(node).then(async () => {
@@ -52,15 +54,21 @@ export class TemplateService extends CoreService {
 				await divineHandler(data.user.uid !== uid, () => {
 					throw new HttpException(`模板不存在`, HttpStatus.BAD_REQUEST)
 				})
+				/**替换模板**/
+				await divineHandler(Boolean(data.cover), async () => {
+					return await this.aliyunOssService.deleteFiler(data.cover.replace(`https://oss.lisfes.cn/`, ''))
+				})
 				return data
 			})
 			await this.entity.mailerTemplate.update(
 				{ id: props.id },
 				{
 					name: props.name,
+					cover: props.cover,
 					width: props.width,
 					json: props.json,
-					mjml: props.mjml
+					mjml: props.mjml,
+					status: divineWherer(props.status === 'sketch', 'sketch', 'pending')
 				}
 			)
 			return await divineResult({ message: '编辑成功' })

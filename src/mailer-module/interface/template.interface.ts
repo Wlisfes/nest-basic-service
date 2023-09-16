@@ -14,6 +14,10 @@ export class MailerTemplate extends PickType(Request, ['id']) {
 	@IsNotEmpty({ message: '模板名称 必填' })
 	name: string
 
+	@ApiProperty({ description: '模板封面' })
+	@IsNotEmpty({ message: '模板封面 必填' })
+	cover: string
+
 	@ApiProperty({ description: '模板宽度', example: 640 })
 	@IsNotEmpty({ message: '模板宽度 必填' })
 	@Type(type => Number)
@@ -29,7 +33,7 @@ export class MailerTemplate extends PickType(Request, ['id']) {
 	json: Object
 
 	@ApiProperty({
-		description: '状态: 待审核-pending、审核中-loading、已审核-review、未通过-rejected、禁用-disable、删除-delete',
+		description: '状态: 待审核-pending、草稿-sketch、审核中-loading、已审核-review、未通过-rejected、禁用-disable、删除-delete',
 		example: 'pending',
 		default: 'pending'
 	})
@@ -39,10 +43,10 @@ export class MailerTemplate extends PickType(Request, ['id']) {
 }
 
 /**创建模板**/
-export class CreateTemplate extends PickType(MailerTemplate, ['name', 'mjml', 'json', 'width']) {}
+export class CreateTemplate extends PickType(MailerTemplate, ['name', 'mjml', 'json', 'width', 'status', 'cover']) {}
 
 /**编辑模板**/
-export class UpdateTemplate extends PickType(MailerTemplate, ['id', 'name', 'mjml', 'json', 'width']) {}
+export class UpdateTemplate extends PickType(MailerTemplate, ['id', 'name', 'mjml', 'json', 'width', 'status', 'cover']) {}
 
 /**模板列表**/
 export class ColumnTemplate extends IntersectionType(PickType(Request, ['page', 'size']), PickType(MailerTemplate, [])) {}
