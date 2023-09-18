@@ -7,7 +7,7 @@ import { JOB_MAILER_SCHEDULE } from '@/job-module/job-mailer/job-mailer.config'
 @Injectable()
 export class JobService {
 	constructor(
-		@InjectQueue(JOB_CAPTCHA_SUPERVISOR.name) public readonly supervisor: Queue,
-		@InjectQueue(JOB_MAILER_SCHEDULE.name) public readonly mailer: Queue
+		@InjectQueue(JOB_CAPTCHA_SUPERVISOR.name) public readonly captchaSupervisor: Queue,
+		@InjectQueue(JOB_MAILER_SCHEDULE.name) public readonly mailerSchedule: Queue
 	) {}
 }

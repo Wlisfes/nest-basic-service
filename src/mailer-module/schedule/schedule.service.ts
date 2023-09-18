@@ -81,7 +81,7 @@ export class ScheduleService extends CoreService {
 				sendTime: new Date()
 			})
 			return await this.entity.mailerSchedule.save(node).then(async data => {
-				const job = await this.job.mailer.add(
+				const job = await this.job.mailerSchedule.add(
 					JOB_MAILER_SCHEDULE.process.schedule,
 					{
 						id: data.id,
