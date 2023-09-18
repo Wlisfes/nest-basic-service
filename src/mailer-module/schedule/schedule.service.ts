@@ -88,7 +88,7 @@ export class ScheduleService extends CoreService {
 						name: '刀剑神域',
 						type: 'immediate',
 						super: 'customize',
-						total: 100,
+						total: 10000,
 						success: 0,
 						failure: 0,
 						content: '<h1>Holle word</h1>',

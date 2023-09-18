@@ -4,8 +4,9 @@ import { BullModule } from '@nestjs/bull'
 import { JobService } from '@/job-module/job.service'
 import { JOB_CAPTCHA_SUPERVISOR } from '@/job-module/job-captcha/job-captcha.config'
 import { JobCaptchaSupervisorConsumer } from '@/job-module/job-captcha/job-captcha.supervisor.consumer'
-import { JOB_MAILER_SCHEDULE } from '@/job-module/job-mailer/job-mailer.config'
+import { JOB_MAILER_SCHEDULE, JOB_MAILER_EXECUTE } from '@/job-module/job-mailer/job-mailer.config'
 import { JobMailerScheduleConsumer } from '@/job-module/job-mailer/job-mailer.schedule.consumer'
+import { JobMailerExecuteConsumer } from '@/job-module/job-mailer/job-mailer.execute.consumer'
 
 @Global()
 @Module({
@@ -26,9 +27,17 @@ import { JobMailerScheduleConsumer } from '@/job-module/job-mailer/job-mailer.sc
 				removeOnFail: JOB_MAILER_SCHEDULE.removeOnFail
 			}
 		}),
+		BullModule.registerQueue({
+			name: JOB_MAILER_EXECUTE.name,
+			limiter: JOB_MAILER_EXECUTE.limiter,
+			defaultJobOptions: {
+				removeOnComplete: JOB_MAILER_EXECUTE.removeOnComplete,
+				removeOnFail: JOB_MAILER_EXECUTE.removeOnFail
+			}
+		}),
 		EventEmitterModule.forRoot()
 	],
-	providers: [JobService, JobCaptchaSupervisorConsumer, JobMailerScheduleConsumer],
+	providers: [JobService, JobCaptchaSupervisorConsumer, JobMailerScheduleConsumer, JobMailerExecuteConsumer],
 	exports: [JobService]
 })
 export class JobModule {}
