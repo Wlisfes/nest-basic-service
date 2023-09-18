@@ -1,5 +1,5 @@
 export const JOB_CAPTCHA_SUPERVISOR = {
-	name: 'supervisor',
+	name: 'captcha:supervisor',
 	delay: 5 * 60 * 1000, //300秒
 	limiter: {
 		max: 100, //仅保留最近的100个任务

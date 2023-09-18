@@ -5,7 +5,7 @@ import { EntityService } from '@/core/entity.service'
 import { NodemailerService } from '@/mailer-module/nodemailer/nodemailer.service'
 import { JobService } from '@/job-module/job.service'
 import { divineHandler } from '@/utils/utils-common'
-import { JOB_MAILER_SCHEDULE } from '@/config/job-config'
+import { JOB_MAILER_SCHEDULE } from '@/job-module/job-mailer/job-mailer.config'
 import * as http from '../interface/schedule.interface'
 
 @Injectable()

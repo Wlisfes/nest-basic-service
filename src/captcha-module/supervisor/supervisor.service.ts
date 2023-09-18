@@ -5,7 +5,7 @@ import { CoreService } from '@/core/core.service'
 import { EntityService } from '@/core/entity.service'
 import { JobService } from '@/job-module/job.service'
 import { divineHandler } from '@/utils/utils-common'
-import { JOB_CAPTCHA_SUPERVISOR } from '@/config/job-config'
+import { JOB_CAPTCHA_SUPERVISOR } from '@/job-module/job-captcha/job-captcha.config'
 import * as http from '../interface/supervisor.interface'
 
 @Injectable()

@@ -1,6 +1,6 @@
 /**邮件服务任务队列配置**/
 export const JOB_MAILER_SCHEDULE = {
-	name: 'mailer',
+	name: 'mailer:schedule',
 	limiter: {
 		max: 100, //仅保留最近的100个任务
 		duration: 2 * 60 * 60 * 1000 //仅保留2小时内的任务
