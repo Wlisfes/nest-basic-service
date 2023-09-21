@@ -14,6 +14,12 @@ export class JobMailerExecuteConsumer extends CoreService {
 		super()
 	}
 
+	/**执行自定义发送**/
+	private async createCustomizeExecute() {}
+
+	/**执行模板发送**/
+	private async createSampleExecute() {}
+
 	/**队列开始执行**/
 	@Process({ name: JOB_MAILER_EXECUTE.process.execute })
 	async Executeprocess(job: Job<{ id: number }>) {

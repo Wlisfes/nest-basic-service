@@ -15,6 +15,11 @@ export class JobMailerScheduleConsumer extends CoreService {
 		super()
 	}
 
+	/**创建发送队列**/
+	private async createExecute() {
+		return await this.jobService.mailerExecute.add(JOB_MAILER_EXECUTE.process.execute, {})
+	}
+
 	/**队列开始执行**/
 	@Process({ name: JOB_MAILER_SCHEDULE.process.schedule })
 	async scheduleProcess(job: Job<{ total: number; id: number }>) {
