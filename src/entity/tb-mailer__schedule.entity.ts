@@ -47,8 +47,7 @@ export class tbMailerSchedule extends Common {
 	})
 	status: string
 
-	@OneToOne(type => tbMailerTemplate)
-	@JoinColumn()
+	@ManyToOne(type => tbMailerTemplate)
 	sample: tbMailerTemplate
 
 	@ManyToOne(type => tbMailerApplication)

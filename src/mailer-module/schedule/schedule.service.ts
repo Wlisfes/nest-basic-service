@@ -130,8 +130,8 @@ export class ScheduleService extends CoreService {
 				success: 0,
 				failure: 0,
 				sendTime,
-				sample,
 				user: app.user,
+				sample,
 				app
 			})
 			return await this.entity.mailerSchedule.save(node).then(async data => {
@@ -142,15 +142,17 @@ export class ScheduleService extends CoreService {
 						jobName: data.name, //任务名称
 						super: data.super, //发送类型: 模板发送-sample、自定义发送-customize
 						total: data.total, //发送总数
-						appId: data.app.appId, //应用ID
-						sampleId: data.sample.id, //模板ID
-						userId: data.user.uid //用户UID
+						appId: props.appId, //应用ID
+						sampleId: props.sampleId, //模板ID
+						userId: uid //用户UID
 					},
 					{ delay: reduce > 0 ? reduce : 0 }
 				)
 				await this.entity.mailerSchedule.update({ id: data.id }, { jobId: job.id as number })
 				return await divineResult({ message: '创建成功' })
 			})
+
+			return await divineResult({ message: '创建成功' })
 		})
 	}
 }
