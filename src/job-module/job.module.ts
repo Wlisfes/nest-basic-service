@@ -13,7 +13,6 @@ import { JobMailerExecuteConsumer } from '@/job-module/job-mailer/job-mailer.exe
 	imports: [
 		BullModule.registerQueue({
 			name: JOB_CAPTCHA_SUPERVISOR.name,
-			limiter: JOB_CAPTCHA_SUPERVISOR.limiter,
 			defaultJobOptions: {
 				removeOnComplete: JOB_CAPTCHA_SUPERVISOR.removeOnComplete,
 				removeOnFail: JOB_CAPTCHA_SUPERVISOR.removeOnFail
@@ -21,7 +20,6 @@ import { JobMailerExecuteConsumer } from '@/job-module/job-mailer/job-mailer.exe
 		}),
 		BullModule.registerQueue({
 			name: JOB_MAILER_SCHEDULE.name,
-			limiter: JOB_MAILER_SCHEDULE.limiter,
 			defaultJobOptions: {
 				removeOnComplete: JOB_MAILER_SCHEDULE.removeOnComplete,
 				removeOnFail: JOB_MAILER_SCHEDULE.removeOnFail
@@ -29,7 +27,6 @@ import { JobMailerExecuteConsumer } from '@/job-module/job-mailer/job-mailer.exe
 		}),
 		BullModule.registerQueue({
 			name: JOB_MAILER_EXECUTE.name,
-			limiter: JOB_MAILER_EXECUTE.limiter,
 			defaultJobOptions: {
 				removeOnComplete: JOB_MAILER_EXECUTE.removeOnComplete,
 				removeOnFail: JOB_MAILER_EXECUTE.removeOnFail
