@@ -2,9 +2,11 @@ import { Module, Global } from '@nestjs/common'
 import { EventEmitterModule } from '@nestjs/event-emitter'
 import { BullModule } from '@nestjs/bull'
 import { JobService } from '@/job-module/job.service'
-import { JOB_CAPTCHA_SUPERVISOR } from '@/job-module/job-captcha/job-captcha.config'
+/**人机验证队列**/
+import { JOB_CAPTCHA_SUPERVISOR } from '@/captcha-module/config/job-redis.resolver'
 import { JobCaptchaSupervisorConsumer } from '@/job-module/job-captcha/job-captcha.supervisor.consumer'
-import { JOB_MAILER_SCHEDULE, JOB_MAILER_EXECUTE } from '@/job-module/job-mailer/job-mailer.config'
+/**邮件队列**/
+import { JOB_MAILER_SCHEDULE, JOB_MAILER_EXECUTE } from '@/mailer-module/config/job-redis.resolver'
 import { JobMailerScheduleConsumer } from '@/job-module/job-mailer/job-mailer.schedule.consumer'
 import { JobMailerExecuteConsumer } from '@/job-module/job-mailer/job-mailer.execute.consumer'
 

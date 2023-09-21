@@ -5,7 +5,7 @@ import { EventEmitter2 } from '@nestjs/event-emitter'
 import { CoreService } from '@/core/core.service'
 import { EntityService } from '@/core/entity.service'
 import { divineHandler, divineDelay } from '@/utils/utils-common'
-import { JOB_MAILER_EXECUTE } from '@/job-module/job-mailer/job-mailer.config'
+import { JOB_MAILER_EXECUTE } from '@/mailer-module/config/job-redis.resolver'
 
 @Processor({ name: JOB_MAILER_EXECUTE.name })
 export class JobMailerExecuteConsumer extends CoreService {

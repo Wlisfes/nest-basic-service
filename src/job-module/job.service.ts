@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common'
 import { Queue } from 'bull'
 import { InjectQueue } from '@nestjs/bull'
-import { JOB_CAPTCHA_SUPERVISOR } from '@/job-module/job-captcha/job-captcha.config'
-import { JOB_MAILER_SCHEDULE, JOB_MAILER_EXECUTE } from '@/job-module/job-mailer/job-mailer.config'
+import { JOB_CAPTCHA_SUPERVISOR } from '@/captcha-module/config/job-redis.resolver'
+import { JOB_MAILER_SCHEDULE, JOB_MAILER_EXECUTE } from '@/mailer-module/config/job-redis.resolver'
 
 @Injectable()
 export class JobService {

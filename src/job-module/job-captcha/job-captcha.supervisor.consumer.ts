@@ -4,7 +4,7 @@ import { Job } from 'bull'
 import { EventEmitter2 } from '@nestjs/event-emitter'
 import { CoreService } from '@/core/core.service'
 import { EntityService } from '@/core/entity.service'
-import { JOB_CAPTCHA_SUPERVISOR } from '@/job-module/job-captcha/job-captcha.config'
+import { JOB_CAPTCHA_SUPERVISOR } from '@/captcha-module/config/job-redis.resolver'
 
 @Processor({ name: JOB_CAPTCHA_SUPERVISOR.name })
 export class JobCaptchaSupervisorConsumer extends CoreService {
