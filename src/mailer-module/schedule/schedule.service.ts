@@ -76,6 +76,24 @@ export class ScheduleService extends CoreService {
 	/**创建模板发送队列**/
 	public async httpScheduleSampleReducer(props: http.ScheduleSampleReducer, uid: number) {
 		return await this.RunCatch(async i18n => {
+			const user = await this.validator({
+				model: this.entity.user,
+				name: '用户',
+				empty: { value: true },
+				close: { value: true },
+				delete: { value: true },
+				options: { where: { uid } }
+			})
+			const app = await this.validator({
+				model: this.entity.mailerApplication,
+				name: '应用',
+				empty: { value: true },
+				close: { value: true },
+				delete: { value: true },
+				options: { where: { appId: props.appId } }
+			})
+			const currTime = new Date()
+			const sendTime = new Date(props.sendTime ?? currTime)
 			const node = await this.entity.mailerSchedule.create({
 				name: '刀剑神域',
 				type: 'immediate',
@@ -85,7 +103,9 @@ export class ScheduleService extends CoreService {
 				failure: 0,
 				content: '<h1>Holle word</h1>',
 				status: 'pending',
-				sendTime: new Date()
+				sendTime,
+				user,
+				app
 			})
 			return await this.entity.mailerSchedule.save(node).then(async data => {
 				const job = await this.jobService.mailerSchedule.add(

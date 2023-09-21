@@ -17,7 +17,7 @@ export class MailerSchedule {
 	@IsNotEmpty({ message: '发送内容 必填' })
 	content: string
 
-	@ApiProperty({ description: '定时发送时间', example: '2023-08-23 15:30:00' })
+	@ApiProperty({ description: '定时发送时间', required: false, example: '2023-08-23 15:30:00' })
 	@IsOptional()
 	@IsDate({ message: '定时发送时间 格式错误' })
 	sendTime: string
