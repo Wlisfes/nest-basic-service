@@ -22,7 +22,7 @@ export class ScheduleService extends CoreService {
 		return await this.nodemailerService.readCustomize()
 	}
 
-	/**自定义发送队列**/
+	/**创建自定义发送队列**/
 	public async httpScheduleCustomizeReducer(props: http.ScheduleCustomizeReducer, uid: number) {
 		return await this.RunCatch(async i18n => {
 			for (let index = 0; index < 10; index++) {
@@ -73,8 +73,8 @@ export class ScheduleService extends CoreService {
 		})
 	}
 
-	/**创建发送队列**/
-	public async httpScheduleReducer() {
+	/**创建模板发送队列**/
+	public async httpScheduleSampleReducer(props: http.ScheduleSampleReducer, uid: number) {
 		return await this.RunCatch(async i18n => {
 			const node = await this.entity.mailerSchedule.create({
 				name: '刀剑神域',

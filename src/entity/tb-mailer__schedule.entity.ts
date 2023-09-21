@@ -1,7 +1,8 @@
-import { Entity, Column, ManyToOne } from 'typeorm'
+import { Entity, Column, ManyToOne, OneToOne, JoinColumn } from 'typeorm'
 import { Common } from '@/entity/tb-common'
 import { User } from '@/entity/tb-user.entity'
 import { tbMailerApplication } from '@/entity/tb-mailer__application.entity'
+import { tbMailerTemplate } from '@/entity/tb-mailer__template.entity'
 import * as day from 'dayjs'
 
 @Entity('tb-mailer__schedule')
@@ -27,13 +28,7 @@ export class tbMailerSchedule extends Common {
 	@Column({ comment: '失败数', nullable: true, default: 0 })
 	failure: number
 
-	@Column({ comment: '模板ID', nullable: true })
-	columnId: string
-
-	@Column({ comment: '模板名称', nullable: true })
-	columnName: string
-
-	@Column({ type: 'text', comment: '发送内容', nullable: false })
+	@Column({ type: 'text', comment: '发送内容', nullable: true })
 	content: string
 
 	@Column({
@@ -41,10 +36,7 @@ export class tbMailerSchedule extends Common {
 		comment: '定时发送时间',
 		nullable: true,
 		default: null,
-		transformer: {
-			from: value => day(value).format('YYYY-MM-DD HH:mm:ss'),
-			to: value => value
-		}
+		transformer: { from: value => day(value).format('YYYY-MM-DD HH:mm:ss'), to: value => value }
 	})
 	sendTime: Date
 
@@ -54,6 +46,10 @@ export class tbMailerSchedule extends Common {
 		nullable: false
 	})
 	status: string
+
+	@OneToOne(type => tbMailerTemplate)
+	@JoinColumn()
+	sample: tbMailerTemplate
 
 	@ManyToOne(type => tbMailerApplication)
 	app: tbMailerApplication

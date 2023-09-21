@@ -21,13 +21,14 @@ export class ScheduleController {
 		response.send(html)
 	}
 
-	@Post('/reducer')
+	@Post('/sample/reducer')
 	@ApiDecorator({
-		operation: { summary: '创建发送队列' },
-		response: { status: 200, description: 'OK', type: Notice }
+		operation: { summary: '创建模板发送队列' },
+		response: { status: 200, description: 'OK', type: Notice },
+		authorize: { login: true, error: true }
 	})
-	public async httpScheduleReducer(@Body() body) {
-		return await this.scheduleService.httpScheduleReducer()
+	public async httpScheduleSampleReducer(@Request() request, @Body() body: http.ScheduleSampleReducer) {
+		return await this.scheduleService.httpScheduleSampleReducer(body, request.user.uid)
 	}
 
 	@Post('/customize/reducer')
