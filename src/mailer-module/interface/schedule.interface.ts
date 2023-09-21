@@ -1,7 +1,7 @@
 import { ApiProperty, PickType, IntersectionType } from '@nestjs/swagger'
-import { IsNotEmpty, IsDate } from 'class-validator'
+import { IsNotEmpty } from 'class-validator'
 import { Type } from 'class-transformer'
-import { IsOptional } from '@/decorator/common.decorator'
+import { IsOptional, IsDateCustomize } from '@/decorator/common.decorator'
 import { Request } from '@/interface/common.interface'
 
 export class MailerSchedule {
@@ -19,7 +19,7 @@ export class MailerSchedule {
 
 	@ApiProperty({ description: '定时发送时间', required: false, example: '2023-08-23 15:30:00' })
 	@IsOptional()
-	@IsDate({ message: '定时发送时间 格式错误' })
+	@IsDateCustomize({ message: '定时发送时间 格式错误' })
 	sendTime: string
 
 	@ApiProperty({ description: 'App ID', example: 1692282119673627 })

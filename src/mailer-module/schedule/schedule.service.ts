@@ -25,12 +25,12 @@ export class ScheduleService extends CoreService {
 	/**创建自定义发送队列**/
 	public async httpScheduleCustomizeReducer(props: http.ScheduleCustomizeReducer, uid: number) {
 		return await this.RunCatch(async i18n => {
-			for (let index = 0; index < 10; index++) {
-				await this.jobService.mailerExecute.add(JOB_MAILER_EXECUTE.process.execute, {
-					uid,
-					props
-				})
-			}
+			// for (let index = 0; index < 10; index++) {
+			// 	await this.jobService.mailerExecute.add(JOB_MAILER_EXECUTE.process.execute, {
+			// 		uid,
+			// 		props
+			// 	})
+			// }
 			return await divineResult({ message: '创建成功' })
 			// return await this.validator({
 			// 	model: this.entity.mailerApplication,
@@ -76,56 +76,80 @@ export class ScheduleService extends CoreService {
 	/**创建模板发送队列**/
 	public async httpScheduleSampleReducer(props: http.ScheduleSampleReducer, uid: number) {
 		return await this.RunCatch(async i18n => {
-			const user = await this.validator({
-				model: this.entity.user,
-				name: '用户',
-				empty: { value: true },
-				close: { value: true },
-				delete: { value: true },
-				options: { where: { uid } }
-			})
 			const app = await this.validator({
 				model: this.entity.mailerApplication,
 				name: '应用',
 				empty: { value: true },
 				close: { value: true },
 				delete: { value: true },
-				options: { where: { appId: props.appId } }
+				options: {
+					join: {
+						alias: 'tb',
+						leftJoinAndSelect: { user: 'tb.user' }
+					},
+					where: new Brackets(qb => {
+						qb.where('tb.appId = :appId', { appId: props.appId })
+						qb.andWhere('user.uid = :uid', { uid })
+					})
+				}
+			})
+			const sample = await this.validator({
+				model: this.entity.mailerTemplate,
+				name: '模板',
+				empty: { value: true },
+				close: { value: true },
+				delete: { value: true },
+				options: {
+					join: {
+						alias: 'tb',
+						leftJoinAndSelect: { user: 'tb.user' }
+					},
+					where: new Brackets(qb => {
+						qb.where('tb.id = :id', { id: props.sampleId })
+						qb.andWhere('tb.status IN(:...status)', {
+							status: ['pending', 'loading', 'review', 'rejected', 'disable', 'delete']
+						})
+						qb.andWhere('user.uid = :uid', { uid })
+					})
+				}
+			}).then(async data => {
+				await divineHandler(['pending', 'loading', 'rejected'].includes(data.status), () => {
+					throw new HttpException(`模板未审核`, HttpStatus.BAD_REQUEST)
+				})
+				return data
 			})
 			const currTime = new Date()
 			const sendTime = new Date(props.sendTime ?? currTime)
+			const reduce = sendTime.getTime() - currTime.getTime()
 			const node = await this.entity.mailerSchedule.create({
-				name: '刀剑神域',
-				type: 'immediate',
-				super: 'customize',
+				super: 'sample',
+				status: 'pending',
+				name: props.name,
+				type: props.type,
 				total: 100,
 				success: 0,
 				failure: 0,
-				content: '<h1>Holle word</h1>',
-				status: 'pending',
 				sendTime,
-				user,
+				sample,
+				user: app.user,
 				app
 			})
 			return await this.entity.mailerSchedule.save(node).then(async data => {
 				const job = await this.jobService.mailerSchedule.add(
 					JOB_MAILER_SCHEDULE.process.schedule,
 					{
-						id: data.id,
-						name: '刀剑神域',
-						type: 'immediate',
-						super: 'customize',
-						total: 100,
-						success: 0,
-						failure: 0,
-						content: '<h1>Holle word</h1>',
-						receive: 'limvcfast@gmail.com'
+						jobId: data.id, //任务ID
+						jobName: data.name, //任务名称
+						super: data.super, //发送类型: 模板发送-sample、自定义发送-customize
+						total: data.total, //发送总数
+						appId: data.app.appId, //应用ID
+						sampleId: data.sample.id, //模板ID
+						userId: data.user.uid //用户UID
 					},
-					{ delay: 0 }
+					{ delay: reduce > 0 ? reduce : 0 }
 				)
-				return await this.entity.mailerSchedule.update({ id: data.id }, { jobId: job.id as number }).then(() => {
-					return { message: '创建成功' }
-				})
+				await this.entity.mailerSchedule.update({ id: data.id }, { jobId: job.id as number })
+				return await divineResult({ message: '创建成功' })
 			})
 		})
 	}

@@ -15,15 +15,22 @@ export class JobMailerScheduleConsumer extends CoreService {
 		super()
 	}
 
-	/**创建发送队列**/
-	private async createExecute() {
+	/**创建自定义发送队列**/
+	private async createCustomizeExecute(data: any) {
+		return await this.jobService.mailerExecute.add(JOB_MAILER_EXECUTE.process.execute, {})
+	}
+
+	/**创建模板发送队列**/
+	private async createSampleExecute(data: any) {
+		// const sample =
 		return await this.jobService.mailerExecute.add(JOB_MAILER_EXECUTE.process.execute, {})
 	}
 
 	/**队列开始执行**/
 	@Process({ name: JOB_MAILER_SCHEDULE.process.schedule })
-	async scheduleProcess(job: Job<{ total: number; id: number }>) {
+	async scheduleProcess(job: Job<any>) {
 		this.logger.log('process---队列开始执行:', `jobId: ${job.id}`)
+		console.log(job.data, job)
 		// await this.entity.mailerSchedule.update({ id: job.data.id }, { status: 'loading' })
 		// for (let index = 0; index < job.data.total; index++) {
 		// 	// await divineDelay(100)
@@ -32,14 +39,14 @@ export class JobMailerScheduleConsumer extends CoreService {
 		// }
 		// await this.entity.mailerSchedule.update({ id: job.data.id }, { status: 'fulfilled' })
 		// await job.progress(100)
-		for (let index = 0; index < job.data.total; index++) {
-			// await divineDelay(0)
-			await job.progress(((index + 1) / job.data.total) * 100)
-			await this.jobService.mailerExecute.add(JOB_MAILER_EXECUTE.process.execute, {
-				data: job.data,
-				jobId: job.id
-			})
-		}
+		// for (let index = 0; index < job.data.total; index++) {
+		// 	// await divineDelay(0)
+		// 	await job.progress(((index + 1) / job.data.total) * 100)
+		// 	await this.jobService.mailerExecute.add(JOB_MAILER_EXECUTE.process.execute, {
+		// 		data: job.data,
+		// 		jobId: job.id
+		// 	})
+		// }
 		this.logger.log('process---队列执行完毕:', `jobId: ${job.id}`)
 		return await job.discard()
 	}

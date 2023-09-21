@@ -7,11 +7,14 @@ export class tbMailerRecord extends Common {
 	@Column({ type: 'int', default: null, comment: '任务ID', readonly: true })
 	jobId: number
 
+	@Column({ comment: '收件人', nullable: false })
+	receive: string
+
 	@Column({ comment: '任务名称', nullable: false })
 	jobName: string
 
 	@Column({ comment: '发送类型: 模板发送-sample、自定义发送-customize', nullable: false })
-	type: string
+	super: string
 
 	@Column({ comment: `状态: 发送完成-fulfilled、发送失败-rejected`, nullable: false })
 	status: string
