@@ -22,8 +22,14 @@ export class JobMailerExecuteConsumer extends CoreService {
 
 	/**队列开始执行**/
 	@Process({ name: JOB_MAILER_EXECUTE.process.execute })
-	async Executeprocess(job: Job<{ id: number }>) {
-		// this.logger.log('process.execute---发送中:', `jobId: ${job.id}`)
+	async onProcess(job: Job<any>) {
+		this.logger.log('process---邮件发送中:', job.data)
+		if (job.data.super === 'sample') {
+			/**发送模板消息**/
+		} else if (job.data.super === 'customize') {
+			/**发送自定义消息**/
+		}
+
 		await job.progress(100)
 		return await job.discard()
 	}

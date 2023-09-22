@@ -22,6 +22,9 @@ export class tbMailerSchedule extends Common {
 	@Column({ comment: '发送总数', nullable: false, default: 0 })
 	total: number
 
+	@Column({ comment: '队列提交数', nullable: false, default: 0 })
+	submit: number
+
 	@Column({ comment: '成功数', nullable: true, default: 0 })
 	success: number
 

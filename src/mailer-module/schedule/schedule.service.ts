@@ -126,7 +126,8 @@ export class ScheduleService extends CoreService {
 				status: 'pending',
 				name: props.name,
 				type: props.type,
-				total: 300,
+				total: 10,
+				submit: 0,
 				success: 0,
 				failure: 0,
 				sendTime,
@@ -142,6 +143,7 @@ export class ScheduleService extends CoreService {
 						jobName: data.name, //任务名称
 						super: data.super, //发送类型: 模板发送-sample、自定义发送-customize
 						total: data.total, //发送总数
+						submit: data.submit, //提交队列数
 						appId: props.appId, //应用ID
 						sampleId: props.sampleId, //模板ID
 						userId: uid //用户UID
