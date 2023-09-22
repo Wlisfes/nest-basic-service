@@ -5,10 +5,12 @@ import { JwtService } from '@nestjs/jwt'
 import { HttpService } from '@nestjs/axios'
 import { compareSync } from 'bcryptjs'
 import { CoreService } from '@/core/core.service'
+import { RedisService } from '@/core/redis.service'
 import { EntityService } from '@/core/entity.service'
 import { User } from '@/entity/tb-user.entity'
 import { divineHandler, divineResult, divineTransfer, divineDeduction } from '@/utils/utils-common'
-import * as http from '../interface/user.interface'
+import * as cache from '@/user-module/config/user-redis.resolver'
+import * as http from '@/user-module/interface/user.interface'
 
 @Injectable()
 export class UserService extends CoreService {
@@ -16,7 +18,8 @@ export class UserService extends CoreService {
 		private readonly entity: EntityService,
 		private readonly httpService: HttpService,
 		private readonly configService: ConfigService,
-		private readonly jwtService: JwtService
+		private readonly jwtService: JwtService,
+		private readonly redisService: RedisService
 	) {
 		super()
 	}
@@ -124,10 +127,10 @@ export class UserService extends CoreService {
 		})
 	}
 
-	/**登录**/
+	/**登录**/ //prettier-ignore
 	public async httpAuthorize(props: http.Authorize, origin: string) {
 		return await this.RunCatch(async i18n => {
-			const response = await this.httpService.axiosRef.request({
+			await this.httpService.axiosRef.request({
 				url: `https://api.lisfes.cn/api-basic/captcha/supervisor/inspector`,
 				method: 'POST',
 				headers: { origin },
@@ -137,27 +140,44 @@ export class UserService extends CoreService {
 					token: props.token,
 					session: props.session
 				}
-			})
-			await divineHandler(response.data.code !== 200, () => {
-				throw new HttpException(response.data.message, HttpStatus.BAD_REQUEST)
+			}).then(async response => {
+				await divineHandler(response.data.code !== 200, () => {
+					throw new HttpException(response.data.message, HttpStatus.BAD_REQUEST)
+				})
+				return response
 			})
 			const user = await this.validator({
 				model: this.entity.user,
 				name: '账号',
 				empty: { value: true },
 				close: { value: true },
-				delete: { value: true },
-				options: { where: { mobile: props.mobile }, select: ['id', 'uid', 'status', 'password'] }
-			})
-			await divineHandler(!compareSync(props.password, user.password), () => {
-				throw new HttpException('密码错误', HttpStatus.BAD_REQUEST)
+				options: {
+					select: ['id', 'uid', 'nickname', 'avatar', 'email', 'mobile', 'password', 'status', 'comment', 'createTime', 'updateTime'],
+					join: { alias: 'tb' },
+					where: new Brackets(qb => {
+						qb.where('tb.mobile = :mobile', { mobile: props.mobile })
+						qb.andWhere('tb.status IN(:...status)', { status: ['enable', 'disable'] })
+					})
+				}
+			}).then(async data => {
+				await divineHandler(!compareSync(props.password, data.password), () => {
+					throw new HttpException('密码错误', HttpStatus.BAD_REQUEST)
+				})
+
+				/**登录成功更新redis缓存**/
+				await this.redisService.setStore(cache.createUserBasicCache(data.uid), {
+					uid: data.uid,
+					nickname: data.nickname,
+					email: data.email,
+					avatar: data.avatar,
+					status: data.status,
+					mobile: data.mobile,
+					password: data.password
+				})
+				return data
 			})
 			const { token, expire } = await this.newJwtToken(user)
-			return await divineResult({
-				token,
-				expire,
-				message: '登录成功'
-			})
+			return await divineResult({ token, expire, message: '登录成功' })
 		})
 	}
 
