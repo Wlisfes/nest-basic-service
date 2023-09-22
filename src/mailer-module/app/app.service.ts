@@ -53,14 +53,23 @@ export class AppService extends CoreService {
 	}
 
 	/**编辑授权地址**/
-	public async httpUpdateBucket(props: http.UpdateBucket) {
+	public async httpUpdateBucket(props: http.UpdateBucket, uid: number) {
 		return await this.RunCatch(async i18n => {
 			const app = await this.validator({
 				model: this.entity.mailerApplication,
 				name: '应用',
 				empty: { value: true },
 				close: { value: true },
-				options: { where: { appId: props.appId } }
+				options: {
+					join: {
+						alias: 'tb',
+						leftJoinAndSelect: { user: 'tb.user' }
+					},
+					where: new Brackets(qb => {
+						qb.where('tb.appId = :appId', { appId: props.appId })
+						qb.andWhere('user.uid = :uid', { uid })
+					})
+				}
 			})
 			await this.entity.mailerApplication.update({ appId: props.appId }, { bucket: props.bucket, ip: props.ip }).then(async data => {
 				/**应用编辑后需要更新redis缓存**/

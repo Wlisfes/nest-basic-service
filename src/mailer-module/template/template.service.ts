@@ -1,15 +1,20 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common'
 import { Brackets, In } from 'typeorm'
 import { CoreService } from '@/core/core.service'
+import { RedisService } from '@/core/redis.service'
 import { EntityService } from '@/core/entity.service'
 import { AliyunOssService } from '@/aliyun-module/aliyun-oss/aliyun-oss.service'
 import { divineResult, divineHandler, divineWherer } from '@/utils/utils-common'
-import * as mjml from 'mjml'
+import * as cache from '@/mailer-module/config/common-redis.resolver'
 import * as http from '@/mailer-module/interface/template.interface'
 
 @Injectable()
 export class TemplateService extends CoreService {
-	constructor(private readonly entity: EntityService, private readonly aliyunOssService: AliyunOssService) {
+	constructor(
+		private readonly entity: EntityService,
+		private readonly redisService: RedisService,
+		private readonly aliyunOssService: AliyunOssService
+	) {
 		super()
 	}
 
@@ -31,7 +36,17 @@ export class TemplateService extends CoreService {
 				status: divineWherer(props.status === 'sketch', 'sketch', 'pending'),
 				user
 			})
-			return await this.entity.mailerTemplate.save(node).then(async () => {
+			return await this.entity.mailerTemplate.save(node).then(async data => {
+				/**模板创建成功后添加redis缓存**/
+				await this.redisService.setStore(cache.createMailerTemplateCache(data.id), {
+					id: data.id,
+					name: data.name,
+					cover: data.cover,
+					width: data.width,
+					status: data.status,
+					mjml: data.mjml,
+					userId: uid
+				})
 				return await divineResult({ message: '创建成功' })
 			})
 		})
@@ -40,37 +55,54 @@ export class TemplateService extends CoreService {
 	/**编辑邮件模板**/
 	public async httpUpdateMailerTemplate(props: http.UpdateTemplate, uid: number) {
 		return await this.RunCatch(async i18n => {
-			await this.validator({
+			const sample = await this.validator({
 				model: this.entity.mailerTemplate,
 				name: '模板',
 				empty: { value: true },
 				close: { value: true },
-				delete: { value: true },
 				options: {
-					where: { id: props.id },
-					relations: ['user']
+					join: {
+						alias: 'tb',
+						leftJoinAndSelect: { user: 'tb.user' }
+					},
+					where: new Brackets(qb => {
+						qb.where('tb.id = :id', { id: props.id })
+						qb.andWhere('tb.status IN(:...status)', { status: ['pending', 'loading', 'review', 'rejected', 'disable'] })
+						qb.andWhere('user.uid = :uid', { uid })
+					})
 				}
-			}).then(async data => {
-				await divineHandler(data.user.uid !== uid, () => {
-					throw new HttpException(`模板不存在`, HttpStatus.BAD_REQUEST)
-				})
-				/**替换模板**/
-				await divineHandler(Boolean(data.cover), async () => {
-					return await this.aliyunOssService.deleteFiler(data.cover.replace(`https://oss.lisfes.cn/`, ''))
-				})
-				return data
 			})
-			await this.entity.mailerTemplate.update(
-				{ id: props.id },
-				{
-					name: props.name,
-					cover: props.cover,
-					width: props.width,
-					json: props.json,
-					mjml: props.mjml,
-					status: divineWherer(props.status === 'sketch', 'sketch', 'pending')
-				}
-			)
+			await this.entity.mailerTemplate
+				.update(
+					{ id: props.id },
+					{
+						name: props.name,
+						cover: props.cover,
+						width: props.width,
+						json: props.json,
+						mjml: props.mjml,
+						status: divineWherer(props.status === 'sketch', 'sketch', 'pending')
+					}
+				)
+				.then(async () => {
+					/**替换模板封面文件**/
+					await divineHandler(Boolean(sample.cover), async () => {
+						return await this.aliyunOssService.deleteFiler(sample.cover.replace(`https://oss.lisfes.cn/`, ''))
+					})
+					/**模板编辑成功后添加redis缓存**/
+					const node = await this.redisService.getStore<typeof sample>(cache.createMailerTemplateCache(props.id))
+					await this.redisService.setStore(
+						cache.createMailerTemplateCache(props.id),
+						Object.assign(node, {
+							name: props.name,
+							cover: props.cover,
+							width: props.width,
+							json: props.json,
+							mjml: props.mjml,
+							status: divineWherer(props.status === 'sketch', 'sketch', 'pending')
+						})
+					)
+				})
 			return await divineResult({ message: '编辑成功' })
 		})
 	}
@@ -105,14 +137,16 @@ export class TemplateService extends CoreService {
 				name: '模板',
 				empty: { value: true },
 				options: {
-					where: { id: props.id },
-					relations: ['user']
+					join: {
+						alias: 'tb',
+						leftJoinAndSelect: { user: 'tb.user' }
+					},
+					where: new Brackets(qb => {
+						qb.where('tb.id = :id', { id: props.id })
+						qb.andWhere('tb.status IN(:...status)', { status: ['pending', 'loading', 'review', 'rejected', 'disable'] })
+						qb.andWhere('user.uid = :uid', { uid })
+					})
 				}
-			}).then(async data => {
-				await divineHandler(data.user.uid !== uid, () => {
-					throw new HttpException(`模板不存在`, HttpStatus.BAD_REQUEST)
-				})
-				return data
 			})
 		})
 	}

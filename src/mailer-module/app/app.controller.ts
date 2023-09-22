@@ -23,10 +23,11 @@ export class AppController {
 	@Post('/update/bucket')
 	@ApiDecorator({
 		operation: { summary: '编辑授权地址' },
-		response: { status: 200, description: 'OK', type: Notice }
+		response: { status: 200, description: 'OK', type: Notice },
+		authorize: { login: true, error: true }
 	})
-	public async httpUpdateBucket(@Body() body: http.UpdateBucket) {
-		return await this.appService.httpUpdateBucket(body)
+	public async httpUpdateBucket(@Request() request, @Body() body: http.UpdateBucket) {
+		return await this.appService.httpUpdateBucket(body, request.user.uid)
 	}
 
 	@Get('/column')
