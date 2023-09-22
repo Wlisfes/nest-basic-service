@@ -151,8 +151,6 @@ export class ScheduleService extends CoreService {
 				await this.entity.mailerSchedule.update({ id: data.id }, { jobId: job.id as number })
 				return await divineResult({ message: '创建成功' })
 			})
-
-			return await divineResult({ message: '创建成功' })
 		})
 	}
 }

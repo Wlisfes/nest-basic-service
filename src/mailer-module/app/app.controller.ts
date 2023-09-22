@@ -13,10 +13,11 @@ export class AppController {
 	@Post('/create')
 	@ApiDecorator({
 		operation: { summary: '创建应用' },
-		response: { status: 200, description: 'OK', type: Notice }
+		response: { status: 200, description: 'OK', type: Notice },
+		authorize: { login: true, error: true }
 	})
-	public async httpCreateApplication(@Body() body: http.CreateApplication) {
-		return await this.appService.httpCreateApplication(body)
+	public async httpCreateApplication(@Request() request, @Body() body: http.CreateApplication) {
+		return await this.appService.httpCreateApplication(body, request.user.uid)
 	}
 
 	@Post('/update/bucket')

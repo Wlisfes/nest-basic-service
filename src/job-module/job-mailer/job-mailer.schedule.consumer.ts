@@ -31,6 +31,7 @@ export class JobMailerScheduleConsumer extends CoreService {
 	async scheduleProcess(job: Job<any>) {
 		this.logger.log('process---队列开始执行:', `jobId: ${job.id}`)
 		console.log(job.data, job)
+
 		// await this.entity.mailerSchedule.update({ id: job.data.id }, { status: 'loading' })
 		// for (let index = 0; index < job.data.total; index++) {
 		// 	// await divineDelay(100)
