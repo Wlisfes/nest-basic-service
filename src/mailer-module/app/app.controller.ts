@@ -42,10 +42,11 @@ export class AppController {
 	@Get('/basic')
 	@ApiDecorator({
 		operation: { summary: '应用信息' },
-		response: { status: 200, description: 'OK', type: Notice }
+		response: { status: 200, description: 'OK', type: Notice },
+		authorize: { login: true, error: true }
 	})
-	public async httpBasicApplication(@Query() query: http.BasicApplication) {
-		return await this.appService.httpBasicApplication(query)
+	public async httpBasicApplication(@Request() request, @Query() query: http.BasicApplication) {
+		return await this.appService.httpBasicApplication(query, request.user.uid)
 	}
 
 	@Put('/update/name')

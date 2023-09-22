@@ -103,13 +103,25 @@ export class AppService extends CoreService {
 	}
 
 	/**应用信息**/
-	public async httpBasicApplication(props: http.BasicApplication) {
+	public async httpBasicApplication(props: http.BasicApplication, uid: number) {
 		return await this.RunCatch(async i18n => {
 			return await this.validator({
 				model: this.entity.mailerApplication,
 				name: '应用',
 				empty: { value: true },
-				options: { where: { appId: props.appId } }
+				options: {
+					join: {
+						alias: 'tb',
+						leftJoinAndSelect: {
+							user: 'tb.user',
+							service: 'tb.service'
+						}
+					},
+					where: new Brackets(qb => {
+						qb.where('tb.appId = :appId', { appId: props.appId })
+						qb.andWhere('user.uid = :uid', { uid })
+					})
+				}
 			})
 		})
 	}

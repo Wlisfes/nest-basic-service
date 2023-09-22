@@ -54,15 +54,20 @@ import * as path from 'path'
 		}),
 		RedisModule.forRootAsync({
 			inject: [ConfigService],
-			useFactory: (config: ConfigService) => ({
-				config: {
-					host: config.get('REDIS_HOST'),
-					port: parseInt(config.get('REDIS_PORT')),
-					password: config.get('REDIS_PASSWORD'),
-					db: parseInt(config.get('REDIS_DB')),
-					lazyConnect: false
+			useFactory: (config: ConfigService) => {
+				const NODE_ENV = (process.env.NODE_ENV ?? '').toString().trim()
+				const prefix = NODE_ENV === 'development' ? 'development' : 'production'
+				return {
+					config: {
+						keyPrefix: prefix,
+						host: config.get('REDIS_HOST'),
+						port: parseInt(config.get('REDIS_PORT')),
+						password: config.get('REDIS_PASSWORD'),
+						db: parseInt(config.get('REDIS_DB')),
+						lazyConnect: false
+					}
 				}
-			})
+			}
 		}),
 		BullModule.forRootAsync({
 			inject: [ConfigService],
