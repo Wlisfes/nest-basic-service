@@ -7,6 +7,7 @@ import { EntityService } from '@/core/entity.service'
 import { divineHandler, divineDelay } from '@/utils/utils-common'
 import { JOB_MAILER_SCHEDULE, JOB_MAILER_EXECUTE } from '@/mailer-module/config/job-redis.resolver'
 import { JobService } from '@/job-module/job.service'
+import * as _ from 'lodash'
 
 @Processor({ name: JOB_MAILER_SCHEDULE.name })
 export class JobMailerScheduleConsumer extends CoreService {
@@ -28,8 +29,12 @@ export class JobMailerScheduleConsumer extends CoreService {
 
 	/**队列开始执行**/
 	@Process({ name: JOB_MAILER_SCHEDULE.process.schedule })
-	async scheduleProcess(job: Job<any>) {
+	async createProcessConsumer(job: Job<any>) {
 		this.logger.log('process---邮件任务队列开始执行:', `jobId: ${job.id}`)
+
+		const updateProgress = _.throttle(async function (value: number) {
+			return await job.progress(value)
+		}, 2500)
 
 		/**任务状态切换到-发送中**/
 		await this.entity.mailerSchedule.update({ id: job.data.jobId }, { status: 'loading' })
@@ -45,7 +50,8 @@ export class JobMailerScheduleConsumer extends CoreService {
 				userId: job.data.userId,
 				receive: 'limvcfast@gmail.com'
 			})
-			await job.progress(((index + 1) / job.data.total) * 100)
+			// await job.progress(((index + 1) / job.data.total) * 100)
+			await updateProgress(((index + 1) / job.data.total) * 100)
 		}
 
 		/**任务状态切换到-发送完成**/
@@ -57,6 +63,6 @@ export class JobMailerScheduleConsumer extends CoreService {
 
 	@OnQueueProgress({ name: JOB_MAILER_SCHEDULE.process.schedule })
 	async scheduleProgress(job: Job<any>) {
-		// console.log(job.progress(), job.data)
+		console.log(job.progress(), job.data)
 	}
 }

@@ -23,7 +23,7 @@ export class JobMailerExecuteConsumer extends CoreService {
 	/**队列开始执行**/
 	@Process({ name: JOB_MAILER_EXECUTE.process.execute })
 	async Executeprocess(job: Job<{ id: number }>) {
-		this.logger.log('process.execute---发送中:', `jobId: ${job.id}`)
+		// this.logger.log('process.execute---发送中:', `jobId: ${job.id}`)
 		await job.progress(100)
 		return await job.discard()
 	}

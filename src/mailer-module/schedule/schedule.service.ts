@@ -126,7 +126,7 @@ export class ScheduleService extends CoreService {
 				status: 'pending',
 				name: props.name,
 				type: props.type,
-				total: 10,
+				total: 300,
 				success: 0,
 				failure: 0,
 				sendTime,
