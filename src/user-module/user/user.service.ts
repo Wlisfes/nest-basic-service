@@ -9,7 +9,7 @@ import { RedisService } from '@/core/redis.service'
 import { EntityService } from '@/core/entity.service'
 import { User } from '@/entity/tb-user.entity'
 import { divineHandler, divineResult, divineTransfer, divineDeduction } from '@/utils/utils-common'
-import * as cache from '@/user-module/config/user-redis.resolver'
+import * as cache from '@/user-module/config/common-redis.resolver'
 import * as http from '@/user-module/interface/user.interface'
 
 @Injectable()
