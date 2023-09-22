@@ -41,7 +41,7 @@ export class tbMailerRecord extends Common {
 	content: string
 
 	@Column({ type: 'bigint', comment: '用户UID', transformer: UUIDTransformer })
-	uid: number
+	userId: number
 
 	@Column({ comment: '用户昵称', nullable: false })
 	nickname: string

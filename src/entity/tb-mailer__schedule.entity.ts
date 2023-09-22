@@ -28,6 +28,9 @@ export class tbMailerSchedule extends Common {
 	@Column({ comment: '失败数', nullable: true, default: 0 })
 	failure: number
 
+	@Column({ comment: '发送进度', nullable: true, default: 0 })
+	progress: number
+
 	@Column({ type: 'text', comment: '发送内容', nullable: true })
 	content: string
 

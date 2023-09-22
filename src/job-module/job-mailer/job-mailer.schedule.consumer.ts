@@ -21,7 +21,7 @@ export class JobMailerScheduleConsumer extends CoreService {
 	}
 
 	/**创建模板发送队列**/
-	private async createSampleExecute(data: any) {
+	private async createExecute(data: any) {
 		// const sample =
 		return await this.jobService.mailerExecute.add(JOB_MAILER_EXECUTE.process.execute, {})
 	}
@@ -29,26 +29,29 @@ export class JobMailerScheduleConsumer extends CoreService {
 	/**队列开始执行**/
 	@Process({ name: JOB_MAILER_SCHEDULE.process.schedule })
 	async scheduleProcess(job: Job<any>) {
-		this.logger.log('process---队列开始执行:', `jobId: ${job.id}`)
-		console.log(job.data, job)
+		this.logger.log('process---邮件任务队列开始执行:', `jobId: ${job.id}`)
 
-		// await this.entity.mailerSchedule.update({ id: job.data.id }, { status: 'loading' })
-		// for (let index = 0; index < job.data.total; index++) {
-		// 	// await divineDelay(100)
-		// 	await this.entity.mailerSchedule.update({ id: job.data.id }, { success: index + 1 })
-		// 	this.logger.log('process---队列执行中:', `index: ${index}`)
-		// }
-		// await this.entity.mailerSchedule.update({ id: job.data.id }, { status: 'fulfilled' })
-		// await job.progress(100)
-		// for (let index = 0; index < job.data.total; index++) {
-		// 	// await divineDelay(0)
-		// 	await job.progress(((index + 1) / job.data.total) * 100)
-		// 	await this.jobService.mailerExecute.add(JOB_MAILER_EXECUTE.process.execute, {
-		// 		data: job.data,
-		// 		jobId: job.id
-		// 	})
-		// }
-		this.logger.log('process---队列执行完毕:', `jobId: ${job.id}`)
+		/**任务状态切换到-发送中**/
+		await this.entity.mailerSchedule.update({ id: job.data.jobId }, { status: 'loading' })
+
+		for (let index = 0; index < job.data.total; index++) {
+			await this.jobService.mailerExecute.add(JOB_MAILER_EXECUTE.process.execute, {
+				jobId: job.data.jobId,
+				jobName: job.data.jobName,
+				super: job.data.super,
+				appId: job.data.appId,
+				sampleId: job.data.sampleId,
+				content: job.data.content ?? null,
+				userId: job.data.userId,
+				receive: 'limvcfast@gmail.com'
+			})
+			await job.progress(((index + 1) / job.data.total) * 100)
+		}
+
+		/**任务状态切换到-发送完成**/
+		await this.entity.mailerSchedule.update({ id: job.data.jobId }, { status: 'fulfilled' })
+
+		this.logger.log('process---邮件任务队列执行完毕:', `jobId: ${job.id}`)
 		return await job.discard()
 	}
 

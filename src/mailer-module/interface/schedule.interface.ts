@@ -27,7 +27,7 @@ export class MailerSchedule {
 	@Type(type => Number)
 	appId: number
 
-	@ApiProperty({ description: '模板 ID', example: 20 })
+	@ApiProperty({ description: '模板 ID', example: 28 })
 	@IsNotEmpty({ message: '模板 必填' })
 	@Type(type => Number)
 	sampleId: number
