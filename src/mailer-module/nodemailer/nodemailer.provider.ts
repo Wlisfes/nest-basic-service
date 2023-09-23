@@ -49,3 +49,9 @@ export async function readNodemailer(option: Record<string, any> = {}) {
 	const register = handlebar.compile(fs.readFileSync(path.join(process.cwd(), './public/template/register.mjml'), 'utf8'))
 	return mjml(register(option)).html
 }
+
+/**MJML模板转换**/
+export function sampleTransfer(mjmlContent: string, option: Record<string, any> = {}) {
+	const register = handlebar.compile(mjmlContent)
+	return mjml(register(option)).html
+}

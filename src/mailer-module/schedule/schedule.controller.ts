@@ -2,13 +2,15 @@ import { Controller, Post, Get, Put, Body, Query, Request, Response } from '@nes
 import { ApiTags } from '@nestjs/swagger'
 import { ApiDecorator } from '@/decorator/compute.decorator'
 import { Notice } from '@/interface/common.interface'
-import { ScheduleService } from './schedule.service'
-import * as http from '../interface/schedule.interface'
+import { RedisService } from '@/core/redis.service'
+import { ScheduleService } from '@/mailer-module/schedule/schedule.service'
+import { sampleTransfer } from '@/mailer-module/nodemailer/nodemailer.provider'
+import * as http from '@/mailer-module/interface/schedule.interface'
 
 @ApiTags('邮件任务模块')
 @Controller('schedule')
 export class ScheduleController {
-	constructor(private readonly scheduleService: ScheduleService) {}
+	constructor(private readonly scheduleService: ScheduleService, private readonly redisService: RedisService) {}
 
 	@Get('/basic')
 	@ApiDecorator({

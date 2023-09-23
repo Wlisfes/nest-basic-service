@@ -4,7 +4,7 @@ import { UUIDTransformer } from '@/utils/utils-entity'
 
 @Entity('tb-mailer__record')
 export class tbMailerRecord extends Common {
-	@Column({ type: 'int', default: null, comment: '任务ID', readonly: true })
+	@Column({ type: 'int', default: null, comment: '任务ID' })
 	jobId: number
 
 	@Column({ comment: '收件人', nullable: false })
