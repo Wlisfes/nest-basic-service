@@ -29,15 +29,15 @@ export class tbMailerRecord extends Common {
 	sampleId: number
 
 	@Column({ comment: '模板名称', nullable: true })
-	sampleName: number
+	sampleName: string
 
 	@Column({ comment: '模板封面', nullable: true })
 	sampleCover: string
 
-	@Column({ comment: '模板内容', nullable: true })
+	@Column({ type: 'text', select: false, comment: '模板内容', nullable: true })
 	sampleContent: string
 
-	@Column({ type: 'text', comment: '自定义发送内容', nullable: true })
+	@Column({ type: 'text', select: false, comment: '自定义发送内容', nullable: true })
 	content: string
 
 	@Column({ type: 'bigint', comment: '用户UID', transformer: UUIDTransformer })

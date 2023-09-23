@@ -73,7 +73,7 @@ export class JobMailerScheduleConsumer extends CoreService {
 	@OnQueueProgress({ name: JOB_MAILER_SCHEDULE.process.schedule })
 	async onProgress(job: Job<any>) {
 		/**更新任务进度**/
-		console.log(`progress---更新任务进度: ${job.progress()} :---`, job.data)
+		// console.log(`progress---更新任务进度: ${job.progress()} :---`, job.data)
 		const cache = await this.redisService.getStore<any>(createScheduleCache(job.data.jobId))
 		await this.entity.mailerSchedule.update(
 			{ id: job.data.jobId },

@@ -2,7 +2,7 @@
 export const JOB_MAILER_SCHEDULE = {
 	name: 'mailer:job:schedule:instance',
 	removeOnComplete: true, //任务成功后不保留在redis
-	removeOnFail: false, //任务失败后保留在redis
+	removeOnFail: true, //任务失败后不保留在redis
 	process: {
 		schedule: 'schedule'
 	}
@@ -12,7 +12,7 @@ export const JOB_MAILER_SCHEDULE = {
 export const JOB_MAILER_EXECUTE = {
 	name: 'mailer:job:execute:instance',
 	removeOnComplete: true, //任务成功后不保留在redis
-	removeOnFail: false, //任务失败后保留在redis
+	removeOnFail: true, //任务失败后不保留在redis
 	process: {
 		execute: 'execute'
 	}

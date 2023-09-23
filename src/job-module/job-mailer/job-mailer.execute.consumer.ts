@@ -7,7 +7,7 @@ import { CoreService } from '@/core/core.service'
 import { RedisService } from '@/core/redis.service'
 import { EntityService } from '@/core/entity.service'
 import { useThrottle } from '@/hooks/hook-consumer'
-import { divineHandler, divineDelay } from '@/utils/utils-common'
+import { divineHandler, divineCompress } from '@/utils/utils-common'
 import { JOB_MAILER_EXECUTE } from '@/mailer-module/config/job-redis.resolver'
 import { createUserBasicCache } from '@/user-module/config/common-redis.resolver'
 import { createMailerAppCache, createScheduleCache, createMailerTemplateCache } from '@/mailer-module/config/common-redis.resolver'
@@ -30,6 +30,7 @@ export class JobMailerExecuteConsumer extends CoreService {
 	/**队列开始执行**/
 	@Process({ name: JOB_MAILER_EXECUTE.process.execute })
 	async onProcess(job: Job<any>) {
+		// this.logger.log(`process---邮件发送中: jobId: ${job.id}------:`, job.data)
 		const user = await this.redisService.getStore<any>(createUserBasicCache(job.data.userId))
 		const app = await this.redisService.getStore<any>(createMailerAppCache(job.data.appId))
 
@@ -57,6 +58,11 @@ export class JobMailerExecuteConsumer extends CoreService {
 							failure: failure.get(job.data.jobId)
 						})
 					)
+					console.log({
+						cache,
+						success: success.get(job.data.jobId),
+						failure: failure.get(job.data.jobId)
+					})
 					return await this.entity.mailerSchedule.update(
 						{ id: job.data.jobId },
 						{
@@ -71,9 +77,10 @@ export class JobMailerExecuteConsumer extends CoreService {
 		/**发送模板消息**/
 		await divineHandler(job.data.super === 'sample', async () => {
 			try {
-				this.logger.log(`process---邮件发送中: jobId: ${job.id}------:`, job.data)
+				console.log(success.get(job.data.jobId))
 				await success.set(job.data.jobId, (success.get(job.data.jobId) ?? 0) + 1)
 				const sample = await this.redisService.getStore<any>(createMailerTemplateCache(job.data.sampleId))
+				const content = await divineCompress(sample.mjml)
 				const node = await this.entity.mailerRecord.create({
 					super: 'sample',
 					status: 'fulfilled',
@@ -85,14 +92,14 @@ export class JobMailerExecuteConsumer extends CoreService {
 					sampleId: sample.id,
 					sampleName: sample.name,
 					sampleCover: sample.cover,
-					sampleContent: '<p>Holle</p>',
+					sampleContent: content,
 					userId: user.uid,
 					nickname: user.nickname,
 					avatar: user.avatar
 				})
 				await this.entity.mailerRecord.save(node)
 			} catch (e) {
-				// console.log(e)
+				console.log(e)
 			}
 		})
 
@@ -104,6 +111,6 @@ export class JobMailerExecuteConsumer extends CoreService {
 		await updateConsumer()
 
 		await job.progress(100)
-		return await job.discard()
+		return await job.promote()
 	}
 }
