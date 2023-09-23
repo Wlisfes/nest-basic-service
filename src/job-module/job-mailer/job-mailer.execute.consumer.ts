@@ -10,7 +10,7 @@ import { useThrottle } from '@/hooks/hook-consumer'
 import { divineHandler, divineCompress } from '@/utils/utils-common'
 import { JOB_MAILER_EXECUTE } from '@/mailer-module/config/job-redis.resolver'
 import { createUserBasicCache } from '@/user-module/config/common-redis.resolver'
-import { createMailerAppCache, createScheduleCache, createMailerTemplateCache } from '@/mailer-module/config/common-redis.resolver'
+import { createMailerAppCache, createMailerTemplateCache } from '@/mailer-module/config/common-redis.resolver'
 
 const consumer = new Map<number, Function>()
 const success = new Map<number, number>()
@@ -50,19 +50,6 @@ export class JobMailerExecuteConsumer extends CoreService {
 			return consumer.set(
 				job.data.jobId,
 				update(async () => {
-					const cache = await this.redisService.getStore(createScheduleCache(job.data.jobId))
-					await this.redisService.setStore(
-						createScheduleCache(job.data.jobId),
-						Object.assign(cache, {
-							success: success.get(job.data.jobId),
-							failure: failure.get(job.data.jobId)
-						})
-					)
-					console.log({
-						cache,
-						success: success.get(job.data.jobId),
-						failure: failure.get(job.data.jobId)
-					})
 					return await this.entity.mailerSchedule.update(
 						{ id: job.data.jobId },
 						{
@@ -76,41 +63,36 @@ export class JobMailerExecuteConsumer extends CoreService {
 
 		/**发送模板消息**/
 		await divineHandler(job.data.super === 'sample', async () => {
-			try {
-				console.log(success.get(job.data.jobId))
-				await success.set(job.data.jobId, (success.get(job.data.jobId) ?? 0) + 1)
-				const sample = await this.redisService.getStore<any>(createMailerTemplateCache(job.data.sampleId))
-				const content = await divineCompress(sample.mjml)
-				const node = await this.entity.mailerRecord.create({
-					super: 'sample',
-					status: 'fulfilled',
-					receive: job.data.receive,
-					jobId: job.data.jobId,
-					jobName: job.data.jobName,
-					appId: app.appId,
-					appName: app.name,
-					sampleId: sample.id,
-					sampleName: sample.name,
-					sampleCover: sample.cover,
-					sampleContent: content,
-					userId: user.uid,
-					nickname: user.nickname,
-					avatar: user.avatar
-				})
-				await this.entity.mailerRecord.save(node)
-			} catch (e) {
-				console.log(e)
-			}
+			// await success.set(job.data.jobId, (success.get(job.data.jobId) ?? 0) + 1)
+			// const sample = await this.redisService.getStore<any>(createMailerTemplateCache(job.data.sampleId))
+			// const content = await divineCompress(sample.mjml)
+			// const node = await this.entity.mailerRecord.create({
+			// 	super: 'sample',
+			// 	status: 'fulfilled',
+			// 	receive: job.data.receive,
+			// 	jobId: job.data.jobId,
+			// 	jobName: job.data.jobName,
+			// 	appId: app.appId,
+			// 	appName: app.name,
+			// 	sampleId: sample.id,
+			// 	sampleName: sample.name,
+			// 	sampleCover: sample.cover,
+			// 	sampleContent: content,
+			// 	userId: user.uid,
+			// 	nickname: user.nickname,
+			// 	avatar: user.avatar
+			// })
+			// await this.entity.mailerRecord.save(node)
 		})
 
 		/**发送自定义消息**/
 		await divineHandler(job.data.super === 'customize', async () => {})
 
 		/**执行节流操作更新**/
-		const updateConsumer = consumer.get(job.data.jobId)
-		await updateConsumer()
+		// const updateConsumer = consumer.get(job.data.jobId)
+		// await updateConsumer()
 
 		await job.progress(100)
-		return await job.promote()
+		return await job.discard()
 	}
 }

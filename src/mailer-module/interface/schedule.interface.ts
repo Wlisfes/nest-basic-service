@@ -38,3 +38,6 @@ export class ScheduleSampleReducer extends PickType(MailerSchedule, ['appId', 'n
 
 /**创建自定义发送队列**/
 export class ScheduleCustomizeReducer extends PickType(MailerSchedule, ['appId', 'name', 'type', 'sendTime', 'content']) {}
+
+/**任务队列列表**/
+export class ColumnSchedule extends IntersectionType(PickType(Request, ['page', 'size']), PickType(MailerSchedule, [])) {}

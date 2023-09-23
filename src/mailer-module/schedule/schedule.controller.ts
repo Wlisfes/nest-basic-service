@@ -42,4 +42,14 @@ export class ScheduleController {
 	public async httpScheduleCustomizeReducer(@Request() request, @Body() body: http.ScheduleCustomizeReducer) {
 		return await this.scheduleService.httpScheduleCustomizeReducer(body, request.user.uid)
 	}
+
+	@Get('/column')
+	@ApiDecorator({
+		operation: { summary: '任务队列列表' },
+		customize: { status: 200, description: 'OK', type: Notice },
+		authorize: { login: true, error: true }
+	})
+	public async httpColumnSchedule(@Request() request, @Query() query: http.ColumnSchedule) {
+		return await this.scheduleService.httpColumnSchedule(query, request.user.uid)
+	}
 }

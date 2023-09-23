@@ -155,4 +155,30 @@ export class ScheduleService extends CoreService {
 			})
 		})
 	}
+
+	/**任务队列列表**/
+	public async httpColumnSchedule(props: http.ColumnSchedule, uid: number) {
+		return await this.RunCatch(async i18n => {
+			const { total, list } = await this.batchValidator({
+				model: this.entity.mailerSchedule,
+				options: {
+					join: {
+						alias: 'tb',
+						leftJoinAndSelect: {
+							user: 'tb.user',
+							app: 'tb.app',
+							sample: 'tb.sample'
+						}
+					},
+					where: new Brackets(qb => {
+						qb.where('user.uid = :uid', { uid })
+					}),
+					order: { createTime: 'DESC' },
+					skip: (props.page - 1) * props.size,
+					take: props.size
+				}
+			})
+			return await divineResult({ size: props.size, page: props.page, total, list })
+		})
+	}
 }
