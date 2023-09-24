@@ -6,7 +6,7 @@ import { MailerPackageService } from './package.service'
 import * as http from '../interface/package.interface'
 
 @ApiTags('邮件套餐包模块')
-@Controller('package/mailer')
+@Controller('mailer/package')
 export class MailerPackageController {
 	constructor(private readonly packageService: MailerPackageService) {}
 

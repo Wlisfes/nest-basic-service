@@ -8,7 +8,7 @@ import { sampleTransfer } from '@/mailer-module/nodemailer/nodemailer.provider'
 import * as http from '@/mailer-module/interface/schedule.interface'
 
 @ApiTags('邮件任务模块')
-@Controller('schedule')
+@Controller('mailer/schedule')
 export class ScheduleController {
 	constructor(private readonly scheduleService: ScheduleService, private readonly redisService: RedisService) {}
 
