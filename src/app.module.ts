@@ -4,6 +4,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config'
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm'
 import { RedisModule } from '@nestjs-modules/ioredis'
 import { BullModule } from '@nestjs/bull'
+import { ScheduleModule } from '@nestjs/schedule'
 import { I18nModule, HeaderResolver, I18nJsonLoader } from 'nestjs-i18n'
 import { FairMiddleware } from '@/middleware/fair/fair.middleware'
 import { AuthGuard } from '@/guard/auth.guard'
@@ -17,6 +18,7 @@ import * as path from 'path'
 @Module({
 	imports: [
 		ConfigModule.forRoot({ isGlobal: true }),
+		ScheduleModule.forRoot(),
 		I18nModule.forRoot({
 			fallbackLanguage: 'cn',
 			loader: I18nJsonLoader,

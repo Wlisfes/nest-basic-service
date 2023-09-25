@@ -1,13 +1,14 @@
 import { Logger } from '@nestjs/common'
 import { Processor, Process, OnQueueProgress, OnQueueCompleted, OnQueueFailed, OnQueueRemoved } from '@nestjs/bull'
 import { Job } from 'bull'
+import { Cron, CronExpression, SchedulerRegistry } from '@nestjs/schedule'
 import { isEmpty } from 'class-validator'
 import { EventEmitter2 } from '@nestjs/event-emitter'
 import { CoreService } from '@/core/core.service'
 import { RedisService } from '@/core/redis.service'
 import { EntityService } from '@/core/entity.service'
 import { useThrottle } from '@/hooks/hook-consumer'
-import { divineHandler, divineCompress } from '@/utils/utils-common'
+import { moment, divineHandler, divineCompress } from '@/utils/utils-common'
 import { JOB_MAILER_EXECUTE } from '@/mailer-module/config/job-redis.resolver'
 import { createUserBasicCache } from '@/user-module/config/common-redis.resolver'
 import { createMailerAppCache, createMailerTemplateCache } from '@/mailer-module/config/common-redis.resolver'
@@ -22,9 +23,17 @@ export class JobMailerExecuteConsumer extends CoreService {
 	constructor(
 		private readonly event: EventEmitter2,
 		private readonly entity: EntityService,
-		private readonly redisService: RedisService
+		private readonly redisService: RedisService,
+		private readonly schedulerRegistry: SchedulerRegistry
 	) {
 		super()
+	}
+
+	@Cron(CronExpression.EVERY_5_SECONDS, { name: JOB_MAILER_EXECUTE.CronSchedule })
+	async cronConsumer(e) {
+		const job = this.schedulerRegistry.getCronJob(JOB_MAILER_EXECUTE.CronSchedule)
+		job.stop()
+		this.logger.debug(`CronConsumer: `, moment().format('YYYY-MM-DD HH:mm:ss'))
 	}
 
 	/**队列开始执行**/
