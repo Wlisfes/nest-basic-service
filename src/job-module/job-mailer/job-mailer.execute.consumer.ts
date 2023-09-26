@@ -11,7 +11,11 @@ import { useThrottle } from '@/hooks/hook-consumer'
 import { moment, divineHandler, divineCompress } from '@/utils/utils-common'
 import { JOB_MAILER_EXECUTE } from '@/mailer-module/config/job-redis.resolver'
 import { createUserBasicCache } from '@/user-module/config/common-redis.resolver'
-import { createMailerAppCache, createMailerTemplateCache } from '@/mailer-module/config/common-redis.resolver'
+import {
+	createMailerAppCache,
+	createMailerTemplateCache,
+	createMailerScheduleProgressCache
+} from '@/mailer-module/config/common-redis.resolver'
 
 const consumer = new Map<number, Function>()
 const success = new Map<number, number>()
@@ -20,6 +24,7 @@ const failure = new Map<number, number>()
 @Processor({ name: JOB_MAILER_EXECUTE.name })
 export class JobMailerExecuteConsumer extends CoreService {
 	private readonly logger = new Logger(JobMailerExecuteConsumer.name)
+	private isCron: boolean = true
 	constructor(
 		private readonly event: EventEmitter2,
 		private readonly entity: EntityService,
@@ -27,13 +32,31 @@ export class JobMailerExecuteConsumer extends CoreService {
 		private readonly schedulerRegistry: SchedulerRegistry
 	) {
 		super()
+
+		// this.redisService.client.lrange(`:mailer:job:schedule:progress`, 0, -1, (err, r) => {
+		// 	console.log(err, r)
+		// 	this.logger.debug(`CronConsumer: `, moment().format('YYYY-MM-DD HH:mm:ss'))
+		// })
 	}
 
 	@Cron(CronExpression.EVERY_5_SECONDS, { name: JOB_MAILER_EXECUTE.CronSchedule })
-	async cronConsumer(e) {
+	async cronConsumer() {
+		const cacheName = createMailerScheduleProgressCache()
 		const job = this.schedulerRegistry.getCronJob(JOB_MAILER_EXECUTE.CronSchedule)
-		job.stop()
-		this.logger.debug(`CronConsumer: `, moment().format('YYYY-MM-DD HH:mm:ss'))
+
+		this.redisService.client.lrange(cacheName, 0, -1, async (err, response = []) => {
+			await this.redisService.client.ltrim(cacheName, 0, -(response.length + 1))
+			console.log(response)
+			if (response.length === 0) {
+				this.isCron = false
+				job.stop()
+			}
+			this.logger.debug(`CronConsumer: `, moment().format('YYYY-MM-DD HH:mm:ss'))
+		})
+		// this.redisService.client.ltrim(`:mailer:job:schedule:progress`, 0, 4, async (err, r) => {
+		// 	console.log(err, e, r)
+		// 	this.logger.debug(`CronConsumer: `, moment().format('YYYY-MM-DD HH:mm:ss'))
+		// })
 	}
 
 	/**队列开始执行**/
@@ -70,6 +93,15 @@ export class JobMailerExecuteConsumer extends CoreService {
 			)
 		})
 
+		await this.redisService.client.lpush(
+			`:mailer:job:schedule:progress`,
+			JSON.stringify({
+				jobId: job.data.jobId,
+				id: job.id,
+				success: 1
+			})
+		)
+
 		/**发送模板消息**/
 		await divineHandler(job.data.super === 'sample', async () => {
 			// await success.set(job.data.jobId, (success.get(job.data.jobId) ?? 0) + 1)
@@ -101,6 +133,11 @@ export class JobMailerExecuteConsumer extends CoreService {
 		// const updateConsumer = consumer.get(job.data.jobId)
 		// await updateConsumer()
 
+		await divineHandler(!this.isCron, () => {
+			this.isCron = true
+			const job = this.schedulerRegistry.getCronJob(JOB_MAILER_EXECUTE.CronSchedule)
+			job.start()
+		})
 		await job.progress(100)
 		return await job.discard()
 	}

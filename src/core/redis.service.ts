@@ -3,7 +3,7 @@ import { InjectRedis, Redis } from '@nestjs-modules/ioredis'
 
 @Injectable()
 export class RedisService {
-	constructor(@InjectRedis() private readonly client: Redis) {}
+	constructor(@InjectRedis() public readonly client: Redis) {}
 
 	/**redis存储**/
 	public async setStore(key: string, data: any, seconds?: number) {
