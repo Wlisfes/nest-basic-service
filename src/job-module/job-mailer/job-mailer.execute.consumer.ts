@@ -37,10 +37,16 @@ export class JobMailerExecuteConsumer extends CoreService {
 
 	@Cron(CronExpression.EVERY_5_SECONDS, { name: JOB_MAILER_EXECUTE.CronSchedule })
 	async cronConsumer() {
-		const { successCache, failureCache } = createMailerScheduleCache('*')
-		const failure = await this.redisService.getStore(failureCache.slice(1))
+		const { successCache, failureCache } = createMailerScheduleCache(23)
+		const failure = await this.redisService.getStore(failureCache)
 		const success = await this.redisService.client.keys(successCache.slice(1))
-		console.log({ successCache, failureCache, failure, success })
+		console.log({
+			successCache,
+			failureCache,
+			failure,
+			success,
+			keys: await this.redisService.client.keys('*')
+		})
 
 		// const cacheName = createMailerScheduleCache()
 		// const job = this.schedulerRegistry.getCronJob(JOB_MAILER_EXECUTE.CronSchedule)
