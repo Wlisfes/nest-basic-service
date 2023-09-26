@@ -8,14 +8,10 @@ import { CoreService } from '@/core/core.service'
 import { RedisService } from '@/core/redis.service'
 import { EntityService } from '@/core/entity.service'
 import { useThrottle } from '@/hooks/hook-consumer'
-import { moment, divineHandler, divineCompress } from '@/utils/utils-common'
+import { moment, divineHandler, divineDelay, divineCompress } from '@/utils/utils-common'
 import { JOB_MAILER_EXECUTE } from '@/mailer-module/config/job-redis.resolver'
 import { createUserBasicCache } from '@/user-module/config/common-redis.resolver'
-import {
-	createMailerAppCache,
-	createMailerTemplateCache,
-	createMailerScheduleProgressCache
-} from '@/mailer-module/config/common-redis.resolver'
+import { createMailerAppCache, createMailerTemplateCache, createMailerScheduleCache } from '@/mailer-module/config/common-redis.resolver'
 
 const consumer = new Map<number, Function>()
 const success = new Map<number, number>()
@@ -41,18 +37,22 @@ export class JobMailerExecuteConsumer extends CoreService {
 
 	@Cron(CronExpression.EVERY_5_SECONDS, { name: JOB_MAILER_EXECUTE.CronSchedule })
 	async cronConsumer() {
-		const cacheName = createMailerScheduleProgressCache()
-		const job = this.schedulerRegistry.getCronJob(JOB_MAILER_EXECUTE.CronSchedule)
+		const { successCache, failureCache } = createMailerScheduleCache('*')
+		const failure = await this.redisService.getStore(failureCache.slice(1))
+		const success = await this.redisService.client.keys(successCache.slice(1))
+		console.log({ successCache, failureCache, failure, success })
 
-		this.redisService.client.lrange(cacheName, 0, -1, async (err, response = []) => {
-			await this.redisService.client.ltrim(cacheName, 0, -(response.length + 1))
-			console.log(response)
-			if (response.length === 0) {
-				this.isCron = false
-				job.stop()
-			}
-			this.logger.debug(`CronConsumer: `, moment().format('YYYY-MM-DD HH:mm:ss'))
-		})
+		// const cacheName = createMailerScheduleCache()
+		// const job = this.schedulerRegistry.getCronJob(JOB_MAILER_EXECUTE.CronSchedule)
+		// this.redisService.client.lrange(cacheName, 0, -1, async (err, response = []) => {
+		// 	await this.redisService.client.ltrim(cacheName, 0, -(response.length + 1))
+		// 	console.log(response)
+		// 	if (response.length === 0) {
+		// 		this.isCron = false
+		// 		job.stop()
+		// 	}
+		// 	this.logger.debug(`CronConsumer: `, moment().format('YYYY-MM-DD HH:mm:ss'))
+		// })
 		// this.redisService.client.ltrim(`:mailer:job:schedule:progress`, 0, 4, async (err, r) => {
 		// 	console.log(err, e, r)
 		// 	this.logger.debug(`CronConsumer: `, moment().format('YYYY-MM-DD HH:mm:ss'))
@@ -63,6 +63,7 @@ export class JobMailerExecuteConsumer extends CoreService {
 	@Process({ name: JOB_MAILER_EXECUTE.process.execute })
 	async onProcess(job: Job<any>) {
 		// this.logger.log(`process---邮件发送中: jobId: ${job.id}------:`, job.data)
+		const { successCache, failureCache } = createMailerScheduleCache(job.data.jobId)
 		const user = await this.redisService.getStore<any>(createUserBasicCache(job.data.userId))
 		const app = await this.redisService.getStore<any>(createMailerAppCache(job.data.appId))
 
@@ -93,14 +94,7 @@ export class JobMailerExecuteConsumer extends CoreService {
 			)
 		})
 
-		await this.redisService.client.lpush(
-			`:mailer:job:schedule:progress`,
-			JSON.stringify({
-				jobId: job.data.jobId,
-				id: job.id,
-				success: 1
-			})
-		)
+		await this.redisService.client.incr(successCache)
 
 		/**发送模板消息**/
 		await divineHandler(job.data.super === 'sample', async () => {
@@ -133,11 +127,11 @@ export class JobMailerExecuteConsumer extends CoreService {
 		// const updateConsumer = consumer.get(job.data.jobId)
 		// await updateConsumer()
 
-		await divineHandler(!this.isCron, () => {
-			this.isCron = true
-			const job = this.schedulerRegistry.getCronJob(JOB_MAILER_EXECUTE.CronSchedule)
-			job.start()
-		})
+		// await divineHandler(!this.isCron, () => {
+		// 	this.isCron = true
+		// 	const job = this.schedulerRegistry.getCronJob(JOB_MAILER_EXECUTE.CronSchedule)
+		// 	job.start()
+		// })
 		await job.progress(100)
 		return await job.discard()
 	}
