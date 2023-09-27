@@ -1,4 +1,5 @@
 import { Logger } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
 import { Processor, Process, OnQueueProgress, OnQueueCompleted, OnQueueFailed, OnQueueRemoved } from '@nestjs/bull'
 import { Job } from 'bull'
 import { Cron, CronExpression, SchedulerRegistry } from '@nestjs/schedule'
@@ -13,10 +14,6 @@ import { JOB_MAILER_EXECUTE } from '@/mailer-module/config/job-redis.resolver'
 import { createUserBasicCache } from '@/user-module/config/common-redis.resolver'
 import { createMailerAppCache, createMailerTemplateCache, createMailerScheduleCache } from '@/mailer-module/config/common-redis.resolver'
 
-const consumer = new Map<number, Function>()
-const success = new Map<number, number>()
-const failure = new Map<number, number>()
-
 @Processor({ name: JOB_MAILER_EXECUTE.name })
 export class JobMailerExecuteConsumer extends CoreService {
 	private readonly logger = new Logger(JobMailerExecuteConsumer.name)
@@ -25,81 +22,62 @@ export class JobMailerExecuteConsumer extends CoreService {
 		private readonly event: EventEmitter2,
 		private readonly entity: EntityService,
 		private readonly redisService: RedisService,
-		private readonly schedulerRegistry: SchedulerRegistry
+		private readonly schedulerRegistry: SchedulerRegistry,
+		private readonly configService: ConfigService
 	) {
 		super()
+	}
 
-		// this.redisService.client.lrange(`:mailer:job:schedule:progress`, 0, -1, (err, r) => {
-		// 	console.log(err, r)
-		// 	this.logger.debug(`CronConsumer: `, moment().format('YYYY-MM-DD HH:mm:ss'))
-		// })
+	/**读取redis任务进度缓存**/
+	public async readExecuteCache() {
+		const prefix = await this.configService.get('NODE_ENV').trim()
+		const { executeCache } = createMailerScheduleCache('*', prefix)
+		const executeKeys = (await this.redisService.client.keys(executeCache)).map(key => key.replace(prefix, ''))
+		if (executeKeys.length > 0) {
+			const response = await this.redisService.client.mget(...executeKeys)
+			return executeKeys.map((key, index) => ({
+				jobId: Number(key.slice(key.lastIndexOf(':') + 1, key.length)),
+				value: Number(response[index] ?? 0)
+			}))
+		} else {
+			return []
+		}
 	}
 
 	@Cron(CronExpression.EVERY_5_SECONDS, { name: JOB_MAILER_EXECUTE.CronSchedule })
-	async cronConsumer() {
-		const { successCache, failureCache } = createMailerScheduleCache(23)
-		const failure = await this.redisService.getStore(failureCache)
-		const success = await this.redisService.client.keys(successCache.slice(1))
-		console.log({
-			successCache,
-			failureCache,
-			failure,
-			success,
-			keys: await this.redisService.client.keys('*')
-		})
-
-		// const cacheName = createMailerScheduleCache()
-		// const job = this.schedulerRegistry.getCronJob(JOB_MAILER_EXECUTE.CronSchedule)
-		// this.redisService.client.lrange(cacheName, 0, -1, async (err, response = []) => {
-		// 	await this.redisService.client.ltrim(cacheName, 0, -(response.length + 1))
-		// 	console.log(response)
-		// 	if (response.length === 0) {
-		// 		this.isCron = false
-		// 		job.stop()
-		// 	}
-		// 	this.logger.debug(`CronConsumer: `, moment().format('YYYY-MM-DD HH:mm:ss'))
-		// })
-		// this.redisService.client.ltrim(`:mailer:job:schedule:progress`, 0, 4, async (err, r) => {
-		// 	console.log(err, e, r)
-		// 	this.logger.debug(`CronConsumer: `, moment().format('YYYY-MM-DD HH:mm:ss'))
-		// })
+	public async cronConsumer() {
+		this.logger.debug('定时任务执行:', moment().format('YYYY-MM-DD HH:mm:ss'))
+		const job = this.schedulerRegistry.getCronJob(JOB_MAILER_EXECUTE.CronSchedule)
+		const schedule = await this.readExecuteCache()
+		if (schedule.length > 0) {
+			/**存在任务执行进度**/
+			for (let index = 0; index < schedule.length; index++) {
+				const cache = schedule[index]
+				const { successCache, failureCache, totalCache, executeCache } = createMailerScheduleCache(cache.jobId)
+				const total = await this.redisService.getStore<number>(totalCache)
+				const success = await this.redisService.getStore<number>(successCache)
+				const failure = await this.redisService.getStore<number>(failureCache)
+				await this.entity.mailerSchedule.update({ id: cache.jobId }, { success, failure }).then(() => {
+					return divineHandler(cache.value >= total, async () => {
+						await this.redisService.delStore(executeCache)
+					})
+				})
+			}
+		} else {
+			/**不存在任务执行进度、停止定时任务**/
+			this.isCron = false
+			job.stop()
+		}
 	}
 
 	/**队列开始执行**/
 	@Process({ name: JOB_MAILER_EXECUTE.process.execute })
 	async onProcess(job: Job<any>) {
 		// this.logger.log(`process---邮件发送中: jobId: ${job.id}------:`, job.data)
-		const { successCache, failureCache } = createMailerScheduleCache(job.data.jobId)
+		const { successCache, failureCache, executeCache } = createMailerScheduleCache(job.data.jobId)
 		const user = await this.redisService.getStore<any>(createUserBasicCache(job.data.userId))
 		const app = await this.redisService.getStore<any>(createMailerAppCache(job.data.appId))
-
-		/**添加任务成功数缓存**/
-		await divineHandler(isEmpty(success.get(job.data.jobId)), () => {
-			return success.set(job.data.jobId, 0)
-		})
-
-		/**添加任务失败数缓存**/
-		await divineHandler(isEmpty(failure.get(job.data.jobId)), () => {
-			return failure.set(job.data.jobId, 0)
-		})
-
-		/**添加任务节流操作缓存**/
-		await divineHandler(!consumer.get(job.data.jobId), () => {
-			const update = useThrottle(5000)
-			return consumer.set(
-				job.data.jobId,
-				update(async () => {
-					return await this.entity.mailerSchedule.update(
-						{ id: job.data.jobId },
-						{
-							success: success.get(job.data.jobId),
-							failure: failure.get(job.data.jobId)
-						}
-					)
-				})
-			)
-		})
-
+		await this.redisService.client.incr(executeCache)
 		await this.redisService.client.incr(successCache)
 
 		/**发送模板消息**/
@@ -133,11 +111,12 @@ export class JobMailerExecuteConsumer extends CoreService {
 		// const updateConsumer = consumer.get(job.data.jobId)
 		// await updateConsumer()
 
-		// await divineHandler(!this.isCron, () => {
-		// 	this.isCron = true
-		// 	const job = this.schedulerRegistry.getCronJob(JOB_MAILER_EXECUTE.CronSchedule)
-		// 	job.start()
-		// })
+		/**判断定时任务是否在执行、不执行就启动定时任务**/
+		await divineHandler(!this.isCron, () => {
+			this.isCron = true
+			const job = this.schedulerRegistry.getCronJob(JOB_MAILER_EXECUTE.CronSchedule)
+			job.start()
+		})
 		await job.progress(100)
 		return await job.discard()
 	}

@@ -26,11 +26,12 @@ export class JobMailerScheduleConsumer extends CoreService {
 	/**队列开始执行**/
 	@Process({ name: JOB_MAILER_SCHEDULE.process.schedule })
 	async onProcess(job: Job<any>) {
-		this.logger.log(`process---${job.data.jobName}邮件任务队列开始执行:`, `jobId: ${job.id}`, job.data)
+		this.logger.log(`process--- "${job.data.jobName}" 邮件任务队列开始执行:`, `jobId: ${job.id}`)
 
 		const updateConsumer = useThrottle(3000)
-		const { totalCache, successCache, failureCache } = createMailerScheduleCache(job.data.jobId)
+		const { totalCache, successCache, failureCache, executeCache } = createMailerScheduleCache(job.data.jobId)
 		await this.redisService.setStore(totalCache, job.data.total)
+		await this.redisService.setStore(executeCache, 0)
 		await this.redisService.setStore(successCache, 0)
 		await this.redisService.setStore(failureCache, 0)
 
@@ -55,14 +56,14 @@ export class JobMailerScheduleConsumer extends CoreService {
 		/**任务状态切换到-发送完成**/
 		await this.entity.mailerSchedule.update({ id: job.data.jobId }, { status: 'fulfilled' })
 
-		this.logger.log(`process---${job.data.jobName}邮件任务队列执行完毕:`, `jobId: ${job.id}`, job.data)
+		this.logger.log(`process--- "${job.data.jobName}" 邮件任务队列执行完毕:`, `jobId: ${job.id}`)
 		return await job.discard()
 	}
 
 	@OnQueueProgress({ name: JOB_MAILER_SCHEDULE.process.schedule })
 	async onProgress(job: Job<any>) {
 		/**更新任务进度**/
-		console.log(`progress---${job.data.jobName}邮件任务进度: ${job.progress()}% :-----`, `jobId: ${job.id}`)
+		this.logger.log(`progress---${job.data.jobName}邮件任务进度: ${job.progress()}% :-----`, `jobId: ${job.id}`)
 		const { submitCache, progressCache } = createMailerScheduleCache(job.data.jobId)
 		await this.redisService.setStore(submitCache, job.data.submit)
 		await this.redisService.setStore(progressCache, job.progress())
