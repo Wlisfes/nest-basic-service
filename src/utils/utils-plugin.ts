@@ -32,21 +32,18 @@ export function divineUnzipCompr(value: Buffer) {
 }
 
 /**解析excel表格文件**/
-export function divineParsesheet(buffer: Excel.Buffer) {
+export function divineParsesheet(buffer: Excel.Buffer): Promise<{ total: number; list: Array<Record<string, string>> }> {
 	return new Promise(async (resolve, reject) => {
 		try {
 			const excel = new Excel.Workbook()
 			await excel.xlsx.load(buffer)
 			const sheet = excel.getWorksheet(1)
-			const jsonData = []
+			const jsonData: Array<Record<string, string>> = []
 			sheet.eachRow({ includeEmpty: false }, (row, rowNumber) => {
-				const rowData = {}
-
-				row.eachCell((cell, colNumber) => {
-					console.log({ cell: cell.value, rowNumber, colNumber })
-					rowData[`column_${colNumber}`] = cell.value
+				const rowData: Record<string, string> = {}
+				row.eachCell((cell: any, colNumber) => {
+					rowData[`COLUMN_${colNumber}`] = cell.value.text ?? cell.value
 				})
-
 				jsonData.push(rowData)
 			})
 			resolve({ total: jsonData.length, list: jsonData })

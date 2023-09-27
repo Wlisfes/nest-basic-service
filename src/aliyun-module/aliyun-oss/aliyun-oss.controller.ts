@@ -34,23 +34,32 @@ export class AliyunOssController {
 		consumes: ['multipart/form-data']
 	})
 	@ApiBody({ type: FileUploadDto })
-	@UseInterceptors(FileInterceptor('file'))
+	@UseInterceptors(
+		FileInterceptor('file', {
+			fileFilter(r, file, callback) {
+				if (['.csv', '.xlsx'].includes(file.originalname.slice(file.originalname.lastIndexOf('.')))) {
+					return callback(null, true)
+				}
+				return callback(new HttpException('文件类型错误', HttpStatus.BAD_REQUEST), false)
+			}
+		})
+	)
 	public async httpCreateUploadExcel(
-		@UploadedFile()
-		// new ParseFilePipe({
-		// 	validators: [new FileTypeValidator({ fileType: 'image/xlsx' })],
-		// 	errorHttpStatusCode: HttpStatus.BAD_REQUEST,
-		// 	exceptionFactory: error => new HttpException('文件类型错误', HttpStatus.BAD_REQUEST)
-		// }),
-		// new ParseFilePipe({
-		// 	validators: [new MaxFileSizeValidator({ maxSize: 1024 * 5 })],
-		// 	errorHttpStatusCode: HttpStatus.BAD_REQUEST,
-		// 	exceptionFactory: error => new HttpException('文件大小不能超过5MB', HttpStatus.BAD_REQUEST)
-		// })
+		@UploadedFile(
+			//https://stackoverflow.com/questions/974079/setting-mime-type-for-excel-document
+			// new ParseFilePipe({
+			// 	validators: [new FileTypeValidator({ fileType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', })],
+			// 	errorHttpStatusCode: HttpStatus.BAD_REQUEST,
+			// 	exceptionFactory: error => new HttpException('文件类型错误', HttpStatus.BAD_REQUEST)
+			// }),
+			new ParseFilePipe({
+				validators: [new MaxFileSizeValidator({ maxSize: 1024 * 1024 * 1 })],
+				errorHttpStatusCode: HttpStatus.BAD_REQUEST,
+				exceptionFactory: error => new HttpException('文件大小不能超过5MB', HttpStatus.BAD_REQUEST)
+			})
+		)
 		file
 	) {
-		console.log(file)
-		return { message: 'OK' }
-		// return await divineParsesheet(file.buffer)
+		return await divineParsesheet(file.buffer)
 	}
 }
