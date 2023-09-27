@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common'
 import { Brackets } from 'typeorm'
 import { CoreService } from '@/core/core.service'
 import { EntityService } from '@/core/entity.service'
-import { moment, divineResult, divineHandler } from '@/utils/utils-common'
+import { divineResult, divineHandler } from '@/utils/utils-common'
 import * as http from '../interface/app.interface'
 
 @Injectable()

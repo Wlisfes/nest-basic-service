@@ -1,45 +1,7 @@
-import * as dayjs from 'dayjs'
-import * as zlib from 'zlib'
-export const moment = dayjs
-
-/**字符串压缩**/
-export function divineCompress(value: string): Promise<string> {
-	return new Promise((resolve, reject) => {
-		zlib.deflate(value, (err, buffer) => {
-			if (err) {
-				console.error('压缩失败:', err)
-				reject('压缩失败')
-			} else {
-				resolve(buffer.toString('base64'))
-			}
-		})
-	})
-}
-
-/**字符串解压**/
-export function divineUnzipCompr(value: Buffer) {
-	return new Promise((resolve, reject) => {
-		zlib.inflate(value, (err, buffer) => {
-			if (err) {
-				console.error('解压失败:', err)
-				reject('解压失败')
-			} else {
-				resolve(buffer.toString())
-			}
-		})
-	})
-}
-
 /**返回包装**/
-export async function divineResult<
-	T = {
-		message: string
-		list: Array<unknown>
-		total: number
-		page: number
-		size: number
-	}
->(data: T): Promise<T> {
+export async function divineResult<T = { message: string; list: Array<unknown>; total: number; page: number; size: number }>(
+	data: T
+): Promise<T> {
 	return data
 }
 
@@ -88,15 +50,5 @@ export async function divineDeduction(value: number, option: { credit: number; b
 		const balance = option.credit + option.balance - value - option.credit
 		const credit = option.credit + option.balance - value
 		return { balance, credit }
-	}
-}
-
-/**邮件模板JSON转换**/
-export function divineJsonTransfer(data: Record<string, any>) {
-	return {
-		attributes: data.attributes ?? {},
-		tagName: data.tagName ?? '',
-		content: data.content ?? '',
-		children: (data.children ?? []).map(item => divineJsonTransfer(item))
 	}
 }

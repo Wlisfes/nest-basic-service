@@ -3,7 +3,8 @@ import { Brackets, In } from 'typeorm'
 import { CoreService } from '@/core/core.service'
 import { EntityService } from '@/core/entity.service'
 import { UserService } from '@/user-module/user/user.service'
-import { moment, divineResult, divineHandler, divineTransfer } from '@/utils/utils-common'
+import { divineResult, divineHandler, divineTransfer } from '@/utils/utils-common'
+import { moment } from '@/utils/utils-plugin'
 import * as http from '../interface/package.interface'
 
 @Injectable()
