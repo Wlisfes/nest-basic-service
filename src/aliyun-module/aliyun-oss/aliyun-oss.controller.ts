@@ -1,10 +1,11 @@
-import { Controller, Post, Get, Put, Body, Query, Request, Response, UseInterceptors, UploadedFile } from '@nestjs/common'
+import { Controller, Post, Get, Put, Body, Query, HttpStatus, HttpException, UseInterceptors } from '@nestjs/common'
+import { UploadedFile, ParseFilePipe, MaxFileSizeValidator, FileTypeValidator } from '@nestjs/common'
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express'
 import { ApiTags, ApiConsumes, ApiProperty, ApiOperation, ApiBody } from '@nestjs/swagger'
 import { ApiDecorator } from '@/decorator/compute.decorator'
 import { Notice } from '@/interface/common.interface'
 import { AliyunOssService } from '@/aliyun-module/aliyun-oss/aliyun-oss.service'
-import * as Excel from 'exceljs'
+import { divineParsesheet } from '@/utils/utils-plugin'
 
 class FileUploadDto {
 	@ApiProperty({ type: 'string', format: 'binary' })
@@ -27,37 +28,29 @@ export class AliyunOssController {
 	}
 
 	@Post('/resolve/excel')
-	@ApiOperation({ summary: '上传' })
-	// @ApiDecorator({
-	// 	operation: { summary: '创建OSS-STS临时鉴权' },
-	// 	response: { status: 200, description: 'OK' }
-	// 	// authorize: { login: true, error: true }
-	// })
-	@ApiConsumes('multipart/form-data')
-	@ApiBody({
-		description: 'List of cats',
-		type: FileUploadDto
+	@ApiDecorator({
+		operation: { summary: '创建OSS-STS临时鉴权' },
+		response: { status: 200, description: 'OK', type: Notice },
+		consumes: ['multipart/form-data']
 	})
+	@ApiBody({ type: FileUploadDto })
 	@UseInterceptors(FileInterceptor('file'))
-	public async httpCreateUploadExcel(@UploadedFile() file) {
-		const workbook = new Excel.Workbook()
-		await workbook.xlsx.load(file.buffer)
-		const worksheet = workbook.getWorksheet(1)
-
-		const jsonData = []
-		return await new Promise(resolve => {
-			worksheet.eachRow({ includeEmpty: false }, (row, rowNumber) => {
-				const rowData = {}
-
-				row.eachCell((cell, colNumber) => {
-					rowData[`column_${colNumber}`] = cell.value
-				})
-
-				jsonData.push(rowData)
-			})
-			console.log(file)
-			console.log('jsonData:', jsonData.length, '----', jsonData)
-			resolve({ length: jsonData.length, jsonData })
-		})
+	public async httpCreateUploadExcel(
+		@UploadedFile()
+		// new ParseFilePipe({
+		// 	validators: [new FileTypeValidator({ fileType: 'image/xlsx' })],
+		// 	errorHttpStatusCode: HttpStatus.BAD_REQUEST,
+		// 	exceptionFactory: error => new HttpException('文件类型错误', HttpStatus.BAD_REQUEST)
+		// }),
+		// new ParseFilePipe({
+		// 	validators: [new MaxFileSizeValidator({ maxSize: 1024 * 5 })],
+		// 	errorHttpStatusCode: HttpStatus.BAD_REQUEST,
+		// 	exceptionFactory: error => new HttpException('文件大小不能超过5MB', HttpStatus.BAD_REQUEST)
+		// })
+		file
+	) {
+		console.log(file)
+		return { message: 'OK' }
+		// return await divineParsesheet(file.buffer)
 	}
 }

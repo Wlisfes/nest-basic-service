@@ -9,13 +9,17 @@ interface Option {
 	response: ApiResponseOptions
 	customize: { status: number; description: string; type: Type<unknown> }
 	authorize: { login: boolean; error: boolean; baseURL?: boolean }
+	consumes?: string[]
+	produces?: string[]
 }
 
 export function ApiDecorator(option: Partial<Option> = {}) {
+	const consumes = option.consumes ?? ['application/x-www-form-urlencoded', 'application/json']
+	const produces = option.produces ?? ['application/json', 'application/xml']
 	const decorator: Array<ClassDecorator | MethodDecorator | PropertyDecorator> = [
 		ApiOperation(option.operation),
-		ApiConsumes('application/x-www-form-urlencoded', 'application/json'),
-		ApiProduces('application/json', 'application/xml')
+		ApiConsumes(...consumes),
+		ApiProduces(...produces)
 	]
 
 	if (option.customize) {
