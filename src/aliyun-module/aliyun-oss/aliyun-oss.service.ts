@@ -3,7 +3,8 @@ import { ConfigService } from '@nestjs/config'
 import { CoreService } from '@/core/core.service'
 import { EntityService } from '@/core/entity.service'
 import { OSS_CLIENT, OSS_STS_CLIENT } from './aliyun-oss.provider'
-import { moment, divineResult, divineHandler } from '@/utils/utils-common'
+import { divineResult, divineHandler } from '@/utils/utils-common'
+import { moment } from '@/utils/utils-plugin'
 import * as Client from 'ali-oss'
 
 @Injectable()
@@ -45,4 +46,7 @@ export class AliyunOssService extends CoreService {
 			})
 		})
 	}
+
+	/**上传excel文件**/
+	public async httpCreateUploadExcel() {}
 }
