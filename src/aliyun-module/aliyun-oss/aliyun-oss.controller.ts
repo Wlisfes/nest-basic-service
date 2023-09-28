@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Put, Body, Query, HttpStatus, HttpException, UseInterceptors } from '@nestjs/common'
+import { Controller, Post, Get, Put, Body, Query, Request, HttpStatus, HttpException, UseInterceptors } from '@nestjs/common'
 import { UploadedFile, ParseFilePipe, MaxFileSizeValidator, FileTypeValidator } from '@nestjs/common'
 import { FileInterceptor } from '@nestjs/platform-express'
 import { ApiTags, ApiBody } from '@nestjs/swagger'
@@ -26,11 +26,13 @@ export class AliyunOssController {
 	@ApiDecorator({
 		operation: { summary: '上传xlsx、csv文件' },
 		response: { status: 200, description: 'OK', type: http.OSSResultExcelFile },
-		consumes: ['multipart/form-data']
+		consumes: ['multipart/form-data'],
+		authorize: { login: true, error: true }
 	})
 	@ApiBody({ type: http.OSSUploadFile })
 	@UseInterceptors(FileInterceptor('file'))
 	public async httpCreateUploadExcel(
+		@Request() request,
 		@UploadedFile(
 			//https://stackoverflow.com/questions/974079/setting-mime-type-for-excel-document
 			new ParseFilePipe({
@@ -50,6 +52,16 @@ export class AliyunOssController {
 		)
 		file
 	) {
-		return await this.aliyunOssService.httpCreateUploadExcel(file)
+		return await this.aliyunOssService.httpCreateUploadExcel(file, request.user.uid)
+	}
+
+	@Get('/excel/column')
+	@ApiDecorator({
+		operation: { summary: 'excel文件列表' },
+		customize: { status: 200, description: 'OK', type: http.OSSResultExcelFile },
+		authorize: { login: true, error: true }
+	})
+	public async httpColumnExcelFile(@Request() request, @Query() query: http.ColumnExcelFile) {
+		return await this.aliyunOssService.httpColumnExcelFile(query, request.user.uid)
 	}
 }

@@ -1,5 +1,6 @@
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, PickType } from '@nestjs/swagger'
 import { IsNotEmpty } from 'class-validator'
+import { Request } from '@/interface/common.interface'
 
 export class OSSUploadFile {
 	@ApiProperty({ type: 'string', format: 'binary' })
@@ -13,7 +14,7 @@ export class OSSUploadFiles {
 	files: any
 }
 
-export class OSSResultExcelFile {
+export class OSSResultExcelFile extends PickType(Request, ['id', 'createTime', 'updateTime']) {
 	@ApiProperty({ description: '文件地址', example: `https://oss.lisfes.cn/basic/excel/2023-09/59186481996726314527.xlsx` })
 	fileURL: string
 
@@ -29,9 +30,15 @@ export class OSSResultExcelFile {
 	@ApiProperty({ description: '文件存储路径', example: `basic/excel/2023-09/59186481996726314527.xlsx` })
 	folder: string
 
+	@ApiProperty({ description: '文件后辍', example: `xlsx` })
+	suffix: string
+
 	@ApiProperty({ description: '文件解析列表', example: [] })
 	list: []
 
 	@ApiProperty({ description: '文件解析列表总数', example: 200 })
 	total: number
 }
+
+/**excel文件列表**/
+export class ColumnExcelFile extends PickType(Request, ['page', 'size']) {}
