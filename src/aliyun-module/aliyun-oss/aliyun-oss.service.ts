@@ -132,4 +132,38 @@ export class AliyunOssService extends CoreService {
 			return await divineResult({ list, total, size: props.size, page: props.page })
 		})
 	}
+
+	/**excel文件信息**/
+	public async httpBasicExcelFile(props: http.BasicExcelFile, uid: number) {
+		return await this.RunCatch(async i18n => {
+			const excel = await this.validator({
+				model: this.entity.basicExcel,
+				name: '模板',
+				empty: { value: true },
+				options: {
+					join: {
+						alias: 'tb',
+						leftJoinAndSelect: { user: 'tb.user' }
+					},
+					where: new Brackets(qb => {
+						qb.where('tb.fileId = :fileId', { fileId: props.fileId })
+						qb.andWhere('user.uid = :uid', { uid })
+					})
+				}
+			})
+			function streamToBuffer(streamFile): Promise<Buffer> {
+				return new Promise((resolve, reject) => {
+					let buffers = []
+					streamFile.on('error', reject)
+					streamFile.on('data', data => buffers.push(data))
+					streamFile.on('end', () => resolve(Buffer.concat(buffers)))
+				})
+			}
+			const result = await this.client.getStream(excel.folder)
+			const buffer = await streamToBuffer(result.stream)
+			const sheet = await divineParsesheet(buffer, 10)
+			console.log(buffer)
+			return await divineResult({ ...excel, ...sheet })
+		})
+	}
 }

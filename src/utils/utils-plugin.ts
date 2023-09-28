@@ -54,14 +54,15 @@ export function divineParsesheet(buffer: Excel.Buffer, max?: number): Promise<{ 
 				})
 				jsonData.push(rowData)
 			})
-			if (max && max < jsonData.length) {
-				resolve({
-					total: jsonData.length,
-					list: jsonData.splice(0, max)
-				})
-			} else {
-				resolve({ total: jsonData.length, list: jsonData })
-			}
+			resolve({ total: jsonData.length, list: jsonData })
+			// if (max && max < jsonData.length) {
+			// 	resolve({
+			// 		total: jsonData.length,
+			// 		list: jsonData.splice(0, max)
+			// 	})
+			// } else {
+			// 	resolve({ total: jsonData.length, list: jsonData })
+			// }
 		} catch (e) {
 			reject('文件解析失败')
 		}

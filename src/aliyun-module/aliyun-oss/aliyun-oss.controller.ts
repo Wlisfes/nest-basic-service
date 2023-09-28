@@ -64,4 +64,14 @@ export class AliyunOssController {
 	public async httpColumnExcelFile(@Request() request, @Query() query: http.ColumnExcelFile) {
 		return await this.aliyunOssService.httpColumnExcelFile(query, request.user.uid)
 	}
+
+	@Get('/excel/basic')
+	@ApiDecorator({
+		operation: { summary: 'excel文件信息' },
+		response: { status: 200, description: 'OK', type: http.OSSResultExcelFile },
+		authorize: { login: true, error: true }
+	})
+	public async httpBasicExcelFile(@Request() request, @Query() query: http.BasicExcelFile) {
+		return await this.aliyunOssService.httpBasicExcelFile(query, request.user.uid)
+	}
 }
