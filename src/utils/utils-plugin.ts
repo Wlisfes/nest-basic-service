@@ -1,7 +1,15 @@
 import * as dayjs from 'dayjs'
 import * as zlib from 'zlib'
 import * as Excel from 'exceljs'
+import { zh_CN, Faker } from '@faker-js/faker'
+
+/**时间处理库**/
 export const moment = dayjs
+
+/**虚拟数据库**/
+export const faker = new Faker({
+	locale: [zh_CN]
+})
 
 /**字符串压缩**/
 export function divineCompress(value: string): Promise<string> {
@@ -49,6 +57,21 @@ export function divineParsesheet(buffer: Excel.Buffer): Promise<{ total: number;
 			resolve({ total: jsonData.length, list: jsonData })
 		} catch (e) {
 			reject('文件解析失败')
+		}
+	})
+}
+
+/**JSON转化成xlsx文件**/
+export function divineWritesheet(jsonData: Array<Record<string, string>>) {
+	return new Promise(async (resolve, rejcet) => {
+		try {
+			const excel = new Excel.Workbook()
+			const sheet = excel.addWorksheet('Sheet1')
+			sheet.addRows(jsonData)
+			const buffer = await excel.xlsx.writeBuffer()
+			resolve(buffer)
+		} catch (e) {
+			rejcet('JSON转换失败')
 		}
 	})
 }

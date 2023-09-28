@@ -21,6 +21,7 @@
 		"test:e2e": "jest --config ./test/jest-e2e.json"
 	},
 	"dependencies": {
+		"@faker-js/faker": "^8.1.0",
 		"@nestjs-modules/ioredis": "^1.0.1",
 		"@nestjs/axios": "^3.0.0",
 		"@nestjs/bull": "^10.0.1",

@@ -1,3 +1,11 @@
+/**生成N位随机整数**/
+export function divineIntRandom(option: { length: number; min: number; max: number }) {
+	const randomArray = Array.from({ length: option.length }, e => {
+		return Math.floor(Math.random() * (option.max - option.min + 1)) + option.min
+	})
+	return Number(randomArray.join(''))
+}
+
 /**返回包装**/
 export async function divineResult<T = { message: string; list: Array<unknown>; total: number; page: number; size: number }>(
 	data: T
