@@ -73,7 +73,7 @@ export class AliyunOssService extends CoreService {
 	/**上传excel文件**/
 	public async httpCreateUploadExcel(file, uid: number) {
 		return await this.RunCatch(async i18n => {
-			const sheet = await divineParsesheet(file.buffer)
+			const sheet = await divineParsesheet(file.buffer, 10)
 			const excel = await this.createStream(file, 'excel')
 			const response = await this.client.putStream(excel.folder, excel.fileStream)
 			await divineHandler(response.res.status !== HttpStatus.OK, () => {
@@ -97,17 +97,16 @@ export class AliyunOssService extends CoreService {
 				fileURL: response.url,
 				user
 			})
-			return await this.entity.basicExcel.save(node).then(async () => {
-				return await divineResult({
-					suffix: excel.suffix,
-					fileId: excel.fileId,
-					fieldName: excel.fieldName,
-					fileName: excel.fileName,
-					folder: excel.folder,
-					total: sheet.total,
-					list: sheet.list,
-					fileURL: response.url
-				})
+			await this.entity.basicExcel.save(node)
+			return await divineResult({
+				suffix: excel.suffix,
+				fileId: excel.fileId,
+				fieldName: excel.fieldName,
+				fileName: excel.fileName,
+				folder: excel.folder,
+				total: sheet.total,
+				list: sheet.list,
+				fileURL: response.url
 			})
 		})
 	}

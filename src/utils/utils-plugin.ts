@@ -40,7 +40,7 @@ export function divineUnzipCompr(value: Buffer) {
 }
 
 /**解析excel表格文件**/
-export function divineParsesheet(buffer: Excel.Buffer): Promise<{ total: number; list: Array<Record<string, string>> }> {
+export function divineParsesheet(buffer: Excel.Buffer, max?: number): Promise<{ total: number; list: Array<Record<string, string>> }> {
 	return new Promise(async (resolve, reject) => {
 		try {
 			const excel = new Excel.Workbook()
@@ -54,7 +54,14 @@ export function divineParsesheet(buffer: Excel.Buffer): Promise<{ total: number;
 				})
 				jsonData.push(rowData)
 			})
-			resolve({ total: jsonData.length, list: jsonData })
+			if (max && max < jsonData.length) {
+				resolve({
+					total: jsonData.length,
+					list: jsonData.splice(0, max)
+				})
+			} else {
+				resolve({ total: jsonData.length, list: jsonData })
+			}
 		} catch (e) {
 			reject('文件解析失败')
 		}
