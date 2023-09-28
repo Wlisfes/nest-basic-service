@@ -5,7 +5,7 @@ import { ApiTags, ApiConsumes, ApiProperty, ApiOperation, ApiBody } from '@nestj
 import { ApiDecorator } from '@/decorator/compute.decorator'
 import { Notice } from '@/interface/common.interface'
 import { AliyunOssService } from '@/aliyun-module/aliyun-oss/aliyun-oss.service'
-import { faker, divineParsesheet, divineWritesheet } from '@/utils/utils-plugin'
+import { faker, divineParsesheet } from '@/utils/utils-plugin'
 
 class FileUploadDto {
 	@ApiProperty({ type: 'string', format: 'binary' })
@@ -60,14 +60,6 @@ export class AliyunOssController {
 		// })
 		file
 	) {
-		const jsonData = Array.from({ length: 10 }, () => {
-			return {
-				receive: faker.internet.email(),
-				name: faker.person.fullName()
-			}
-		})
-		const buffer = await divineWritesheet(jsonData)
-		console.log(buffer, jsonData)
 		return await divineParsesheet(file.buffer)
 	}
 }

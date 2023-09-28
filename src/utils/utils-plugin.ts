@@ -62,14 +62,15 @@ export function divineParsesheet(buffer: Excel.Buffer): Promise<{ total: number;
 }
 
 /**JSON转化成xlsx文件**/
-export function divineWritesheet(jsonData: Array<Record<string, string>>) {
+export function divineWritesheet(jsonData: Array<Record<string, any>>, option: { columns: Array<Partial<Excel.Column>> }): Promise<Buffer> {
 	return new Promise(async (resolve, rejcet) => {
 		try {
 			const excel = new Excel.Workbook()
 			const sheet = excel.addWorksheet('Sheet1')
+			sheet.columns = option.columns ?? []
 			sheet.addRows(jsonData)
 			const buffer = await excel.xlsx.writeBuffer()
-			resolve(buffer)
+			resolve(buffer as Buffer)
 		} catch (e) {
 			rejcet('JSON转换失败')
 		}
