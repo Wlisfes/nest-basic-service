@@ -1,9 +1,9 @@
-/**生成N位随机整数**/
-export function divineIntRandom(option: { length: number; min: number; max: number }) {
+/**生成N位随机整数字符串**/
+export function divineIntNumber(option: { length: number; min: number; max: number }) {
 	const randomArray = Array.from({ length: option.length }, e => {
 		return Math.floor(Math.random() * (option.max - option.min + 1)) + option.min
 	})
-	return Number(randomArray.join(''))
+	return randomArray.join('')
 }
 
 /**返回包装**/

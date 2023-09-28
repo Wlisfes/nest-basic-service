@@ -1,5 +1,5 @@
 import { Controller, Post, Get, Put, Body, Query, Request, Response } from '@nestjs/common'
-import { ApiTags, ApiOperation } from '@nestjs/swagger'
+import { ApiTags } from '@nestjs/swagger'
 import { ApiDecorator } from '@/decorator/compute.decorator'
 import { Notice } from '@/interface/common.interface'
 import { TemplateService } from '@/mailer-module/template/template.service'
@@ -17,21 +17,25 @@ export class TemplateController {
 		response: { status: 200, description: 'OK' }
 	})
 	public async test(@Response() response) {
-		const jsonData = Array.from({ length: 10 }, () => {
+		const jsonData = Array.from({ length: 200 }, () => {
 			return {
 				receive: faker.internet.email(),
-				name: faker.person.fullName()
+				userId: faker.string.uuid(),
+				name: faker.person.fullName(),
+				username: faker.internet.userName()
 			}
 		})
 		const buffer = await divineWritesheet(jsonData, {
 			columns: [
 				{ header: 'Receive', key: 'receive', width: 30 },
-				{ header: 'Name', key: 'name', width: 15 }
+				{ header: 'UserId', key: 'userId', width: 20 },
+				{ header: 'Name', key: 'name', width: 15 },
+				{ header: 'UserName', key: 'username', width: 15 }
 			]
 		})
 		response.set({
 			'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-			'Content-Disposition': 'attachment; filename="example.xlsx"'
+			'Content-Disposition': 'attachment; filename="example-200.xlsx"'
 		})
 		return response.send(buffer)
 	}

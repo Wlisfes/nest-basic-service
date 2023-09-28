@@ -5,7 +5,6 @@ import { ApiTags, ApiBody } from '@nestjs/swagger'
 import { ApiDecorator } from '@/decorator/compute.decorator'
 import { Notice } from '@/interface/common.interface'
 import { AliyunOssService } from '@/aliyun-module/aliyun-oss/aliyun-oss.service'
-import { divineParsesheet } from '@/utils/utils-plugin'
 import * as http from '@/aliyun-module/interface/aliyun-oss.interface'
 
 @ApiTags('阿里云对象存储模块')
@@ -25,8 +24,8 @@ export class AliyunOssController {
 
 	@Post('/resolve/excel')
 	@ApiDecorator({
-		operation: { summary: '解析上传xlsx、csv文件' },
-		response: { status: 200, description: 'OK', type: Notice },
+		operation: { summary: '上传xlsx、csv文件' },
+		response: { status: 200, description: 'OK', type: http.OSSResultExcelFile },
 		consumes: ['multipart/form-data']
 	})
 	@ApiBody({ type: http.OSSUploadFile })
@@ -51,6 +50,6 @@ export class AliyunOssController {
 		)
 		file
 	) {
-		return await divineParsesheet(file.buffer)
+		return await this.aliyunOssService.httpCreateUploadExcel(file)
 	}
 }
