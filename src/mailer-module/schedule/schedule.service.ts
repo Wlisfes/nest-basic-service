@@ -3,8 +3,11 @@ import { Brackets } from 'typeorm'
 import { CoreService } from '@/core/core.service'
 import { EntityService } from '@/core/entity.service'
 import { NodemailerService } from '@/mailer-module/nodemailer/nodemailer.service'
+import { AppService } from '@/mailer-module/app/app.service'
+import { TemplateService } from '@/mailer-module/template/template.service'
 import { JobService } from '@/job-module/job.service'
 import { divineHandler, divineResult } from '@/utils/utils-common'
+import { divineCatchWherer } from '@/utils/utils-affair'
 import { JOB_MAILER_SCHEDULE, JOB_MAILER_EXECUTE } from '@/mailer-module/config/job-redis.resolver'
 import * as http from '../interface/schedule.interface'
 
@@ -13,7 +16,9 @@ export class ScheduleService extends CoreService {
 	constructor(
 		private readonly entity: EntityService,
 		private readonly jobService: JobService,
-		private readonly nodemailerService: NodemailerService
+		private readonly nodemailerService: NodemailerService,
+		private readonly templateService: TemplateService,
+		private readonly appService: AppService
 	) {
 		super()
 	}
@@ -76,45 +81,18 @@ export class ScheduleService extends CoreService {
 	/**创建模板发送队列**/
 	public async httpScheduleSampleReducer(props: http.ScheduleSampleReducer, uid: number) {
 		return await this.RunCatch(async i18n => {
-			const app = await this.validator({
-				model: this.entity.mailerApplication,
-				name: '应用',
-				empty: { value: true },
-				close: { value: true },
-				delete: { value: true },
-				options: {
-					join: {
-						alias: 'tb',
-						leftJoinAndSelect: { user: 'tb.user' }
-					},
-					where: new Brackets(qb => {
-						qb.where('tb.appId = :appId', { appId: props.appId })
-						qb.andWhere('user.uid = :uid', { uid })
-					})
-				}
+			const app = await this.appService.httpBasicApplication({ appId: props.appId }, uid).then(async data => {
+				await divineCatchWherer(['disable'].includes(data.status), { message: `应用已禁用` })
+				await divineCatchWherer(['inactivated'].includes(data.status), { message: `应用未激活` })
+				await divineCatchWherer(['delete'].includes(data.status), { message: `应用已删除` })
+				return data
 			})
-			const sample = await this.validator({
-				model: this.entity.mailerTemplate,
-				name: '模板',
-				empty: { value: true },
-				close: { value: true },
-				delete: { value: true },
-				options: {
-					join: {
-						alias: 'tb',
-						leftJoinAndSelect: { user: 'tb.user' }
-					},
-					where: new Brackets(qb => {
-						qb.where('tb.id = :id', { id: props.sampleId })
-						qb.andWhere('tb.status IN(:...status)', {
-							status: ['pending', 'loading', 'review', 'rejected', 'disable', 'delete']
-						})
-						qb.andWhere('user.uid = :uid', { uid })
-					})
-				}
-			}).then(async data => {
-				await divineHandler(['pending', 'loading', 'rejected'].includes(data.status), () => {
-					throw new HttpException(`模板未审核`, HttpStatus.BAD_REQUEST)
+			const sample = await this.templateService.httpBasicMailerTemplate({ id: props.sampleId }, uid).then(async data => {
+				await divineCatchWherer(['disable'].includes(data.status), {
+					message: `模板已禁用`
+				})
+				await divineCatchWherer(['pending', 'loading', 'rejected'].includes(data.status), {
+					message: `模板未审核`
 				})
 				return data
 			})

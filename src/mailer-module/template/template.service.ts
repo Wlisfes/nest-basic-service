@@ -141,6 +141,7 @@ export class TemplateService extends CoreService {
 						alias: 'tb',
 						leftJoinAndSelect: { user: 'tb.user' }
 					},
+					select: ['id', 'name', 'status', 'width', 'cover', 'createTime', 'updateTime', 'mjml', 'json', 'user'],
 					where: new Brackets(qb => {
 						qb.where('tb.id = :id', { id: props.id })
 						qb.andWhere('tb.status IN(:...status)', { status: ['pending', 'loading', 'review', 'rejected', 'disable'] })
