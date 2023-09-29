@@ -5,7 +5,7 @@ import { CoreService } from '@/core/core.service'
 import { EntityService } from '@/core/entity.service'
 import { OSS_CLIENT, OSS_STS_CLIENT } from './aliyun-oss.provider'
 import { divineResult, divineHandler, divineIntNumber } from '@/utils/utils-common'
-import { moment, divineParsesheet } from '@/utils/utils-plugin'
+import { moment, divineParsesheet, divineBufferToStream, divineStreamToBuffer } from '@/utils/utils-plugin'
 import * as http from '@/aliyun-module/interface/aliyun-oss.interface'
 import * as Client from 'ali-oss'
 import * as stream from 'stream'
@@ -29,15 +29,13 @@ export class AliyunOssService extends CoreService {
 		const fileId = divineIntNumber({ length: 20, min: 1, max: 9 })
 		const fileName = fileId + suffix
 		const folder = ['basic', pathFolder, moment().format('YYYY-MM'), fileName].join('/')
-		const fileStream = new stream.PassThrough()
-		fileStream.end(file.buffer)
 		return {
 			fileId,
 			fileName,
 			folder,
 			fieldName,
 			suffix: suffix.slice(1),
-			fileStream
+			fileStream: await divineBufferToStream(file.buffer)
 		}
 	}
 
@@ -151,18 +149,9 @@ export class AliyunOssService extends CoreService {
 					})
 				}
 			})
-			function streamToBuffer(streamFile): Promise<Buffer> {
-				return new Promise((resolve, reject) => {
-					let buffers = []
-					streamFile.on('error', reject)
-					streamFile.on('data', data => buffers.push(data))
-					streamFile.on('end', () => resolve(Buffer.concat(buffers)))
-				})
-			}
 			const result = await this.client.getStream(excel.folder)
-			const buffer = await streamToBuffer(result.stream)
+			const buffer = await divineStreamToBuffer(result.stream)
 			const sheet = await divineParsesheet(buffer, 10)
-			console.log(buffer)
 			return await divineResult({ ...excel, ...sheet })
 		})
 	}

@@ -13,6 +13,11 @@ export async function divineResult<T = { message: string; list: Array<unknown>; 
 	return data
 }
 
+/**参数组合**/
+export async function divineParameter<T>(data: T) {
+	return data
+}
+
 /**条件值返回**/
 export function divineWherer<T>(where: boolean, value: T, defaultValue: T = undefined): T {
 	return where ? value : defaultValue
