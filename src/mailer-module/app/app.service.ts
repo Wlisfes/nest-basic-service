@@ -3,7 +3,7 @@ import { Brackets } from 'typeorm'
 import { CoreService } from '@/core/core.service'
 import { RedisService } from '@/core/redis.service'
 import { EntityService } from '@/core/entity.service'
-import { divineHandler, divineResult } from '@/utils/utils-common'
+import { divineResult } from '@/utils/utils-common'
 import * as cache from '@/mailer-module/config/common-redis.resolver'
 import * as http from '../interface/app.interface'
 

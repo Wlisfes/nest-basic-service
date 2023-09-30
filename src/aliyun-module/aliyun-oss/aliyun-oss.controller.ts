@@ -1,9 +1,8 @@
-import { Controller, Post, Get, Put, Body, Query, Request, HttpStatus, HttpException, UseInterceptors } from '@nestjs/common'
+import { Controller, Post, Get, Query, Request, HttpStatus, HttpException, UseInterceptors } from '@nestjs/common'
 import { UploadedFile, ParseFilePipe, MaxFileSizeValidator, FileTypeValidator } from '@nestjs/common'
 import { FileInterceptor } from '@nestjs/platform-express'
 import { ApiTags, ApiBody } from '@nestjs/swagger'
 import { ApiDecorator } from '@/decorator/compute.decorator'
-import { Notice } from '@/interface/common.interface'
 import { AliyunOssService } from '@/aliyun-module/aliyun-oss/aliyun-oss.service'
 import * as http from '@/aliyun-module/interface/aliyun-oss.interface'
 
