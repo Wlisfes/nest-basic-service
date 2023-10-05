@@ -1,4 +1,4 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { Brackets } from 'typeorm'
 import { CoreService } from '@/core/core.service'
 import { EntityService } from '@/core/entity.service'
@@ -6,7 +6,7 @@ import { NodemailerService } from '@/mailer-module/nodemailer/nodemailer.service
 import { AppService } from '@/mailer-module/app/app.service'
 import { TemplateService } from '@/mailer-module/template/template.service'
 import { JobService } from '@/job-module/job.service'
-import { divineHandler, divineResult } from '@/utils/utils-common'
+import { divineResult } from '@/utils/utils-common'
 import { divineCatchWherer } from '@/utils/utils-plugin'
 import { JOB_MAILER_SCHEDULE, JOB_MAILER_EXECUTE } from '@/mailer-module/config/job-redis.resolver'
 import * as http from '../interface/schedule.interface'
@@ -82,9 +82,15 @@ export class ScheduleService extends CoreService {
 	public async httpScheduleSampleReducer(props: http.ScheduleSampleReducer, uid: number) {
 		return await this.RunCatch(async i18n => {
 			const app = await this.appService.httpBasicApplication({ appId: props.appId }, uid).then(async data => {
-				await divineCatchWherer(['disable'].includes(data.status), { message: `应用已禁用` })
-				await divineCatchWherer(['inactivated'].includes(data.status), { message: `应用未激活` })
-				await divineCatchWherer(['delete'].includes(data.status), { message: `应用已删除` })
+				await divineCatchWherer(['disable'].includes(data.status), {
+					message: `应用已禁用`
+				})
+				await divineCatchWherer(['inactivated'].includes(data.status), {
+					message: `应用未激活`
+				})
+				await divineCatchWherer(['delete'].includes(data.status), {
+					message: `应用已删除`
+				})
 				return data
 			})
 			const sample = await this.templateService.httpBasicMailerTemplate({ id: props.sampleId }, uid).then(async data => {
