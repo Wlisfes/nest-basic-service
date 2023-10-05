@@ -34,13 +34,12 @@ export function divineDelay(delay = 100, handler?: Function) {
 }
 
 /**条件链式执行函数**/
-export async function divineHandler(fn: boolean | Function, handler: Function) {
-	if (typeof fn === 'function') {
-		if (fn()) {
-			return handler && (await handler())
-		}
-	} else if (!!fn) {
-		return handler && (await handler())
+export async function divineHandler(where: boolean | Function, handler: Function) {
+	if (typeof where === 'function') {
+		const value = where()
+		return value && handler ? await handler() : undefined
+	} else if (Boolean(where)) {
+		return handler ? await handler() : undefined
 	}
 	return undefined
 }

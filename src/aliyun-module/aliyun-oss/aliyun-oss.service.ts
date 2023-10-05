@@ -1,4 +1,4 @@
-import { Injectable, Inject, HttpException, HttpStatus } from '@nestjs/common'
+import { Injectable, Inject, HttpStatus } from '@nestjs/common'
 import { Brackets } from 'typeorm'
 import { isEmpty } from 'class-validator'
 import { ConfigService } from '@nestjs/config'
@@ -6,7 +6,7 @@ import { CoreService } from '@/core/core.service'
 import { EntityService } from '@/core/entity.service'
 import { OSS_CLIENT, OSS_STS_CLIENT } from '@/aliyun-module/aliyun-oss/aliyun-oss.provider'
 import { divineResult, divineHandler, divineIntNumber } from '@/utils/utils-common'
-import { moment, divineParsesheet, divineBufferToStream, divineStreamToBuffer } from '@/utils/utils-plugin'
+import { moment, divineCatchWherer, divineParsesheet, divineBufferToStream, divineStreamToBuffer } from '@/utils/utils-plugin'
 import * as http from '@/aliyun-module/interface/aliyun-oss.interface'
 import * as Client from 'ali-oss'
 import * as path from 'path'
@@ -52,8 +52,9 @@ export class AliyunOssService extends CoreService {
 			const rolearn = this.configService.get('OSS_ROLEARN')
 			const sessionname = this.configService.get('OSS_SESSIONNAME')
 			const result = await this.stsClient.assumeRole(rolearn, '', 7200, sessionname)
-			await divineHandler(result.res.statusCode !== 200, () => {
-				throw new HttpException(`授权失败`, HttpStatus.NOT_IMPLEMENTED)
+			await divineCatchWherer(result.res.statusCode !== HttpStatus.OK, {
+				message: '授权失败',
+				code: HttpStatus.NOT_IMPLEMENTED
 			})
 			return await divineResult({
 				interval: 7000,
@@ -74,8 +75,9 @@ export class AliyunOssService extends CoreService {
 			const sheet = await divineParsesheet(file.buffer, 10)
 			const excel = await this.createStream(file, 'excel')
 			const response = await this.client.putStream(excel.folder, excel.fileStream)
-			await divineHandler(response.res.status !== HttpStatus.OK, () => {
-				throw new HttpException(`上传失败`, response.res.status ?? HttpStatus.BAD_REQUEST)
+			await divineCatchWherer(response.res.status !== HttpStatus.OK, {
+				message: '上传失败',
+				code: HttpStatus.BAD_REQUEST
 			})
 			const user = await this.validator({
 				model: this.entity.user,
@@ -95,16 +97,17 @@ export class AliyunOssService extends CoreService {
 				fileURL: response.url,
 				user
 			})
-			await this.entity.basicExcel.save(node)
-			return await divineResult({
-				suffix: excel.suffix,
-				fileId: excel.fileId,
-				fieldName: excel.fieldName,
-				fileName: excel.fileName,
-				folder: excel.folder,
-				total: sheet.total,
-				list: sheet.list,
-				fileURL: response.url
+			return await this.entity.basicExcel.save(node).then(async () => {
+				return await divineResult({
+					suffix: excel.suffix,
+					fileId: excel.fileId,
+					fieldName: excel.fieldName,
+					fileName: excel.fileName,
+					folder: excel.folder,
+					total: sheet.total,
+					list: sheet.list,
+					fileURL: response.url
+				})
 			})
 		})
 	}
