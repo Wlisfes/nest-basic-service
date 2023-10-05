@@ -1,14 +1,14 @@
 import { Injectable, Inject, HttpException, HttpStatus } from '@nestjs/common'
 import { Brackets } from 'typeorm'
+import { isEmpty } from 'class-validator'
 import { ConfigService } from '@nestjs/config'
 import { CoreService } from '@/core/core.service'
 import { EntityService } from '@/core/entity.service'
-import { OSS_CLIENT, OSS_STS_CLIENT } from './aliyun-oss.provider'
+import { OSS_CLIENT, OSS_STS_CLIENT } from '@/aliyun-module/aliyun-oss/aliyun-oss.provider'
 import { divineResult, divineHandler, divineIntNumber } from '@/utils/utils-common'
 import { moment, divineParsesheet, divineBufferToStream, divineStreamToBuffer } from '@/utils/utils-plugin'
 import * as http from '@/aliyun-module/interface/aliyun-oss.interface'
 import * as Client from 'ali-oss'
-import * as stream from 'stream'
 import * as path from 'path'
 
 @Injectable()
@@ -119,8 +119,16 @@ export class AliyunOssService extends CoreService {
 						alias: 'tb',
 						leftJoinAndSelect: { user: 'tb.user' }
 					},
-					where: new Brackets(qb => {
+					where: new Brackets(async qb => {
 						qb.where('user.uid = :uid', { uid })
+						//文件ID搜索
+						await divineHandler(!isEmpty(props.fileId), () => {
+							qb.andWhere('tb.fileId = :fileId', { fileId: props.fileId })
+						})
+						//文件后辍搜索
+						await divineHandler(!isEmpty(props.suffix), () => {
+							qb.andWhere('tb.suffix = :suffix', { suffix: props.suffix })
+						})
 					}),
 					order: { createTime: 'DESC' },
 					skip: (props.page - 1) * props.size,
