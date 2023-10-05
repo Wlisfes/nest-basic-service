@@ -7,7 +7,7 @@ import { AppService } from '@/mailer-module/app/app.service'
 import { TemplateService } from '@/mailer-module/template/template.service'
 import { JobService } from '@/job-module/job.service'
 import { divineHandler, divineResult } from '@/utils/utils-common'
-import { divineCatchWherer } from '@/utils/utils-affair'
+import { divineCatchWherer } from '@/utils/utils-plugin'
 import { JOB_MAILER_SCHEDULE, JOB_MAILER_EXECUTE } from '@/mailer-module/config/job-redis.resolver'
 import * as http from '../interface/schedule.interface'
 

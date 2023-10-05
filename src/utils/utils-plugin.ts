@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus } from '@nestjs/common'
 import { zh_CN, Faker } from '@faker-js/faker'
-import { divineParameter, divineWherer } from '@/utils/utils-common'
+import { divineParameter, divineWherer, divineHandler } from '@/utils/utils-common'
 import * as dayjs from 'dayjs'
 import * as zlib from 'zlib'
 import * as stream from 'stream'
@@ -13,6 +13,13 @@ export const moment = dayjs
 export const faker = new Faker({
 	locale: [zh_CN]
 })
+
+/**条件捕获、异常抛出**/
+export async function divineCatchWherer(where: boolean, option: { message: string; code?: HttpStatus }) {
+	return await divineHandler(where, () => {
+		throw new HttpException(option.message, option.code ?? HttpStatus.BAD_REQUEST)
+	})
+}
 
 /**Buffer转换Stream**/
 export function divineBufferToStream(buffer: Buffer): Promise<stream.PassThrough> {
