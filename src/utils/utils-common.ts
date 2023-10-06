@@ -13,6 +13,15 @@ export async function divineResult<T = { message: string; list: Array<unknown>; 
 	return data
 }
 
+/**计算定时发送时间**/
+export async function divineDateDelay(date: Date | string) {
+	const currTime = new Date()
+	const sendTime = new Date(date ?? currTime)
+	const reduce = sendTime.getTime() - currTime.getTime()
+	const delay = reduce > 0 ? reduce : 0
+	return { currTime, sendTime, reduce, delay }
+}
+
 /**参数组合**/
 export async function divineParameter<T>(data: T) {
 	return data

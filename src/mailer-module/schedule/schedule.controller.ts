@@ -46,7 +46,7 @@ export class ScheduleController {
 	@Get('/column')
 	@ApiDecorator({
 		operation: { summary: '任务队列列表' },
-		customize: { status: 200, description: 'OK', type: Notice },
+		customize: { status: 200, description: 'OK', type: http.MailerSchedule },
 		authorize: { login: true, error: true }
 	})
 	public async httpColumnSchedule(@Request() request, @Query() query: http.ColumnSchedule) {

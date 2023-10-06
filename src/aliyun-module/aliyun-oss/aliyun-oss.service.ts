@@ -143,7 +143,7 @@ export class AliyunOssService extends CoreService {
 	}
 
 	/**excel文件信息**/
-	public async httpBasicExcelFile(props: http.BasicExcelFile, uid: number) {
+	public async httpBasicExcelFile(props: http.BasicExcelFile, uid: number, max: number = 10) {
 		return await this.RunCatch(async i18n => {
 			const excel = await this.validator({
 				model: this.entity.basicExcel,
@@ -162,7 +162,7 @@ export class AliyunOssService extends CoreService {
 			})
 			const result = await this.client.getStream(excel.folder)
 			const buffer = await divineStreamToBuffer(result.stream)
-			const sheet = await divineParsesheet(buffer, 10)
+			const sheet = await divineParsesheet(buffer, max)
 			return await divineResult({ ...excel, ...sheet })
 		})
 	}

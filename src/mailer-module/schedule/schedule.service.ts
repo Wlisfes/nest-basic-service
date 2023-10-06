@@ -1,12 +1,14 @@
 import { Injectable } from '@nestjs/common'
 import { Brackets } from 'typeorm'
+import { isEmpty } from 'class-validator'
 import { CoreService } from '@/core/core.service'
 import { EntityService } from '@/core/entity.service'
+import { AliyunOssService } from '@/aliyun-module/aliyun-oss/aliyun-oss.service'
 import { NodemailerService } from '@/mailer-module/nodemailer/nodemailer.service'
 import { AppService } from '@/mailer-module/app/app.service'
 import { TemplateService } from '@/mailer-module/template/template.service'
 import { JobService } from '@/job-module/job.service'
-import { divineResult } from '@/utils/utils-common'
+import { divineResult, divineDateDelay, divineParameter, divineHandler } from '@/utils/utils-common'
 import { divineCatchWherer } from '@/utils/utils-plugin'
 import { JOB_MAILER_SCHEDULE, JOB_MAILER_EXECUTE } from '@/mailer-module/config/job-redis.resolver'
 import * as http from '../interface/schedule.interface'
@@ -18,7 +20,8 @@ export class ScheduleService extends CoreService {
 		private readonly jobService: JobService,
 		private readonly nodemailerService: NodemailerService,
 		private readonly templateService: TemplateService,
-		private readonly appService: AppService
+		private readonly appService: AppService,
+		private readonly aliyunOssService: AliyunOssService
 	) {
 		super()
 	}
@@ -102,23 +105,52 @@ export class ScheduleService extends CoreService {
 				})
 				return data
 			})
-			const currTime = new Date()
-			const sendTime = new Date(props.sendTime ?? currTime)
-			const reduce = sendTime.getTime() - currTime.getTime()
-			const node = await this.entity.mailerSchedule.create({
+			// const excel = await divineCatchWherer(props.accept === 'excel' && isEmpty(props.fileId), {
+			// 	message: '发送文件ID 必填'
+			// }).then(async () => {
+			// 	return await this.aliyunOssService.httpBasicExcelFile({ fileId: props.fileId }, uid)
+			// })
+			// console.log(excel)
+
+			// return excel
+
+			const { sendTime, delay } = await divineDateDelay(props.sendTime ?? new Date())
+			const parameter = await divineParameter({
 				super: 'sample',
 				status: 'pending',
-				name: props.name,
-				type: props.type,
-				total: 300,
 				submit: 0,
 				success: 0,
 				failure: 0,
-				sendTime,
+				name: props.name,
+				type: props.type,
+				accept: props.accept,
+				sendTime: sendTime,
 				user: app.user,
 				sample,
 				app
+			}).then(async (data: Record<string, any>) => {
+				/**自定义接收类型**/
+				await divineHandler(data.accept === 'customize', async () => {
+					await divineCatchWherer(isEmpty(props.receive) || props.receive.length === 0, {
+						message: '自定义接收列表 必填'
+					})
+					data.receive = props.receive
+					data.total = props.receive.length
+				})
+				/**excel文件接收列表**/
+				await divineHandler(data.accept === 'excel', async () => {
+					await divineCatchWherer(isEmpty(props.fileId), {
+						message: '发送文件ID 必填'
+					})
+					const { fileId, fieldName, total } = await this.aliyunOssService.httpBasicExcelFile({ fileId: props.fileId }, uid)
+					data.fileId = fileId
+					data.fieldName = fieldName
+					data.total = total
+				})
+				return data
 			})
+
+			const node = await this.entity.mailerSchedule.create(parameter)
 			return await this.entity.mailerSchedule.save(node).then(async data => {
 				const job = await this.jobService.mailerSchedule.add(
 					JOB_MAILER_SCHEDULE.process.schedule,
@@ -126,13 +158,17 @@ export class ScheduleService extends CoreService {
 						jobId: data.id, //任务ID
 						jobName: data.name, //任务名称
 						super: data.super, //发送类型: 模板发送-sample、自定义发送-customize
+						accept: data.accept, //接收类型: 接收列表文件-excel、自定义接收-customize
 						total: data.total, //发送总数
 						submit: data.submit, //提交队列数
 						appId: props.appId, //应用ID
 						sampleId: props.sampleId, //模板ID
+						receive: data.receive ?? null, //自定义接收列表
+						fileId: data.fileId ?? null, //发送文件ID
+						fieldName: data.fieldName ?? null, //发送文件原始名称
 						userId: uid //用户UID
 					},
-					{ delay: reduce > 0 ? reduce : 0 }
+					{ delay: delay }
 				)
 				await this.entity.mailerSchedule.update({ id: data.id }, { jobId: job.id as number })
 				return await divineResult({ message: '创建成功' })
