@@ -94,17 +94,15 @@ export class TemplateService extends CoreService {
 					})
 					/**模板编辑成功后添加redis缓存**/
 					const node = await this.redisService.getStore<typeof sample>(cache.createMailerTemplateCache(props.id))
-					await this.redisService.setStore(
-						cache.createMailerTemplateCache(props.id),
-						Object.assign(node, {
-							name: props.name,
-							cover: props.cover,
-							width: props.width,
-							json: json,
-							mjml: mjml,
-							status: divineWherer(props.status === 'sketch', 'sketch', 'pending')
-						})
-					)
+					await this.redisService.setStore(cache.createMailerTemplateCache(props.id), {
+						...node,
+						name: props.name,
+						cover: props.cover,
+						width: props.width,
+						json: json,
+						mjml: mjml,
+						status: divineWherer(props.status === 'sketch', 'sketch', 'pending')
+					})
 				})
 			return await divineResult({ message: '编辑成功' })
 		})

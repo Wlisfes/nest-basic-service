@@ -198,10 +198,10 @@ export class AppService extends CoreService {
 			await this.entity.mailerApplication.update({ appId: app.appId }, { appSecret: appSecret }).then(async data => {
 				/**应用编辑后需要更新redis缓存**/
 				const node = await this.redisService.getStore<typeof app>(cache.createMailerAppCache(props.appId))
-				return await this.redisService.setStore(
-					cache.createMailerAppCache(props.appId),
-					Object.assign(node, { appSecret: appSecret })
-				)
+				return await this.redisService.setStore(cache.createMailerAppCache(props.appId), {
+					...node,
+					appSecret: appSecret
+				})
 			})
 			return await divineResult({ message: '重置成功' })
 		})
@@ -243,18 +243,16 @@ export class AppService extends CoreService {
 					await this.entity.mailerApplication.update({ id: data.id }, { status: 'activated' }).then(async () => {
 						/**应用编辑后需要更新redis缓存**/
 						const node = await this.redisService.getStore<typeof data>(cache.createMailerAppCache(props.appId))
-						return await this.redisService.setStore(
-							cache.createMailerAppCache(props.appId),
-							Object.assign(node, {
-								status: 'activated',
-								host: props.host ?? data.service.host,
-								port: props.port ?? data.service.port,
-								secure: props.secure ?? data.service.secure,
-								username: props.username ?? data.service.username,
-								password: props.password ?? data.service.password,
-								type: props.type ?? data.service.type
-							})
-						)
+						return await this.redisService.setStore(cache.createMailerAppCache(props.appId), {
+							...node,
+							status: 'activated',
+							host: props.host ?? data.service.host,
+							port: props.port ?? data.service.port,
+							secure: props.secure ?? data.service.secure,
+							username: props.username ?? data.service.username,
+							password: props.password ?? data.service.password,
+							type: props.type ?? data.service.type
+						})
 					})
 					return await divineResult({ message: '激活成功' })
 				}
@@ -272,18 +270,16 @@ export class AppService extends CoreService {
 				await this.entity.mailerApplication.update({ id: data.id }, { status: 'activated' }).then(async () => {
 					/**应用编辑后需要更新redis缓存**/
 					const node = await this.redisService.getStore<typeof data>(cache.createMailerAppCache(props.appId))
-					return await this.redisService.setStore(
-						cache.createMailerAppCache(props.appId),
-						Object.assign(node, {
-							status: 'activated',
-							host: props.host,
-							port: props.port,
-							secure: props.secure,
-							username: props.username,
-							password: props.password,
-							type: props.type
-						})
-					)
+					return await this.redisService.setStore(cache.createMailerAppCache(props.appId), {
+						...node,
+						status: 'activated',
+						host: props.host,
+						port: props.port,
+						secure: props.secure,
+						username: props.username,
+						password: props.password,
+						type: props.type
+					})
 				})
 				return await divineResult({ message: '编辑成功' })
 			})
