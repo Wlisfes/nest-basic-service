@@ -45,8 +45,7 @@ export function divineCompress(value: string): Promise<string> {
 	return new Promise((resolve, reject) => {
 		zlib.deflate(value, (err, buffer) => {
 			if (err) {
-				console.error('压缩失败:', err)
-				reject('压缩失败')
+				reject(new HttpException('压缩失败', HttpStatus.INTERNAL_SERVER_ERROR))
 			} else {
 				resolve(buffer.toString('base64'))
 			}
@@ -59,8 +58,7 @@ export function divineUnzipCompr(value: Buffer) {
 	return new Promise((resolve, reject) => {
 		zlib.inflate(value, (err, buffer) => {
 			if (err) {
-				console.error('解压失败:', err)
-				reject('解压失败')
+				reject(new HttpException('解压失败', HttpStatus.INTERNAL_SERVER_ERROR))
 			} else {
 				resolve(buffer.toString())
 			}
@@ -96,7 +94,7 @@ export async function divineParsesheet(
 			)
 		})
 	} catch (e) {
-		throw new HttpException('文件夹解析失败', HttpStatus.BAD_REQUEST)
+		throw new HttpException('文件解析失败', HttpStatus.INTERNAL_SERVER_ERROR)
 	}
 }
 
@@ -112,6 +110,6 @@ export async function divineWritesheet(
 		sheet.addRows(jsonData)
 		return (await excel.xlsx.writeBuffer()) as Buffer
 	} catch (e) {
-		throw new HttpException('JSON转换失败', HttpStatus.BAD_REQUEST)
+		throw new HttpException('JSON转换失败', HttpStatus.INTERNAL_SERVER_ERROR)
 	}
 }
