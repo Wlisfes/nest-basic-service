@@ -36,7 +36,7 @@ export class MailerSchedule {
 	@Type(type => Number)
 	sampleId: number
 
-	@ApiProperty({ description: '发送文件ID', required: false, example: '59186481996726314527' })
+	@ApiProperty({ description: '发送文件ID', required: false, example: '96846837895235297833' })
 	@IsOptional()
 	fileId: string
 

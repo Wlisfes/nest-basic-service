@@ -35,7 +35,7 @@ export class TemplateController {
 		})
 		response.set({
 			'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-			'Content-Disposition': 'attachment; filename="example-200.xlsx"'
+			'Content-Disposition': 'attachment; filename="example-20.xlsx"'
 		})
 		return response.send(buffer)
 	}
