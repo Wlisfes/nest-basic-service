@@ -17,20 +17,20 @@ export class TemplateController {
 		response: { status: 200, description: 'OK' }
 	})
 	public async test(@Response() response) {
-		const jsonData = Array.from({ length: 200 }, () => {
+		const jsonData = Array.from({ length: 20 }, () => {
 			return {
 				receive: faker.internet.email(),
-				userId: faker.string.uuid(),
 				name: faker.person.fullName(),
-				username: faker.internet.userName()
+				username: faker.internet.userName(),
+				password: faker.internet.password()
 			}
 		})
 		const buffer = await divineWritesheet(jsonData, {
 			columns: [
 				{ header: 'Receive', key: 'receive', width: 30 },
-				{ header: 'UserId', key: 'userId', width: 20 },
 				{ header: 'Name', key: 'name', width: 15 },
-				{ header: 'UserName', key: 'username', width: 15 }
+				{ header: 'UserName', key: 'username', width: 15 },
+				{ header: 'Password', key: 'password', width: 15 }
 			]
 		})
 		response.set({
