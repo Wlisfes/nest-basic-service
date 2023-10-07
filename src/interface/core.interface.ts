@@ -15,3 +15,8 @@ export type BatchRequest<T> = {
 	model: Repository<T>
 	options?: FindOneOptions<T> | FindManyOptions<T>
 }
+
+export type UseResearch<T> = {
+	model: Repository<T>
+	options?: FindOneOptions<T>
+}

@@ -2,7 +2,8 @@ import { Injectable } from '@nestjs/common'
 import { Brackets } from 'typeorm'
 import { CoreService } from '@/core/core.service'
 import { EntityService } from '@/core/entity.service'
-import { divineResult, divineHandler } from '@/utils/utils-common'
+import { divineResult } from '@/utils/utils-common'
+import { divineCatchWherer } from '@/utils/utils-plugin'
 import * as http from '../interface/app.interface'
 
 @Injectable()
@@ -98,23 +99,23 @@ export class AppService extends CoreService {
 					})
 				}
 			}).then(async data => {
-				await this.haveUpdate(
-					{
-						name: '应用',
-						model: this.entity.captchaApplication,
-						options: {
-							join: {
-								alias: 'tb',
-								leftJoinAndSelect: { user: 'tb.user' }
-							},
-							where: new Brackets(qb => {
-								qb.where('tb.name = :name', { name: props.name })
-								qb.andWhere('user.uid = :uid', { uid })
-							})
-						}
-					},
-					node => node.appId !== props.appId
-				)
+				/**验证当前应用名称是否已存在**/
+				await this.useResearch({
+					model: this.entity.captchaApplication,
+					options: {
+						join: {
+							alias: 'tb',
+							leftJoinAndSelect: { user: 'tb.user' }
+						},
+						where: new Brackets(qb => {
+							qb.where('tb.name = :name', { name: props.name })
+							qb.andWhere('user.uid = :uid', { uid })
+						})
+					}
+				}).then(async app => {
+					return await divineCatchWherer(app.appId !== props.appId, { message: `应用已存在` })
+				})
+				/**更新表数据**/
 				await this.entity.captchaApplication.update({ appId: data.appId }, { name: props.name })
 				return await divineResult({ message: '编辑成功' })
 			})

@@ -1,7 +1,7 @@
 import { Injectable, HttpException, HttpStatus, Logger } from '@nestjs/common'
 import { Repository, SelectQueryBuilder, Brackets } from 'typeorm'
 import { usuCurrent } from '@/i18n'
-import { CoreRequest, BatchRequest } from '@/interface/core.interface'
+import { CoreRequest, BatchRequest, UseResearch } from '@/interface/core.interface'
 import * as Nanoid from 'nanoid'
 import * as moment from 'dayjs'
 import * as crypto from 'crypto'
@@ -121,31 +121,13 @@ export class CoreService {
 		})
 	}
 
-	/**创建时、验证数据模型是否已经存在**/
-	public async haveCreate<T>(props: CoreRequest<T>): Promise<T> {
+	/**查询单一数据**/
+	public async useResearch<T>(props: UseResearch<T>): Promise<T> {
 		const i18n = await this.usuCurrent()
 		try {
-			const node = await props.model.findOne(props.options)
-			if (node) {
-				throw new HttpException(props.message ?? i18n.t('http.NOT_HAS', { args: { name: props.name } }), HttpStatus.BAD_REQUEST)
-			}
-			return node
+			return await props.model.findOne(props.options)
 		} catch (e) {
-			throw new HttpException(e.message || i18n.t('http.SERVICE_ERROR'), HttpStatus.BAD_REQUEST)
-		}
-	}
-
-	/**编辑时、验证数据模型是否已经存在**/
-	public async haveUpdate<T>(props: CoreRequest<T>, handler: (e: T) => boolean): Promise<T> {
-		const i18n = await this.usuCurrent()
-		try {
-			const node = await props.model.findOne(props.options)
-			if (node && handler(node)) {
-				throw new HttpException(i18n.t('http.NOT_HAS', { args: { name: props.name } }), HttpStatus.BAD_REQUEST)
-			}
-			return node
-		} catch (e) {
-			throw new HttpException(e.message || i18n.t('http.SERVICE_ERROR'), HttpStatus.BAD_REQUEST)
+			throw new HttpException(e.message || i18n.t('http.SERVICE_ERROR'), HttpStatus.INTERNAL_SERVER_ERROR)
 		}
 	}
 }

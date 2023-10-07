@@ -1,11 +1,12 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { Brackets } from 'typeorm'
 import { CoreService } from '@/core/core.service'
 import { RedisService } from '@/core/redis.service'
 import { EntityService } from '@/core/entity.service'
 import { divineResult } from '@/utils/utils-common'
+import { divineCatchWherer } from '@/utils/utils-plugin'
 import * as cache from '@/mailer-module/config/common-redis.resolver'
-import * as http from '../interface/app.interface'
+import * as http from '@/mailer-module/interface/app.interface'
 
 @Injectable()
 export class AppService extends CoreService {
@@ -40,12 +41,12 @@ export class AppService extends CoreService {
 					status: data.status,
 					bucket: data.bucket,
 					ip: data.ip,
-					host: undefined,
-					port: undefined,
-					secure: undefined,
-					username: undefined,
-					password: undefined,
-					type: undefined
+					host: null,
+					port: null,
+					secure: null,
+					username: null,
+					password: null,
+					type: null
 				})
 				return await divineResult({ message: '创建成功' })
 			})
@@ -74,13 +75,11 @@ export class AppService extends CoreService {
 			await this.entity.mailerApplication.update({ appId: props.appId }, { bucket: props.bucket, ip: props.ip }).then(async data => {
 				/**应用编辑后需要更新redis缓存**/
 				const node = await this.redisService.getStore<typeof app>(cache.createMailerAppCache(props.appId))
-				return await this.redisService.setStore(
-					cache.createMailerAppCache(props.appId),
-					Object.assign(node, {
-						ip: props.ip,
-						bucket: props.bucket
-					})
-				)
+				return await this.redisService.setStore(cache.createMailerAppCache(props.appId), {
+					...node,
+					ip: props.ip,
+					bucket: props.bucket
+				})
 			})
 			return await divineResult({ message: '编辑成功' })
 		})
@@ -94,10 +93,7 @@ export class AppService extends CoreService {
 				options: {
 					join: {
 						alias: 'tb',
-						leftJoinAndSelect: {
-							user: 'tb.user'
-							// service: 'tb.service'
-						}
+						leftJoinAndSelect: { user: 'tb.user' }
 					},
 					where: new Brackets(qb => {
 						qb.where('user.uid = :uid', { uid })
@@ -138,7 +134,7 @@ export class AppService extends CoreService {
 	/**修改应用名称**/
 	public async httpUpdateNameApplication(props: http.UpdateNameApplication, uid: number) {
 		return await this.RunCatch(async i18n => {
-			const app = await this.validator({
+			return await this.validator({
 				model: this.entity.mailerApplication,
 				name: '应用',
 				empty: { value: true },
@@ -152,35 +148,31 @@ export class AppService extends CoreService {
 						qb.andWhere('user.uid = :uid', { uid })
 					})
 				}
-			})
-			await this.haveUpdate(
-				{
-					name: '应用',
+			}).then(async data => {
+				/**验证当前应用名称是否已存在**/
+				await this.useResearch({
 					model: this.entity.mailerApplication,
 					options: {
-						join: {
-							alias: 'tb',
-							leftJoinAndSelect: { user: 'tb.user' }
-						},
+						join: { alias: 'tb', leftJoinAndSelect: { user: 'tb.user' } },
 						where: new Brackets(qb => {
 							qb.where('tb.name = :name', { name: props.name })
 							qb.andWhere('user.uid = :uid', { uid })
 						})
 					}
-				},
-				node => node.appId !== props.appId
-			)
-			await this.entity.mailerApplication.update({ appId: app.appId }, { name: props.name }).then(async data => {
-				/**应用编辑后需要更新redis缓存**/
-				const node = await this.redisService.getStore<typeof app>(cache.createMailerAppCache(props.appId))
-				return await this.redisService.setStore(
-					cache.createMailerAppCache(props.appId),
-					Object.assign(node, {
+				}).then(async app => {
+					await divineCatchWherer(app.appId !== props.appId, { message: `应用已存在` })
+				})
+				/**更新表数据**/
+				await this.entity.mailerApplication.update({ appId: data.appId }, { name: props.name }).then(async () => {
+					/**应用编辑后需要更新redis缓存**/
+					const node = await this.redisService.getStore<typeof data>(cache.createMailerAppCache(props.appId))
+					return await this.redisService.setStore(cache.createMailerAppCache(props.appId), {
+						...node,
 						name: props.name
 					})
-				)
+				})
+				return await divineResult({ message: '编辑成功' })
 			})
-			return await divineResult({ message: '编辑成功' })
 		})
 	}
 
