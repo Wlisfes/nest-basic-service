@@ -29,7 +29,6 @@ export class JobMailerScheduleConsumer extends CoreService {
 	@Process({ name: JOB_MAILER_SCHEDULE.process.schedule })
 	async onProcess(job: Job<any>) {
 		this.logger.log(`process--- "${job.data.jobName}" 邮件任务队列开始执行:`, `jobId: ${job.id}`)
-		console.log(job.data)
 		const updateConsumer = useThrottle(3000)
 		const { totalCache, successCache, failureCache, executeCache } = createMailerScheduleCache(job.data.jobId)
 		await this.redisService.setStore(totalCache, job.data.total)

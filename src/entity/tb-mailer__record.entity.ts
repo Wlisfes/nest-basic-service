@@ -34,6 +34,9 @@ export class tbMailerRecord extends Common {
 	@Column({ type: 'text', select: false, comment: '自定义发送内容', nullable: true })
 	content: string
 
+	@Column({ comment: '错误原因', nullable: true })
+	reason: string
+
 	@Column({ type: 'bigint', comment: '用户UID', transformer: UUIDTransformer })
 	userId: number
 
