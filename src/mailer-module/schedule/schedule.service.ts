@@ -105,15 +105,6 @@ export class ScheduleService extends CoreService {
 				})
 				return data
 			})
-			// const excel = await divineCatchWherer(props.accept === 'excel' && isEmpty(props.fileId), {
-			// 	message: '发送文件ID 必填'
-			// }).then(async () => {
-			// 	return await this.aliyunOssService.httpBasicExcelFile({ fileId: props.fileId }, uid)
-			// })
-			// console.log(excel)
-
-			// return excel
-
 			const { sendTime, delay } = await divineDateDelay(props.sendTime ?? new Date())
 			const parameter = await divineParameter({
 				super: 'sample',
