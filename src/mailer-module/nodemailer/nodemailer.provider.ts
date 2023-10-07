@@ -51,7 +51,7 @@ export async function readNodemailer(option: Record<string, any> = {}) {
 }
 
 /**MJML模板转换**/
-export function sampleTransfer(mjmlContent: string, option: Record<string, any> = {}) {
+export async function readCompile(mjmlContent: string, option: Record<string, any> = {}) {
 	const register = handlebar.compile(mjmlContent)
 	return mjml(register(option)).html
 }

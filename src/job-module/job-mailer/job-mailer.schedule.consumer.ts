@@ -50,7 +50,8 @@ export class JobMailerScheduleConsumer extends CoreService {
 					sampleId: job.data.sampleId,
 					content: job.data.content ?? null,
 					userId: job.data.userId,
-					receive: node.COLUMN_1
+					receive: node.COLUMN_1,
+					state: node
 				})
 				await updateConsumer(async () => {
 					const progress = Number(((index / job.data.total) * 100).toFixed(2))
@@ -61,7 +62,7 @@ export class JobMailerScheduleConsumer extends CoreService {
 		} else if (job.data.accept === 'customize') {
 			/**自定义收件人**/
 			for (let index = 1; index <= job.data.total; index++) {
-				const node = job.data.receive.shift()
+				const receive = job.data.receive.shift()
 				await this.jobService.mailerExecute.add(JOB_MAILER_EXECUTE.process.execute, {
 					jobId: job.data.jobId,
 					jobName: job.data.jobName,
@@ -70,7 +71,8 @@ export class JobMailerScheduleConsumer extends CoreService {
 					sampleId: job.data.sampleId,
 					content: job.data.content ?? null,
 					userId: job.data.userId,
-					receive: node.COLUMN_1
+					receive: receive,
+					state: { COLUMN_1: receive }
 				})
 				await updateConsumer(async () => {
 					const progress = Number(((index / job.data.total) * 100).toFixed(2))

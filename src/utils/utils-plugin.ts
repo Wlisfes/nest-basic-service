@@ -54,13 +54,13 @@ export function divineCompress(value: string): Promise<string> {
 }
 
 /**字符串解压**/
-export function divineUnzipCompr(value: Buffer) {
+export function divineUnzipCompr<T>(value: Buffer): Promise<T> {
 	return new Promise((resolve, reject) => {
 		zlib.inflate(value, (err, buffer) => {
 			if (err) {
 				reject(new HttpException('解压失败', HttpStatus.INTERNAL_SERVER_ERROR))
 			} else {
-				resolve(buffer.toString())
+				resolve(buffer.toString() as T)
 			}
 		})
 	})

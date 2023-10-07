@@ -31,12 +31,6 @@ export class tbMailerRecord extends Common {
 	@Column({ comment: '模板名称', nullable: true })
 	sampleName: string
 
-	@Column({ comment: '模板封面', nullable: true })
-	sampleCover: string
-
-	@Column({ type: 'text', select: false, comment: '模板内容', nullable: true })
-	sampleContent: string
-
 	@Column({ type: 'text', select: false, comment: '自定义发送内容', nullable: true })
 	content: string
 

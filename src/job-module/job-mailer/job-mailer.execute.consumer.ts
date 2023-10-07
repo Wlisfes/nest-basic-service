@@ -8,9 +8,9 @@ import { EventEmitter2 } from '@nestjs/event-emitter'
 import { CoreService } from '@/core/core.service'
 import { RedisService } from '@/core/redis.service'
 import { EntityService } from '@/core/entity.service'
-import { useThrottle } from '@/hooks/hook-consumer'
 import { divineHandler, divineDelay } from '@/utils/utils-common'
-import { moment } from '@/utils/utils-plugin'
+import { moment, divineUnzipCompr, divineCompress } from '@/utils/utils-plugin'
+import { readCompile } from '@/mailer-module/nodemailer/nodemailer.provider'
 import { JOB_MAILER_EXECUTE } from '@/mailer-module/config/job-redis.resolver'
 import { createUserBasicCache } from '@/user-module/config/common-redis.resolver'
 import { createMailerAppCache, createMailerTemplateCache, createMailerScheduleCache } from '@/mailer-module/config/common-redis.resolver'
@@ -79,38 +79,41 @@ export class JobMailerExecuteConsumer extends CoreService {
 		const user = await this.redisService.getStore<any>(createUserBasicCache(job.data.userId))
 		const app = await this.redisService.getStore<any>(createMailerAppCache(job.data.appId))
 		await this.redisService.client.incr(executeCache)
-		await this.redisService.client.incr(successCache)
 
 		/**发送模板消息**/
 		await divineHandler(job.data.super === 'sample', async () => {
-			// await success.set(job.data.jobId, (success.get(job.data.jobId) ?? 0) + 1)
-			// const sample = await this.redisService.getStore<any>(createMailerTemplateCache(job.data.sampleId))
-			// const content = await divineCompress(sample.mjml)
-			// const node = await this.entity.mailerRecord.create({
-			// 	super: 'sample',
-			// 	status: 'fulfilled',
-			// 	receive: job.data.receive,
-			// 	jobId: job.data.jobId,
-			// 	jobName: job.data.jobName,
-			// 	appId: app.appId,
-			// 	appName: app.name,
-			// 	sampleId: sample.id,
-			// 	sampleName: sample.name,
-			// 	sampleCover: sample.cover,
-			// 	sampleContent: content,
-			// 	userId: user.uid,
-			// 	nickname: user.nickname,
-			// 	avatar: user.avatar
-			// })
-			// await this.entity.mailerRecord.save(node)
+			const sample = await this.redisService.getStore<any>(createMailerTemplateCache(job.data.sampleId))
+			try {
+				const buffer = Buffer.from(sample.mjml, 'base64')
+				const mjml = await divineUnzipCompr<string>(buffer)
+				const compile = await readCompile(mjml, job.data.state)
+				const content = await divineCompress(compile)
+				const node = await this.entity.mailerRecord.create({
+					jobId: job.data.jobId,
+					jobName: job.data.jobName,
+					super: job.data.super,
+					status: 'fulfilled',
+					receive: job.data.receive,
+					appId: job.data.appId,
+					appName: app.name,
+					sampleId: job.data.sampleId,
+					sampleName: sample.name,
+					content: content,
+					userId: job.data.userId,
+					nickname: user.nickname,
+					avatar: user.avatar
+				})
+				await this.entity.mailerRecord.save(node).then(async () => {
+					return await this.redisService.client.incr(successCache)
+				})
+			} catch (e) {
+				console.log(e)
+				return await this.redisService.client.incr(failureCache)
+			}
 		})
 
 		/**发送自定义消息**/
 		await divineHandler(job.data.super === 'customize', async () => {})
-
-		/**执行节流操作更新**/
-		// const updateConsumer = consumer.get(job.data.jobId)
-		// await updateConsumer()
 
 		/**判断定时任务是否在执行、不执行就启动定时任务**/
 		await divineHandler(!this.isCron, () => {

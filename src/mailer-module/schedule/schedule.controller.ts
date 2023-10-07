@@ -4,7 +4,6 @@ import { ApiDecorator } from '@/decorator/compute.decorator'
 import { Notice } from '@/interface/common.interface'
 import { RedisService } from '@/core/redis.service'
 import { ScheduleService } from '@/mailer-module/schedule/schedule.service'
-import { sampleTransfer } from '@/mailer-module/nodemailer/nodemailer.provider'
 import * as http from '@/mailer-module/interface/schedule.interface'
 
 @ApiTags('邮件任务模块')
