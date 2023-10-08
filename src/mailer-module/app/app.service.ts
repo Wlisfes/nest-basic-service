@@ -228,6 +228,7 @@ export class AppService extends CoreService {
 					})
 				}
 			}).then(async data => {
+				console.log(data, props)
 				if (data.service) {
 					await this.entity.mailerService.update(
 						{ id: data.service.id },
@@ -254,7 +255,7 @@ export class AppService extends CoreService {
 							type: props.type ?? data.service.type
 						})
 					})
-					return await divineResult({ message: '激活成功' })
+					return await divineResult({ message: '编辑成功' })
 				}
 				const node = await this.entity.mailerService.create({
 					host: props.host,
@@ -281,7 +282,7 @@ export class AppService extends CoreService {
 						type: props.type
 					})
 				})
-				return await divineResult({ message: '编辑成功' })
+				return await divineResult({ message: '激活成功' })
 			})
 		})
 	}

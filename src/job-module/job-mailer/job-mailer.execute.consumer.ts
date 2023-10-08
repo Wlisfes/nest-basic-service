@@ -116,6 +116,8 @@ export class JobMailerExecuteConsumer extends CoreService {
 						to: data.receive,
 						subject: data.jobName,
 						html: compile
+					}).catch(err => {
+						console.log(err)
 					})
 
 					data.status = 'fulfilled'

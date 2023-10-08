@@ -1,5 +1,5 @@
 import { ApiProperty, PickType, IntersectionType } from '@nestjs/swagger'
-import { IsNotEmpty, IsString, IsArray } from 'class-validator'
+import { IsNotEmpty, IsString, IsArray, IsBoolean } from 'class-validator'
 import { Type } from 'class-transformer'
 import { IsOptional } from '@/decorator/common.decorator'
 import { Request } from '@/interface/common.interface'
@@ -14,9 +14,9 @@ export class MailerService extends PickType(Request, ['id']) {
 	@Type(() => Number)
 	port: number
 
-	@ApiProperty({ description: 'TLS开管', example: true })
-	@IsNotEmpty({ message: 'TLS开管 必填' })
-	@Type(() => Boolean)
+	@ApiProperty({ description: 'TLS', enum: [true, false], example: true })
+	@IsNotEmpty({ message: 'TLS 必填' })
+	@IsBoolean({ message: 'TLS 类型错误' })
 	secure: boolean
 
 	@ApiProperty({ description: '登录用户' })
