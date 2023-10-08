@@ -8,7 +8,7 @@ import { EntityService } from '@/core/entity.service'
 import { JobService } from '@/job-module/job.service'
 import { AliyunOssService } from '@/aliyun-module/aliyun-oss/aliyun-oss.service'
 import { useThrottle } from '@/hooks/hook-consumer'
-import { divineHandler } from '@/utils/utils-common'
+import { divineWherer } from '@/utils/utils-common'
 import { JOB_MAILER_SCHEDULE, JOB_MAILER_EXECUTE } from '@/mailer-module/config/job-redis.resolver'
 import { createMailerScheduleCache } from '@/mailer-module/config/common-redis.resolver'
 
@@ -38,9 +38,10 @@ export class JobMailerScheduleConsumer extends CoreService {
 
 		if (job.data.accept === 'excel') {
 			/**Excel收件人列表**/
-			const { list } = await this.aliyunOssService.httpBasicExcelFile({ fileId: job.data.fileId }, job.data.userId, 0)
-			for (let index = 1; index <= job.data.total; index++) {
-				const node = list.shift()
+			const { list, header } = await this.aliyunOssService.httpBasicExcelFile({ fileId: job.data.fileId }, job.data.userId, 0)
+			const dataSource = divineWherer(header, list.splice(1), list)
+			for (let index = 0; index < job.data.total; index++) {
+				const node = dataSource.shift()
 				await this.jobService.mailerExecute.add(JOB_MAILER_EXECUTE.process.execute, {
 					jobId: job.data.jobId,
 					jobName: job.data.jobName,
@@ -53,14 +54,14 @@ export class JobMailerScheduleConsumer extends CoreService {
 					state: node
 				})
 				await updateConsumer(async () => {
-					const progress = Number(((index / job.data.total) * 100).toFixed(2))
-					await job.update({ ...job.data, submit: index })
+					const progress = Number((((index + 1) / job.data.total) * 100).toFixed(2))
+					await job.update({ ...job.data, submit: index + 1 })
 					return job.progress(progress)
 				})
 			}
 		} else if (job.data.accept === 'customize') {
 			/**自定义收件人**/
-			for (let index = 1; index <= job.data.total; index++) {
+			for (let index = 0; index < job.data.total; index++) {
 				const receive = job.data.receive.shift()
 				await this.jobService.mailerExecute.add(JOB_MAILER_EXECUTE.process.execute, {
 					jobId: job.data.jobId,
@@ -74,8 +75,8 @@ export class JobMailerScheduleConsumer extends CoreService {
 					state: { COLUMN_1: receive }
 				})
 				await updateConsumer(async () => {
-					const progress = Number(((index / job.data.total) * 100).toFixed(2))
-					await job.update({ ...job.data, submit: index })
+					const progress = Number((((index + 1) / job.data.total) * 100).toFixed(2))
+					await job.update({ ...job.data, submit: index + 1 })
 					return job.progress(progress)
 				})
 			}

@@ -1,6 +1,7 @@
 import { HttpException, HttpStatus } from '@nestjs/common'
+import { isEmail } from 'class-validator'
 import { zh_CN, Faker } from '@faker-js/faker'
-import { divineParameter, divineWherer, divineHandler } from '@/utils/utils-common'
+import { divineParameter, divineHandler } from '@/utils/utils-common'
 import * as dayjs from 'dayjs'
 import * as zlib from 'zlib'
 import * as stream from 'stream'
@@ -70,7 +71,7 @@ export function divineUnzipCompr<T>(value: Buffer): Promise<T> {
 export async function divineParsesheet(
 	buffer: Excel.Buffer,
 	max?: number
-): Promise<{ total: number; list: Array<Record<string, string>> }> {
+): Promise<{ header: boolean; total: number; list: Array<Record<string, string>> }> {
 	try {
 		const excel = new Excel.Workbook()
 		await excel.xlsx.load(buffer)
@@ -83,15 +84,15 @@ export async function divineParsesheet(
 			})
 			jsonData.push(rowData)
 		})
-		return await divineParameter({ total: jsonData.length, list: jsonData }).then(data => {
-			return divineWherer(
-				max && data.total > max,
-				{
-					total: data.total,
-					list: data.list.splice(0, max)
-				},
-				data
-			)
+		return await divineParameter({
+			header: jsonData.length > 0 && !isEmail(jsonData[0].COLUMN_),
+			total: jsonData.length,
+			list: jsonData
+		}).then(data => {
+			if (max && data.total > max) {
+				return { ...data, list: data.list.splice(0, max) }
+			}
+			return data
 		})
 	} catch (e) {
 		throw new HttpException('文件解析失败', HttpStatus.INTERNAL_SERVER_ERROR)

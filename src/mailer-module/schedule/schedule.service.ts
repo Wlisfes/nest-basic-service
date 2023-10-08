@@ -8,7 +8,7 @@ import { NodemailerService } from '@/mailer-module/nodemailer/nodemailer.service
 import { AppService } from '@/mailer-module/app/app.service'
 import { TemplateService } from '@/mailer-module/template/template.service'
 import { JobService } from '@/job-module/job.service'
-import { divineResult, divineDateDelay, divineParameter, divineHandler } from '@/utils/utils-common'
+import { divineResult, divineWherer, divineDateDelay, divineParameter, divineHandler } from '@/utils/utils-common'
 import { divineCatchWherer } from '@/utils/utils-plugin'
 import { JOB_MAILER_SCHEDULE, JOB_MAILER_EXECUTE } from '@/mailer-module/config/job-redis.resolver'
 import * as http from '../interface/schedule.interface'
@@ -133,10 +133,13 @@ export class ScheduleService extends CoreService {
 					await divineCatchWherer(isEmpty(props.fileId), {
 						message: '发送文件ID 必填'
 					})
-					const { fileId, fieldName, total } = await this.aliyunOssService.httpBasicExcelFile({ fileId: props.fileId }, uid)
+					const { fileId, fieldName, total, header } = await this.aliyunOssService.httpBasicExcelFile(
+						{ fileId: props.fileId },
+						uid
+					)
 					data.fileId = fileId
 					data.fieldName = fieldName
-					data.total = total
+					data.total = divineWherer(header, total - 1, total)
 				})
 				return data
 			})

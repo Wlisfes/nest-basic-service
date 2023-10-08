@@ -18,6 +18,7 @@ export interface CustomizeOption {
 	html: string
 }
 
+/**注册Nodemailer实例**/
 export async function createNodemailer(option: NodemailerOption) {
 	return new nodemailer.createTransport({
 		host: option.host,
@@ -30,6 +31,7 @@ export async function createNodemailer(option: NodemailerOption) {
 	})
 }
 
+/**注入Nodemailer实例发送邮件**/
 export function customNodemailer(transporter: any, mailOption: CustomizeOption) {
 	return new Promise((resolve, reject) => {
 		return transporter.sendMail(mailOption, (error, info) => {

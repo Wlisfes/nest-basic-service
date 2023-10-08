@@ -1,6 +1,6 @@
 import { Logger } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
-import { Processor, Process, OnQueueProgress, OnQueueCompleted, OnQueueFailed, OnQueueRemoved } from '@nestjs/bull'
+import { Processor, Process } from '@nestjs/bull'
 import { Job } from 'bull'
 import { Cron, CronExpression, SchedulerRegistry } from '@nestjs/schedule'
 import { isEmpty } from 'class-validator'
@@ -8,9 +8,9 @@ import { EventEmitter2 } from '@nestjs/event-emitter'
 import { CoreService } from '@/core/core.service'
 import { RedisService } from '@/core/redis.service'
 import { EntityService } from '@/core/entity.service'
-import { divineHandler, divineDelay, divineParameter } from '@/utils/utils-common'
+import { divineHandler, divineParameter } from '@/utils/utils-common'
 import { moment, divineUnzipCompr, divineCompress } from '@/utils/utils-plugin'
-import { readCompile } from '@/mailer-module/nodemailer/nodemailer.provider'
+import { createNodemailer, customNodemailer, readCompile } from '@/mailer-module/nodemailer/nodemailer.provider'
 import { JOB_MAILER_EXECUTE } from '@/mailer-module/config/job-redis.resolver'
 import { createUserBasicCache } from '@/user-module/config/common-redis.resolver'
 import { createMailerAppCache, createMailerTemplateCache, createMailerScheduleCache } from '@/mailer-module/config/common-redis.resolver'
@@ -96,6 +96,7 @@ export class JobMailerExecuteConsumer extends CoreService {
 				avatar: user.avatar
 			}).then(async (data: Record<string, any>) => {
 				try {
+					console.log(app)
 					const sample = await this.redisService.getStore<any>(createMailerTemplateCache(job.data.sampleId))
 					const buffer = Buffer.from(sample.mjml, 'base64')
 					const mjml = await divineUnzipCompr<string>(buffer)
