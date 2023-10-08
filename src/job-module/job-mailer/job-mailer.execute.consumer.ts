@@ -96,12 +96,27 @@ export class JobMailerExecuteConsumer extends CoreService {
 				avatar: user.avatar
 			}).then(async (data: Record<string, any>) => {
 				try {
-					console.log(app)
 					const sample = await this.redisService.getStore<any>(createMailerTemplateCache(job.data.sampleId))
 					const buffer = Buffer.from(sample.mjml, 'base64')
 					const mjml = await divineUnzipCompr<string>(buffer)
 					const compile = await readCompile(mjml, job.data.state)
 					const content = await divineCompress(compile)
+
+					/**注册Nodemailer实例**/
+					const transporter = await createNodemailer({
+						host: app.host,
+						port: app.port,
+						secure: app.secure,
+						user: app.username,
+						password: app.password
+					})
+					/**注入Nodemailer实例发送邮件**/
+					await customNodemailer(transporter, {
+						from: `"${data.jobName}" <${app.username}>`,
+						to: data.receive,
+						subject: data.jobName,
+						html: compile
+					})
 
 					data.status = 'fulfilled'
 					data.sampleName = sample.name
