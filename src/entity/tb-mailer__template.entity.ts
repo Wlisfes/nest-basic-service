@@ -20,8 +20,8 @@ export class tbMailerTemplate extends Common {
 	})
 	status: string
 
-	@Column({ type: 'simple-json', comment: '模板内容-JSON', select: false, nullable: false, default: null })
-	json: Object
+	@Column({ type: 'text', comment: '模板内容-JSON', select: false, nullable: false })
+	json: string
 
 	@Column({ type: 'text', comment: '模板内容-MJML', select: false, nullable: false })
 	mjml: string

@@ -97,8 +97,7 @@ export class JobMailerExecuteConsumer extends CoreService {
 			}).then(async (data: Record<string, any>) => {
 				try {
 					const sample = await this.redisService.getStore<any>(createMailerTemplateCache(job.data.sampleId))
-					const buffer = Buffer.from(sample.mjml, 'base64')
-					const mjml = await divineUnzipCompr<string>(buffer)
+					const mjml = await divineUnzipCompr<string>(sample.mjml)
 					const compile = await readCompile(mjml, job.data.state)
 					const content = await divineCompress(compile)
 

@@ -5,9 +5,10 @@ import { RedisService } from '@/core/redis.service'
 import { EntityService } from '@/core/entity.service'
 import { AliyunOssService } from '@/aliyun-module/aliyun-oss/aliyun-oss.service'
 import { divineResult, divineHandler, divineWherer } from '@/utils/utils-common'
-import { divineCompress } from '@/utils/utils-plugin'
+import { divineCompress, divineUnzipCompr } from '@/utils/utils-plugin'
 import * as cache from '@/mailer-module/config/common-redis.resolver'
 import * as http from '@/mailer-module/interface/template.interface'
+import * as LZString from 'lz-string'
 
 @Injectable()
 export class TemplateService extends CoreService {
@@ -73,8 +74,6 @@ export class TemplateService extends CoreService {
 					})
 				}
 			})
-			const mjml = await divineCompress(props.mjml)
-			const json = await divineCompress(JSON.stringify(props.json))
 			await this.entity.mailerTemplate
 				.update(
 					{ id: props.id },
@@ -82,8 +81,8 @@ export class TemplateService extends CoreService {
 						name: props.name,
 						cover: props.cover,
 						width: props.width,
-						json: json,
-						mjml: mjml,
+						json: props.json,
+						mjml: props.mjml,
 						status: divineWherer(props.status === 'sketch', 'sketch', 'pending')
 					}
 				)
@@ -99,8 +98,8 @@ export class TemplateService extends CoreService {
 						name: props.name,
 						cover: props.cover,
 						width: props.width,
-						json: json,
-						mjml: mjml,
+						json: props.json,
+						mjml: props.mjml,
 						status: divineWherer(props.status === 'sketch', 'sketch', 'pending')
 					})
 				})
@@ -149,6 +148,10 @@ export class TemplateService extends CoreService {
 						qb.andWhere('user.uid = :uid', { uid })
 					})
 				}
+			}).then(async data => {
+				// const buffer = Buffer.from(data.json, 'base64')
+				// const json = await divineUnzipCompr<string>(buffer)
+				return { ...data }
 			})
 		})
 	}

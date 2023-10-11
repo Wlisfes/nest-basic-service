@@ -3,7 +3,7 @@ import { isEmail } from 'class-validator'
 import { zh_CN, Faker } from '@faker-js/faker'
 import { divineParameter, divineHandler } from '@/utils/utils-common'
 import * as dayjs from 'dayjs'
-import * as zlib from 'zlib'
+import * as LZString from 'lz-string'
 import * as stream from 'stream'
 import * as Excel from 'exceljs'
 
@@ -42,29 +42,21 @@ export function divineStreamToBuffer(streamFile): Promise<Buffer> {
 }
 
 /**字符串压缩**/
-export function divineCompress(value: string): Promise<string> {
-	return new Promise((resolve, reject) => {
-		zlib.deflate(value, (err, buffer) => {
-			if (err) {
-				reject(new HttpException('压缩失败', HttpStatus.INTERNAL_SERVER_ERROR))
-			} else {
-				resolve(buffer.toString('base64'))
-			}
-		})
-	})
+export async function divineCompress(value: string): Promise<string> {
+	try {
+		return LZString.compressToBase64(value)
+	} catch (e) {
+		throw new HttpException('压缩失败', HttpStatus.INTERNAL_SERVER_ERROR)
+	}
 }
 
 /**字符串解压**/
-export function divineUnzipCompr<T>(value: Buffer): Promise<T> {
-	return new Promise((resolve, reject) => {
-		zlib.inflate(value, (err, buffer) => {
-			if (err) {
-				reject(new HttpException('解压失败', HttpStatus.INTERNAL_SERVER_ERROR))
-			} else {
-				resolve(buffer.toString() as T)
-			}
-		})
-	})
+export async function divineUnzipCompr<T extends string>(value: T): Promise<T> {
+	try {
+		return LZString.decompressFromBase64(value) as T
+	} catch (e) {
+		throw new HttpException('解压失败', HttpStatus.INTERNAL_SERVER_ERROR)
+	}
 }
 
 /**解析excel表格文件**/
