@@ -148,10 +148,6 @@ export class TemplateService extends CoreService {
 						qb.andWhere('user.uid = :uid', { uid })
 					})
 				}
-			}).then(async data => {
-				// const buffer = Buffer.from(data.json, 'base64')
-				// const json = await divineUnzipCompr<string>(buffer)
-				return { ...data }
 			})
 		})
 	}
