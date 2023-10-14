@@ -60,7 +60,7 @@ export class tbMailerSchedule extends Common {
 	sendTime: Date
 
 	@Column({
-		comment: `状态: 等待发送-pending、发送中-loading、发送完成-fulfilled、发送失败-rejected、手动关闭-initiative、系统关闭-automatic`,
+		comment: `状态: 等待发送-pending、发送中-loading、发送完成-fulfilled、发送失败-rejected、手动关闭-closurer、系统关闭-automatic`,
 		default: 'pending',
 		nullable: false
 	})
