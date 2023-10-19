@@ -5,6 +5,7 @@ import { RedisService } from '@/core/redis.service'
 import { EntityService } from '@/core/entity.service'
 import { divineResult } from '@/utils/utils-common'
 import { divineCatchWherer } from '@/utils/utils-plugin'
+import { divineOmitDatePatter } from '@/utils/utils-process'
 import * as cache from '@/mailer-module/config/common-redis.resolver'
 import * as http from '@/mailer-module/interface/app.interface'
 
@@ -104,6 +105,30 @@ export class AppService extends CoreService {
 				}
 			})
 			return await divineResult({ size: props.size, page: props.page, total, list })
+		})
+	}
+
+	/**应用下拉列表**/
+	public async httpSelecterApplication(uid: number) {
+		return await this.RunCatch(async i18n => {
+			const { total, list } = await this.batchValidator({
+				model: this.entity.mailerApplication,
+				options: {
+					join: {
+						alias: 'tb',
+						leftJoinAndSelect: { user: 'tb.user' }
+					},
+					select: ['id', 'appId', 'name', 'status'],
+					where: new Brackets(qb => {
+						qb.where('user.uid = :uid', { uid })
+					}),
+					order: { createTime: 'DESC' }
+				}
+			})
+			return await divineResult({
+				total,
+				list: list.map(item => divineOmitDatePatter(item, ['user']))
+			})
 		})
 	}
 

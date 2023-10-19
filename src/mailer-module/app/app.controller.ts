@@ -40,6 +40,16 @@ export class AppController {
 		return await this.appService.httpColumnApplication(query, request.user.uid)
 	}
 
+	@Get('/selecter')
+	@ApiDecorator({
+		operation: { summary: '应用下拉列表' },
+		customize: { status: 200, description: 'OK', type: http.MailerApplication },
+		authorize: { login: true, error: true }
+	})
+	public async httpSelecterApplication(@Request() request) {
+		return await this.appService.httpSelecterApplication(request.user.uid)
+	}
+
 	@Get('/basic')
 	@ApiDecorator({
 		operation: { summary: '应用信息' },
