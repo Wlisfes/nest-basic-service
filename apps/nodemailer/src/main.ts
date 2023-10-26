@@ -1,12 +1,12 @@
 import { NestFactory } from '@nestjs/core'
 import { ConfigService } from '@nestjs/config'
 import { ValidationPipe } from '@nestjs/common'
-import { NodemailerModule } from '@nodemailer/nodemailer.module'
+import { AppModule } from '@nodemailer/app.module'
 import * as express from 'express'
 import * as cookieParser from 'cookie-parser'
 
 async function bootstrap() {
-	const app = await NestFactory.create(NodemailerModule)
+	const app = await NestFactory.create(AppModule)
 	const port = Number(app.get(ConfigService).get('port.nodemailer') ?? 5051)
 
 	//允许跨域
