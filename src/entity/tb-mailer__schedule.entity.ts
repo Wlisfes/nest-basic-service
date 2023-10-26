@@ -1,6 +1,6 @@
 import { Entity, Column, ManyToOne, OneToOne, JoinColumn } from 'typeorm'
 import { TableCommon } from '@/entity/tb-common'
-import { TableUser } from '@/entity/tb-common.user'
+import { TableCustomer } from '@/entity/tb-common.customer'
 import { tbMailerApplication } from '@/entity/tb-mailer__application.entity'
 import { tbMailerTemplate } from '@/entity/tb-mailer__template.entity'
 import { StrArraytransformer } from '@/utils/utils-entity'
@@ -75,6 +75,6 @@ export class tbMailerSchedule extends TableCommon {
 	@ManyToOne(type => tbMailerApplication)
 	app: tbMailerApplication
 
-	@ManyToOne(type => TableUser)
-	user: TableUser
+	@ManyToOne(type => TableCustomer)
+	user: TableCustomer
 }

@@ -1,6 +1,6 @@
 import { Entity, Column, ManyToOne, OneToOne } from 'typeorm'
 import { TableCommon } from '@/entity/tb-common'
-import { TableUser } from '@/entity/tb-common.user'
+import { TableCustomer } from '@/entity/tb-common.customer'
 import { tbMailerApplication } from '@/entity/tb-mailer__application.entity'
 
 @Entity('tb-mailer__service')
@@ -23,8 +23,8 @@ export class tbMailerService extends TableCommon {
 	@Column({ comment: '服务类型', nullable: false, default: 'QQ' })
 	type: string
 
-	@ManyToOne(type => TableUser)
-	user: TableUser
+	@ManyToOne(type => TableCustomer)
+	user: TableCustomer
 
 	@OneToOne(type => tbMailerApplication, type => type.service)
 	app: tbMailerApplication

@@ -1,7 +1,7 @@
 import { Entity, Column, ManyToOne } from 'typeorm'
 import { TableCommon } from '@/entity/tb-common'
 import { UUIDTransformer, StrArraytransformer } from '@/utils/utils-entity'
-import { TableUser } from '@/entity/tb-common.user'
+import { TableCustomer } from '@/entity/tb-common.customer'
 
 @Entity('tb-captcha__application')
 export class tbCaptchaApplication extends TableCommon {
@@ -32,6 +32,6 @@ export class tbCaptchaApplication extends TableCommon {
 	@Column({ type: 'varchar', length: 2000, comment: '授权IP', nullable: true, transformer: StrArraytransformer })
 	ip: string[]
 
-	// @ManyToOne(type => TableUser, user => user.captcha)
-	// user: TableUser
+	// @ManyToOne(type => TableCustomer, user => user.captcha)
+	// user: TableCustomer
 }

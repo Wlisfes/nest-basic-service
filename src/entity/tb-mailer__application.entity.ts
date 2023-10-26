@@ -1,6 +1,6 @@
 import { Entity, Column, ManyToOne, OneToOne, JoinColumn } from 'typeorm'
 import { TableCommon } from '@/entity/tb-common'
-import { TableUser } from '@/entity/tb-common.user'
+import { TableCustomer } from '@/entity/tb-common.customer'
 import { tbMailerService } from '@/entity/tb-mailer__service.entity'
 
 @Entity('tb-mailer__application')
@@ -57,6 +57,6 @@ export class tbMailerApplication extends TableCommon {
 	@JoinColumn()
 	service: tbMailerService
 
-	// @ManyToOne(type => TableUser, user => user.mailer)
-	// user: TableUser
+	// @ManyToOne(type => TableCustomer, user => user.mailer)
+	// user: TableCustomer
 }

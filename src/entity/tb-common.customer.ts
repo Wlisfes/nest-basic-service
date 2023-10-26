@@ -5,8 +5,8 @@ import { tbMailerApplication } from '@/entity/tb-mailer__application.entity'
 import { hashSync } from 'bcryptjs'
 import { UUIDTransformer } from '@/utils/utils-entity'
 
-@Entity('tb-common_user')
-export class TableUser extends TableCommon {
+@Entity('tb-common_customer')
+export class TableCustomer extends TableCommon {
 	@Column({ type: 'bigint', comment: 'uid', readonly: true, transformer: UUIDTransformer })
 	uid: number
 
