@@ -1,38 +1,47 @@
 {
-  "$schema": "https://json.schemastore.org/nest-cli",
-  "collection": "@nestjs/schematics",
-  "sourceRoot": "apps/nest-basic-service/src",
-  "compilerOptions": {
-    "deleteOutDir": true,
-    "assets": [
-      {
-        "include": "i18n/**/*",
-        "watchAssets": true
-      }
-    ],
-    "webpack": true,
-    "tsConfigPath": "apps/nest-basic-service/tsconfig.app.json"
-  },
-  "monorepo": true,
-  "root": "apps/nest-basic-service",
-  "projects": {
-    "nest-basic-service": {
-      "type": "application",
-      "root": "apps/nest-basic-service",
-      "entryFile": "main",
-      "sourceRoot": "apps/nest-basic-service/src",
-      "compilerOptions": {
-        "tsConfigPath": "apps/nest-basic-service/tsconfig.app.json"
-      }
-    },
-    "nodemailer": {
-      "type": "application",
-      "root": "apps/nodemailer",
-      "entryFile": "main",
-      "sourceRoot": "apps/nodemailer/src",
-      "compilerOptions": {
-        "tsConfigPath": "apps/nodemailer/tsconfig.app.json"
-      }
-    }
-  }
+	"$schema": "https://json.schemastore.org/nest-cli",
+	"collection": "@nestjs/schematics",
+	"sourceRoot": "apps/common/src",
+	"compilerOptions": {
+		"deleteOutDir": true,
+		"assets": [
+			{
+				"include": "i18n/**/*",
+				"watchAssets": true
+			}
+		],
+		"webpack": true,
+		"tsConfigPath": "apps/nest-basic-service/tsconfig.app.json"
+	},
+	"monorepo": true,
+	"root": "apps/common",
+	"projects": {
+		"common": {
+			"type": "application",
+			"root": "apps/common",
+			"entryFile": "main",
+			"sourceRoot": "apps/common/src",
+			"compilerOptions": {
+				"tsConfigPath": "apps/common/tsconfig.app.json"
+			}
+		},
+		"nest-basic-service": {
+			"type": "application",
+			"root": "apps/nest-basic-service",
+			"entryFile": "main",
+			"sourceRoot": "apps/nest-basic-service/src",
+			"compilerOptions": {
+				"tsConfigPath": "apps/nest-basic-service/tsconfig.app.json"
+			}
+		},
+		"nodemailer": {
+			"type": "application",
+			"root": "apps/nodemailer",
+			"entryFile": "main",
+			"sourceRoot": "apps/nodemailer/src",
+			"compilerOptions": {
+				"tsConfigPath": "apps/nodemailer/tsconfig.app.json"
+			}
+		}
+	}
 }
