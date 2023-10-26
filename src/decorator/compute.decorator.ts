@@ -1,8 +1,8 @@
 import { ApiOperationOptions, ApiResponseOptions, getSchemaPath, ApiExtraModels } from '@nestjs/swagger'
 import { ApiOperation, ApiConsumes, ApiProduces, ApiResponse, ApiBearerAuth } from '@nestjs/swagger'
 import { applyDecorators, Type } from '@nestjs/common'
-import { ApiBearer } from '@/guard/auth.guard'
-import { SwaggerOption } from '@/config/swagger-config'
+// import { ApiBearer } from '@/guard/auth.guard'
+// import { SwaggerOption } from '@/config/swagger-config'
 
 interface Option {
 	operation: ApiOperationOptions
@@ -51,14 +51,15 @@ export function ApiDecorator(option: Partial<Option> = {}) {
 
 	if (option.authorize && option.authorize.login) {
 		/**开启登录验证**/
-		decorator.push(
-			ApiBearerAuth(SwaggerOption.APP_AUTH_TOKEN),
-			ApiBearer({
-				authorize: option.authorize.login,
-				error: option.authorize.error,
-				baseURL: option.authorize.baseURL
-			})
-		)
+		// decorator
+		// .push
+		// ApiBearerAuth(SwaggerOption.APP_AUTH_TOKEN),
+		// ApiBearer({
+		// 	authorize: option.authorize.login,
+		// 	error: option.authorize.error,
+		// 	baseURL: option.authorize.baseURL
+		// })
+		// ()
 	}
 
 	return applyDecorators(...decorator)
