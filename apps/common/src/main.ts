@@ -1,4 +1,5 @@
 import { NestFactory } from '@nestjs/core'
+import { ConfigService } from '@nestjs/config'
 import { ValidationPipe } from '@nestjs/common'
 import { CommonModule } from '@common/common.module'
 import * as express from 'express'
@@ -6,7 +7,7 @@ import * as cookieParser from 'cookie-parser'
 
 async function bootstrap() {
 	const app = await NestFactory.create(CommonModule)
-	const port = Number(process.env.BASIC_PORT ?? 5050)
+	const port = Number(app.get(ConfigService).get('port.common') ?? 5050)
 
 	//允许跨域
 	app.enableCors()

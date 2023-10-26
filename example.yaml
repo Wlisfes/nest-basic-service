@@ -1,0 +1,7 @@
+port:
+    common: 5050
+    nodemailer: 5051
+
+db:
+    mysql:
+        host: localhost
