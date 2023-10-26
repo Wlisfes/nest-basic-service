@@ -4,14 +4,8 @@
 	"sourceRoot": "apps/common/src",
 	"compilerOptions": {
 		"deleteOutDir": true,
-		"assets": [
-			{
-				"include": "i18n/**/*",
-				"watchAssets": true
-			}
-		],
 		"webpack": true,
-		"tsConfigPath": "apps/nest-basic-service/tsconfig.app.json"
+		"tsConfigPath": "apps/common/tsconfig.app.json"
 	},
 	"monorepo": true,
 	"root": "apps/common",
@@ -23,15 +17,6 @@
 			"sourceRoot": "apps/common/src",
 			"compilerOptions": {
 				"tsConfigPath": "apps/common/tsconfig.app.json"
-			}
-		},
-		"nest-basic-service": {
-			"type": "application",
-			"root": "apps/nest-basic-service",
-			"entryFile": "main",
-			"sourceRoot": "apps/nest-basic-service/src",
-			"compilerOptions": {
-				"tsConfigPath": "apps/nest-basic-service/tsconfig.app.json"
 			}
 		},
 		"nodemailer": {
