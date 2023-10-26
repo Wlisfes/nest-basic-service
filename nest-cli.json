@@ -7,6 +7,9 @@
 		"webpack": true,
 		"tsConfigPath": "apps/common/tsconfig.app.json"
 	},
+	"generateOptions": {
+		"spec": false
+	},
 	"monorepo": true,
 	"root": "apps/common",
 	"projects": {
