@@ -1,9 +1,38 @@
 {
-	"$schema": "https://json.schemastore.org/nest-cli",
-	"collection": "@nestjs/schematics",
-	"sourceRoot": "src",
-	"compilerOptions": {
-		"deleteOutDir": true,
-		"assets": [{ "include": "i18n/**/*", "watchAssets": true }]
-	}
+  "$schema": "https://json.schemastore.org/nest-cli",
+  "collection": "@nestjs/schematics",
+  "sourceRoot": "apps/nest-basic-service/src",
+  "compilerOptions": {
+    "deleteOutDir": true,
+    "assets": [
+      {
+        "include": "i18n/**/*",
+        "watchAssets": true
+      }
+    ],
+    "webpack": true,
+    "tsConfigPath": "apps/nest-basic-service/tsconfig.app.json"
+  },
+  "monorepo": true,
+  "root": "apps/nest-basic-service",
+  "projects": {
+    "nest-basic-service": {
+      "type": "application",
+      "root": "apps/nest-basic-service",
+      "entryFile": "main",
+      "sourceRoot": "apps/nest-basic-service/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/nest-basic-service/tsconfig.app.json"
+      }
+    },
+    "nodemailer": {
+      "type": "application",
+      "root": "apps/nodemailer",
+      "entryFile": "main",
+      "sourceRoot": "apps/nodemailer/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/nodemailer/tsconfig.app.json"
+      }
+    }
+  }
 }
