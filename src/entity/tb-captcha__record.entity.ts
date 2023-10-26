@@ -1,9 +1,9 @@
 import { Entity, Column } from 'typeorm'
-import { Common } from '@/entity/tb-common'
+import { TableCommon } from '@/entity/tb-common'
 import { UUIDTransformer } from '@/utils/utils-entity'
 
 @Entity('tb-captcha__record')
-export class tbCaptchaRecord extends Common {
+export class tbCaptchaRecord extends TableCommon {
 	@Column({ type: 'bigint', comment: 'App ID', readonly: true, transformer: UUIDTransformer })
 	appId: number
 

@@ -1,12 +1,12 @@
 import { Entity, Column, OneToMany } from 'typeorm'
-import { Common } from '@/entity/tb-common'
+import { TableCommon } from '@/entity/tb-common'
 import { tbCaptchaApplication } from '@/entity/tb-captcha__application.entity'
 import { tbMailerApplication } from '@/entity/tb-mailer__application.entity'
 import { hashSync } from 'bcryptjs'
 import { UUIDTransformer } from '@/utils/utils-entity'
 
-@Entity('tb-user')
-export class User extends Common {
+@Entity('tb-common_user')
+export class TableUser extends TableCommon {
 	@Column({ type: 'bigint', comment: 'uid', readonly: true, transformer: UUIDTransformer })
 	uid: number
 
@@ -39,15 +39,15 @@ export class User extends Common {
 	})
 	password: string
 
-	@OneToMany(type => tbCaptchaApplication, app => app.user)
-	captcha: tbCaptchaApplication[]
+	// @OneToMany(type => tbCaptchaApplication, app => app.user)
+	// captcha: tbCaptchaApplication[]
 
-	@OneToMany(type => tbMailerApplication, app => app.user)
-	mailer: tbMailerApplication[]
+	// @OneToMany(type => tbMailerApplication, app => app.user)
+	// mailer: tbMailerApplication[]
 }
 
 @Entity('tb-user__configur')
-export class tbUserConfigur extends Common {
+export class tbUserConfigur extends TableCommon {
 	@Column({
 		type: 'bigint',
 		comment: '用户UID',
@@ -95,7 +95,7 @@ export class tbUserConfigur extends Common {
 }
 
 @Entity('tb-user__consumer')
-export class tbUserConsumer extends Common {
+export class tbUserConsumer extends TableCommon {
 	@Column({
 		type: 'bigint',
 		comment: '用户UID',

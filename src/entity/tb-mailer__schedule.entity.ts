@@ -1,13 +1,13 @@
 import { Entity, Column, ManyToOne, OneToOne, JoinColumn } from 'typeorm'
-import { Common } from '@/entity/tb-common'
-import { User } from '@/entity/tb-user.entity'
+import { TableCommon } from '@/entity/tb-common'
+import { TableUser } from '@/entity/tb-common.user'
 import { tbMailerApplication } from '@/entity/tb-mailer__application.entity'
 import { tbMailerTemplate } from '@/entity/tb-mailer__template.entity'
 import { StrArraytransformer } from '@/utils/utils-entity'
 import * as day from 'dayjs'
 
 @Entity('tb-mailer__schedule')
-export class tbMailerSchedule extends Common {
+export class tbMailerSchedule extends TableCommon {
 	@Column({ type: 'int', comment: '任务ID', nullable: true })
 	jobId: number
 
@@ -75,6 +75,6 @@ export class tbMailerSchedule extends Common {
 	@ManyToOne(type => tbMailerApplication)
 	app: tbMailerApplication
 
-	@ManyToOne(type => User)
-	user: User
+	@ManyToOne(type => TableUser)
+	user: TableUser
 }

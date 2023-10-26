@@ -1,9 +1,9 @@
 import { Entity, Column, ManyToOne } from 'typeorm'
-import { Common } from '@/entity/tb-common'
-import { User } from '@/entity/tb-user.entity'
+import { TableCommon } from '@/entity/tb-common'
+import { TableUser } from '@/entity/tb-common.user'
 
 @Entity('tb-basic__excel')
-export class tbBasicExcel extends Common {
+export class tbBasicExcel extends TableCommon {
 	@Column({ comment: '文件ID', nullable: false })
 	fileId: string
 
@@ -25,6 +25,6 @@ export class tbBasicExcel extends Common {
 	@Column({ comment: '文件解析列表总数', nullable: false, default: 0 })
 	total: number
 
-	@ManyToOne(type => User)
-	user: User
+	@ManyToOne(type => TableUser)
+	user: TableUser
 }

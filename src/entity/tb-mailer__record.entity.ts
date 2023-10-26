@@ -1,9 +1,9 @@
 import { Entity, Column } from 'typeorm'
-import { Common } from '@/entity/tb-common'
+import { TableCommon } from '@/entity/tb-common'
 import { UUIDTransformer } from '@/utils/utils-entity'
 
 @Entity('tb-mailer__record')
-export class tbMailerRecord extends Common {
+export class tbMailerRecord extends TableCommon {
 	@Column({ type: 'int', default: null, comment: '任务ID' })
 	jobId: number
 

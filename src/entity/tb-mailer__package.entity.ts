@@ -1,9 +1,9 @@
 import { Entity, Column } from 'typeorm'
-import { Common } from '@/entity/tb-common'
+import { TableCommon } from '@/entity/tb-common'
 import * as day from 'dayjs'
 
 @Entity('tb-mailer__package')
-export class tbMailerPackage extends Common {
+export class tbMailerPackage extends TableCommon {
 	@Column({
 		type: 'bigint',
 		comment: '套餐ID',
@@ -74,7 +74,7 @@ export class tbMailerPackage extends Common {
 }
 
 @Entity('tb-user__mailer__package')
-export class tbUserMailerPackage extends Common {
+export class tbUserMailerPackage extends TableCommon {
 	@Column({
 		type: 'bigint',
 		comment: '用户UID',

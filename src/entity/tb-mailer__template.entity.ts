@@ -1,9 +1,9 @@
 import { Entity, Column, ManyToOne } from 'typeorm'
-import { Common } from '@/entity/tb-common'
-import { User } from '@/entity/tb-user.entity'
+import { TableCommon } from '@/entity/tb-common'
+import { TableUser } from '@/entity/tb-common.user'
 
 @Entity('tb-mailer__template')
-export class tbMailerTemplate extends Common {
+export class tbMailerTemplate extends TableCommon {
 	@Column({ comment: '模板名称', nullable: false })
 	name: string
 
@@ -26,6 +26,6 @@ export class tbMailerTemplate extends Common {
 	@Column({ type: 'text', comment: '模板内容-MJML', select: false, nullable: false })
 	mjml: string
 
-	@ManyToOne(type => User)
-	user: User
+	@ManyToOne(type => TableUser)
+	user: TableUser
 }
