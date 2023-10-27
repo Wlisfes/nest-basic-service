@@ -1,7 +1,7 @@
 import { isEmpty } from 'class-validator'
 
-/**uuid转化**/
-export const UUIDTransformer = {
+/**数字转换转化**/
+export const customIntTransfor = {
 	from: value => Number(value),
 	to: value => value
 }

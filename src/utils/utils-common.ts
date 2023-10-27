@@ -1,9 +1,8 @@
 /**生成N位随机整数字符串**/
-export function divineIntNumber(option: { length: number; min: number; max: number }) {
-	const randomArray = Array.from({ length: option.length }, e => {
-		return Math.floor(Math.random() * (option.max - option.min + 1)) + option.min
-	})
-	return randomArray.join('')
+export function divineIntNumber(pad: number = 6) {
+	const flake = [Math.floor(Date.now() / 1000)]
+	const random = Array.from({ length: pad }, e => Math.floor(Math.random() * 9) + 1)
+	return flake.concat(random).join('')
 }
 
 /**返回包装**/

@@ -1,41 +1,47 @@
 import { Entity, Column, OneToMany } from 'typeorm'
+import { ApiProperty } from '@nestjs/swagger'
+import { hashSync } from 'bcryptjs'
 import { TableCommon } from '@/entity/tb-common'
 import { tbCaptchaApplication } from '@/entity/tb-captcha__application.entity'
 import { tbMailerApplication } from '@/entity/tb-mailer__application.entity'
-import { hashSync } from 'bcryptjs'
-import { UUIDTransformer } from '@/utils/utils-entity'
+import { customIntTransfor } from '@/utils/utils-entity'
 
 @Entity('tb-common_customer')
 export class TableCustomer extends TableCommon {
-	@Column({ type: 'bigint', comment: 'uid', readonly: true, transformer: UUIDTransformer })
+	@ApiProperty({ description: '用户唯一UID', example: 1 })
+	@Column({ type: 'bigint', comment: 'uid', update: false, transformer: customIntTransfor })
 	uid: number
 
-	@Column({ charset: 'utf8mb4', comment: '昵称', nullable: false })
+	@ApiProperty({ description: '用户昵称', example: '妖雨纯' })
+	@Column({ comment: '昵称', nullable: false })
 	nickname: string
 
+	@ApiProperty({ description: '邮箱', example: 'ucop8dd096@foxmail.com' })
 	@Column({ comment: '邮箱', nullable: true })
-	email: string | null
+	email: string
 
+	@ApiProperty({ description: '头像' })
 	@Column({ comment: '头像', nullable: true, default: null })
 	avatar: string
 
+	@ApiProperty({ description: '状态', enum: ['disable', 'enable', 'delete'], example: 'enable' })
 	@Column({ comment: '状态: 禁用-disable、启用-enable、删除-delete', default: 'enable', nullable: false })
 	status: string
 
-	@Column({ charset: 'utf8mb4', comment: '备注', nullable: true })
-	comment: string | null
+	@ApiProperty({ description: '备注' })
+	@Column({ comment: '备注', nullable: true })
+	comment: string
 
-	@Column({ comment: '手机号', transformer: UUIDTransformer })
+	@ApiProperty({ description: '手机号', example: 18888888888 })
+	@Column({ comment: '手机号', nullable: false, transformer: customIntTransfor })
 	mobile: string
 
+	@ApiProperty({ description: '密码', example: 'MTIzNDU2' })
 	@Column({
 		comment: '密码',
 		select: false,
 		nullable: false,
-		transformer: {
-			from: value => value,
-			to: value => hashSync(value)
-		}
+		transformer: { from: value => value, to: value => hashSync(value) }
 	})
 	password: string
 
@@ -46,8 +52,8 @@ export class TableCustomer extends TableCommon {
 	// mailer: tbMailerApplication[]
 }
 
-@Entity('tb-user__configur')
-export class tbUserConfigur extends TableCommon {
+@Entity('tb-common_customer__configur')
+export class TableCustomerConfigur extends TableCommon {
 	@Column({
 		type: 'bigint',
 		comment: '用户UID',
