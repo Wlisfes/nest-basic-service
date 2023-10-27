@@ -1,18 +1,18 @@
-import { Controller, Post, Get } from '@nestjs/common'
+import { Controller, Post } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { CustomerService } from '@common/customer/customer.service'
 import { ApiDecorator } from '@/decorator/compute.decorator'
-import { TableCustomer } from '@/entity/tb-common.customer'
+import { NoticeResolver } from '@/interface/common.resolver'
 
 @ApiTags('用户模块')
 @Controller('customer')
 export class CustomerController {
 	constructor(private readonly customerService: CustomerService) {}
 
-	@Get('/register')
+	@Post('/register')
 	@ApiDecorator({
 		operation: { summary: '注册用户' },
-		response: { status: 200, description: 'OK', type: TableCustomer }
+		response: { status: 200, description: 'OK', type: NoticeResolver }
 	})
 	public async httpRegister() {
 		return await this.customerService.httpRegister()

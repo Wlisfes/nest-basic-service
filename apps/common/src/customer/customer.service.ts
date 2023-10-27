@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { TableCustomer } from '@/entity/tb-common.customer'
 import { divineIntNumber } from '@/utils/utils-common'
-import { faker } from '@/utils/utils-plugin'
 
 @Injectable()
 export class CustomerService {
@@ -13,8 +12,9 @@ export class CustomerService {
 	public async httpRegister() {
 		const node = await this.tableCustomer.create({
 			uid: await divineIntNumber(),
-			nickname: faker.person.fullName(),
-			password: 'MTIzNDU2'
+			nickname: '妖雨纯',
+			password: 'MTIzNDU2',
+			mobile: '18676361342'
 		})
 		return await this.tableCustomer.save(node)
 	}

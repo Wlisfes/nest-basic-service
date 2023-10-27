@@ -17,14 +17,13 @@ import { TableCustomer } from '@/entity/tb-common.customer'
 				password: configService.get('db.mysql.password'),
 				database: configService.get('db.mysql.database'),
 				charset: configService.get('db.mysql.charset'),
-				synchronize: configService.get('NODE_ENV') === 'development'
-				//entities: [TableCustomer]
+				synchronize: configService.get('NODE_ENV') === 'development',
+				entities: [TableCustomer]
 			})
-		}),
-
-		TypeOrmModule.forFeature([TableCustomer])
+		})
 	],
 	controllers: [],
-	providers: []
+	providers: [],
+	exports: []
 })
 export class DatabaseModule {}
