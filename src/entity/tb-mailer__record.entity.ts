@@ -1,6 +1,6 @@
 import { Entity, Column } from 'typeorm'
 import { TableCommon } from '@/entity/tb-common'
-import { UUIDTransformer } from '@/utils/utils-entity'
+import { customIntTransfor } from '@/utils/utils-entity'
 
 @Entity('tb-mailer__record')
 export class tbMailerRecord extends TableCommon {
@@ -19,7 +19,7 @@ export class tbMailerRecord extends TableCommon {
 	@Column({ comment: `状态: 发送完成-fulfilled、发送失败-rejected`, nullable: false })
 	status: string
 
-	@Column({ type: 'bigint', comment: 'App ID', readonly: true, transformer: UUIDTransformer })
+	@Column({ type: 'bigint', comment: 'App ID', readonly: true, transformer: customIntTransfor })
 	appId: number
 
 	@Column({ comment: '应用名称', nullable: false })
@@ -37,7 +37,7 @@ export class tbMailerRecord extends TableCommon {
 	@Column({ comment: '错误原因', nullable: true })
 	reason: string
 
-	@Column({ type: 'bigint', comment: '用户UID', transformer: UUIDTransformer })
+	@Column({ type: 'bigint', comment: '用户UID', transformer: customIntTransfor })
 	userId: number
 
 	@Column({ comment: '用户昵称', nullable: false })

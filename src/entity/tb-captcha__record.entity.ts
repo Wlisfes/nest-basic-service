@@ -1,16 +1,16 @@
 import { Entity, Column } from 'typeorm'
 import { TableCommon } from '@/entity/tb-common'
-import { UUIDTransformer } from '@/utils/utils-entity'
+import { customIntTransfor } from '@/utils/utils-entity'
 
 @Entity('tb-captcha__record')
 export class tbCaptchaRecord extends TableCommon {
-	@Column({ type: 'bigint', comment: 'App ID', readonly: true, transformer: UUIDTransformer })
+	@Column({ type: 'bigint', comment: 'App ID', readonly: true, transformer: customIntTransfor })
 	appId: number
 
 	@Column({ comment: '应用名称', nullable: false })
 	name: string
 
-	@Column({ type: 'bigint', comment: 'User ID', readonly: true, transformer: UUIDTransformer })
+	@Column({ type: 'bigint', comment: 'User ID', readonly: true, transformer: customIntTransfor })
 	userId: number
 
 	@Column({ charset: 'utf8mb4', comment: '昵称', nullable: false })

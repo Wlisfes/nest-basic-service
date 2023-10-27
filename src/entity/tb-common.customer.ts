@@ -4,13 +4,12 @@ import { hashSync } from 'bcryptjs'
 import { TableCommon } from '@/entity/tb-common'
 import { tbCaptchaApplication } from '@/entity/tb-captcha__application.entity'
 import { tbMailerApplication } from '@/entity/tb-mailer__application.entity'
-import { customIntTransfor } from '@/utils/utils-entity'
 
 @Entity('tb-common_customer')
 export class TableCustomer extends TableCommon {
 	@ApiProperty({ description: '用户唯一UID', example: 1 })
-	@Column({ type: 'bigint', comment: 'uid', update: false, transformer: customIntTransfor })
-	uid: number
+	@Column({ type: 'bigint', comment: 'uid', update: false, nullable: false })
+	uid: string
 
 	@ApiProperty({ description: '用户昵称', example: '妖雨纯' })
 	@Column({ comment: '昵称', nullable: false })
@@ -33,7 +32,7 @@ export class TableCustomer extends TableCommon {
 	comment: string
 
 	@ApiProperty({ description: '手机号', example: 18888888888 })
-	@Column({ comment: '手机号', nullable: false, transformer: customIntTransfor })
+	@Column({ comment: '手机号', nullable: false })
 	mobile: string
 
 	@ApiProperty({ description: '密码', example: 'MTIzNDU2' })

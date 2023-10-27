@@ -1,5 +1,5 @@
 /**生成N位随机整数字符串**/
-export function divineIntNumber(pad: number = 6) {
+export function divineIntNumber(pad: number = 8) {
 	const flake = [Math.floor(Date.now() / 1000)]
 	const random = Array.from({ length: pad }, e => Math.floor(Math.random() * 9) + 1)
 	return flake.concat(random).join('')

@@ -1,11 +1,11 @@
 import { Entity, Column, ManyToOne } from 'typeorm'
 import { TableCommon } from '@/entity/tb-common'
-import { UUIDTransformer, StrArraytransformer } from '@/utils/utils-entity'
+import { customIntTransfor, StrArraytransformer } from '@/utils/utils-entity'
 import { TableCustomer } from '@/entity/tb-common.customer'
 
 @Entity('tb-captcha__application')
 export class tbCaptchaApplication extends TableCommon {
-	@Column({ type: 'bigint', comment: 'App ID', readonly: true, transformer: UUIDTransformer })
+	@Column({ type: 'bigint', comment: 'App ID', readonly: true, transformer: customIntTransfor })
 	appId: number
 
 	@Column({ comment: '应用名称', nullable: false })
