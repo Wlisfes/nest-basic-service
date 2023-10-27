@@ -13,7 +13,8 @@
 		"paths": {
 			"@/*": ["src/*"],
 			"@common/*": ["apps/common/src/*"],
-			"@nodemailer/*": ["apps/nodemailer/src/*"]
+			"@nodemailer/*": ["apps/nodemailer/src/*"],
+			"@captchar/*": ["apps/captchar/src/*"]
 		},
 		"incremental": true,
 		"skipLibCheck": true,

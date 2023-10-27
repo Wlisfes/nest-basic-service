@@ -11,7 +11,8 @@
 		"dev": "set NODE_ENV=development&& nest start --watch",
 		"start:debug": "nest start --debug --watch",
 		"start:common": "set NODE_ENV=production&& node dist/apps/common/main",
-		"start:nodemailer": "set NODE_ENV=production&& node dist/apps/nodemailer/main"
+		"start:nodemailer": "set NODE_ENV=production&& node dist/apps/nodemailer/main",
+		"start:captchar": "set NODE_ENV=production&& node dist/apps/captchar/main"
 	},
 	"dependencies": {
 		"@faker-js/faker": "^8.1.0",

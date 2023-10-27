@@ -30,6 +30,15 @@
 			"compilerOptions": {
 				"tsConfigPath": "apps/nodemailer/tsconfig.app.json"
 			}
+		},
+		"captchar": {
+			"type": "application",
+			"root": "apps/captchar",
+			"entryFile": "main",
+			"sourceRoot": "apps/captchar/src",
+			"compilerOptions": {
+				"tsConfigPath": "apps/captchar/tsconfig.app.json"
+			}
 		}
 	}
 }
