@@ -1,7 +1,9 @@
 import { Entity, Column, OneToMany } from 'typeorm'
 import { ApiProperty } from '@nestjs/swagger'
+import { IsNotEmpty } from 'class-validator'
 import { hashSync } from 'bcryptjs'
 import { TableCommon } from '@/entity/tb-common'
+import { IsMobile } from '@/decorator/common.decorator'
 import { tbCaptchaApplication } from '@/entity/tb-captcha__application.entity'
 import { tbMailerApplication } from '@/entity/tb-mailer__application.entity'
 
@@ -32,6 +34,8 @@ export class TableCustomer extends TableCommon {
 	comment: string
 
 	@ApiProperty({ description: '手机号', example: 18888888888 })
+	@IsNotEmpty({ message: '手机号 必填' })
+	@IsMobile({ message: '手机号 格式错误' })
 	@Column({ comment: '手机号', nullable: false })
 	mobile: string
 
