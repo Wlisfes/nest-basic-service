@@ -4,13 +4,12 @@ import { IsNotEmpty } from 'class-validator'
 import { hashSync } from 'bcryptjs'
 import { TableCommon } from '@/entity/tb-common'
 import { IsMobile } from '@/decorator/common.decorator'
-import { tbCaptchaApplication } from '@/entity/tb-captcha__application.entity'
-import { tbMailerApplication } from '@/entity/tb-mailer__application.entity'
+import { TableCaptcharAppwr } from '@/entity/tb-common.captchar__appwr'
 
 @Entity('tb-common_customer')
 export class TableCustomer extends TableCommon {
 	@ApiProperty({ description: '用户唯一UID', example: 1 })
-	@Column({ type: 'bigint', comment: 'uid', update: false, nullable: false })
+	@Column({ comment: 'uid', update: false, nullable: false })
 	uid: string
 
 	@ApiProperty({ description: '用户昵称', example: '妖雨纯' })
@@ -48,8 +47,8 @@ export class TableCustomer extends TableCommon {
 	})
 	password: string
 
-	// @OneToMany(type => tbCaptchaApplication, app => app.user)
-	// captcha: tbCaptchaApplication[]
+	@OneToMany(type => TableCaptcharAppwr, app => app.customer)
+	captchar: TableCaptcharAppwr[]
 
 	// @OneToMany(type => tbMailerApplication, app => app.user)
 	// mailer: tbMailerApplication[]

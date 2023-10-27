@@ -7,7 +7,7 @@ export const customIntTransfor = {
 }
 
 /**字符串数组转化**/
-export const StrArraytransformer = {
+export const customStrArrayTransfor = {
 	from: value => {
 		return isEmpty(value) ? [] : value.toString().split(',')
 	},
