@@ -1,4 +1,5 @@
 import { HttpException, HttpStatus } from '@nestjs/common'
+import { JwtService } from '@nestjs/jwt'
 import { isEmail } from 'class-validator'
 import { zh_CN, Faker } from '@faker-js/faker'
 import { divineParameter, divineHandler } from '@/utils/utils-common'
@@ -6,6 +7,9 @@ import * as dayjs from 'dayjs'
 import * as LZString from 'lz-string'
 import * as stream from 'stream'
 import * as Excel from 'exceljs'
+
+/**JWT实例**/
+export const jwt = new JwtService()
 
 /**时间处理库**/
 export const moment = dayjs
@@ -21,6 +25,21 @@ export async function divineCatchWherer(where: boolean, option: { message: strin
 		throw new HttpException(option.message, option.code ?? HttpStatus.BAD_REQUEST)
 	})
 }
+
+/**创建用户JWT Token**/
+export async function divineCreateJwtToken(option: { expire: number; secret: string; data: Record<string, any> }) {
+	const token = await jwt.signAsync(
+		{
+			...option.data,
+			expire: Date.now() + option.expire * 1000
+		},
+		{ secret: option.secret }
+	)
+	return { token, expire: option.expire }
+}
+
+/**解析用户JWT Token***/
+export async function divineParseJwtToken(token: string, option: { secret: string }) {}
 
 /**Buffer转换Stream**/
 export function divineBufferToStream(buffer: Buffer): Promise<stream.PassThrough> {

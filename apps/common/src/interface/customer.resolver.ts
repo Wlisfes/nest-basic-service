@@ -8,4 +8,4 @@ export class RegisterCustomer extends PickType(TableCustomer, ['nickname', 'pass
 export class AuthorizeCustomer extends PickType(TableCustomer, ['mobile', 'password']) {}
 
 /**获取用户信息**/
-export class BearerCustomer extends PickType(TableCustomer, ['uid']) {}
+export class ResolverCustomer extends PickType(TableCustomer, ['uid']) {}

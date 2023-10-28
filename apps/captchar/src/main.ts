@@ -42,7 +42,7 @@ async function bootstrap() {
 	app.useGlobalPipes(new ValidationPipe({ transform: true, whitelist: true }))
 	//挂载文档
 	await useSwagger(app, {
-		authorize: configService.get('public.authorize')
+		authorize: configService.get('public.jwt.name')
 	})
 	//监听端口服务
 	await app.listen(port, () => {

@@ -8,8 +8,8 @@ export class CustomService {
 	/**验证数据模型是否存在**/
 	public async validator<T>(model: Repository<T>, state: FindOneOptions<T> & Partial<{ message: string; code: number }>) {
 		try {
-			const node = model.findOne(state)
-			await divineCatchWherer(!!node && !!state.message, {
+			const node = await model.findOne(state)
+			await divineCatchWherer(!node && !!state.message, {
 				message: state.message ?? '服务器开小差了',
 				code: state.code ?? (state.message ? HttpStatus.BAD_REQUEST : HttpStatus.INTERNAL_SERVER_ERROR)
 			})
