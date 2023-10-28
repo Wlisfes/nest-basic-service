@@ -6,16 +6,16 @@ import { AppModule } from '@common/app.module'
 import * as express from 'express'
 import * as cookieParser from 'cookie-parser'
 
-async function useSwagger(app) {
+async function useSwagger(app, opt: { authorize: string }) {
 	const options = new DocumentBuilder()
 		.setTitle(`Common基础服务`)
 		.setDescription(`Common基础服务 Api Documentation`)
 		.setVersion(`1.0.0`)
-		.addBearerAuth({ type: 'apiKey', name: 'authorization', in: 'header' }, 'authorization')
+		.addBearerAuth({ type: 'apiKey', name: opt.authorize, in: 'header' }, opt.authorize)
 		.build()
 	const document = SwaggerModule.createDocument(app, options)
 	SwaggerModule.setup('api-doc', app, document, {
-		customSiteTitle: `服务端API文档`,
+		customSiteTitle: `Common服务端API文档`,
 		swaggerOptions: {
 			defaultModelsExpandDepth: -1,
 			defaultModelExpandDepth: 5,
@@ -28,7 +28,8 @@ async function useSwagger(app) {
 
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule)
-	const port = Number(app.get(ConfigService).get('port.common') ?? 5050)
+	const configService = app.get(ConfigService)
+	const port = Number(configService.get('port.common') ?? 5050)
 
 	//允许跨域
 	app.enableCors()
@@ -39,7 +40,9 @@ async function bootstrap() {
 	//全局注册验证管道
 	app.useGlobalPipes(new ValidationPipe({ transform: true, whitelist: true }))
 	//挂载文档
-	await useSwagger(app)
+	await useSwagger(app, {
+		authorize: configService.get('swagger.authorize')
+	})
 	//监听端口服务
 	await app.listen(port, () => {
 		console.log('Common服务启动:', `http://localhost:${port}`, `http://localhost:${port}/api-doc`)
