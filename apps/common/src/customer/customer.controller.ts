@@ -35,7 +35,7 @@ export class CustomerController {
 		response: { status: 200, description: 'OK', type: TableCustomer },
 		authorize: { login: true, error: true }
 	})
-	public async httpResolverCustomer(@Query() query: http.ResolverCustomer) {
-		return await this.customerService.httpResolverCustomer(query)
+	public async httpResolverCustomer(@Request() request: { user: TableCustomer }) {
+		return await this.customerService.httpResolverCustomer({ uid: request.user.uid })
 	}
 }

@@ -28,18 +28,22 @@ export async function divineCatchWherer(where: boolean, option: { message: strin
 
 /**创建用户JWT Token**/
 export async function divineCreateJwtToken(option: { expire: number; secret: string; data: Record<string, any> }) {
-	const token = await jwt.signAsync(
-		{
-			...option.data,
-			expire: Date.now() + option.expire * 1000
-		},
-		{ secret: option.secret }
-	)
-	return { token, expire: option.expire }
+	try {
+		const token = await jwt.signAsync({ ...option.data, expire: Date.now() + option.expire * 1000 }, { secret: option.secret })
+		return { token, expire: option.expire }
+	} catch (e) {
+		throw new HttpException('JWT创建失败', HttpStatus.UNAUTHORIZED)
+	}
 }
 
 /**解析用户JWT Token***/
-export async function divineParseJwtToken(token: string, option: { secret: string }) {}
+export async function divineParseJwtToken<T>(token: string, option: { secret: string }) {
+	try {
+		return await jwt.verifyAsync(token, { secret: option.secret })
+	} catch (e) {
+		throw new HttpException('JWT解析失败', HttpStatus.UNAUTHORIZED)
+	}
+}
 
 /**Buffer转换Stream**/
 export function divineBufferToStream(buffer: Buffer): Promise<stream.PassThrough> {
