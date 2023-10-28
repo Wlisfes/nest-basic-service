@@ -5,6 +5,14 @@ export async function divineIntNumber(pad: number = 8) {
 	return flake.concat(random).join('')
 }
 
+/**生成N位随机符串**/
+export async function divineIntStringer(
+	pad: number = 18,
+	character: string = `ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789`
+) {
+	return Array.from({ length: pad }, e => character.charAt(Math.floor(Math.random() * character.length))).join('')
+}
+
 /**返回包装**/
 export async function divineResult<T = { message: string; list: Array<unknown>; total: number; page: number; size: number }>(
 	data: T

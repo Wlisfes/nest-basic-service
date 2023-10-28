@@ -1,21 +1,24 @@
 import { Entity, Column, ManyToOne } from 'typeorm'
 import { ApiProperty } from '@nestjs/swagger'
-import { IsNotEmpty } from 'class-validator'
+import { IsNotEmpty, IsArray, IsString } from 'class-validator'
 import { TableCommon } from '@/entity/tb-common'
 import { TableCustomer } from '@/entity/tb-common.customer'
+import { IsMobile, IsOptional } from '@/decorator/common.decorator'
 
 @Entity('tb-common_captchar__appwr')
 export class TableCaptcharAppwr extends TableCommon {
 	@ApiProperty({ description: 'App ID', example: 1 })
 	@IsNotEmpty({ message: 'App ID 必填' })
 	@Column({ comment: 'App ID', update: false, nullable: false })
-	appId: number
+	appId: string
 
 	@ApiProperty({ description: '应用名称', example: '猪头' })
 	@IsNotEmpty({ message: '应用名称 必填' })
 	@Column({ comment: '应用名称', nullable: false })
 	name: string
 
+	@ApiProperty({ description: '应用key', example: '猪头' })
+	@IsNotEmpty({ message: '应用key 必填' })
 	@Column({ comment: '应用key', nullable: false })
 	iv: string
 
@@ -34,19 +37,29 @@ export class TableCaptcharAppwr extends TableCommon {
 	status: string
 
 	@ApiProperty({ description: '备注' })
+	@IsOptional()
 	@Column({ comment: '备注', nullable: true })
 	comment: string
 
 	@ApiProperty({ description: '默认展示首页' })
+	@IsOptional()
 	@Column({ comment: '默认展示首页', nullable: false, default: 'hide' })
 	visible: string
 
+	@ApiProperty({ description: '授权地址' })
+	@IsOptional()
+	@IsArray()
+	@IsString({ each: true })
 	@Column({ type: 'varchar', length: 2000, comment: '授权地址', nullable: true })
 	bucket: string[]
 
+	@ApiProperty({ description: '授权IP', required: false })
+	@IsOptional()
+	@IsArray()
+	@IsString({ each: true })
 	@Column({ type: 'varchar', length: 2000, comment: '授权IP', nullable: true })
 	ip: string[]
 
-	@ManyToOne(type => TableCustomer, user => user.captchar)
+	@ManyToOne(type => TableCustomer, customer => customer.captchar)
 	customer: TableCustomer
 }

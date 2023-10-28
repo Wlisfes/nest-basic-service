@@ -2,6 +2,7 @@ import { CanActivate, SetMetadata, ExecutionContext, Injectable, HttpException, 
 import { Reflector } from '@nestjs/core'
 import { customProvider } from '@/utils/utils-configer'
 import { divineParseJwtToken } from '@/utils/utils-plugin'
+import { divineHandler } from '@/utils/utils-common'
 
 export interface IOption {
 	authorize: boolean
@@ -33,8 +34,13 @@ export class AuthGuard implements CanActivate {
 				//未携带token
 				await this.httpContextAuthorize(state.error, { message: '未登录' })
 			} else {
-				//解析token
-				const node = await divineParseJwtToken(token, { secret: configer.public.jwt.secret }).catch(async e => {
+				/**解析token**/ //prettier-ignore
+				const node = await divineParseJwtToken(token, { secret: configer.public.jwt.secret }).then(async data => {
+					await divineHandler(data.status === 'disable', () => {
+						return this.httpContextAuthorize(state.error, { message: '账户已被禁用', code: HttpStatus.FORBIDDEN })
+					})
+					return data
+				}).catch(async e => {
 					await this.httpContextAuthorize(state.error, { message: '登录已失效' })
 				})
 				request.user = node

@@ -11,7 +11,7 @@ async function useSwagger(app, opt: { authorize: string }) {
 		.setTitle(`Common基础服务`)
 		.setDescription(`Common基础服务 Api Documentation`)
 		.setVersion(`1.0.0`)
-		.addBearerAuth({ type: 'apiKey', name: opt.authorize, in: 'header' }, opt.authorize)
+		.addBearerAuth({ type: 'apiKey', in: 'header', name: opt.authorize }, opt.authorize)
 		.build()
 	const document = SwaggerModule.createDocument(app, options)
 	SwaggerModule.setup('api-doc', app, document, {

@@ -17,6 +17,6 @@ export class AppwrController {
 		authorize: { login: true, error: true }
 	})
 	public async httpCreateAppwr(@Request() request, @Body() body: CreateAppwr) {
-		return await this.appwrService.httpCreateAppwr(body, request.user?.uid)
+		return await this.appwrService.httpCreateAppwr(body, request.user.uid)
 	}
 }

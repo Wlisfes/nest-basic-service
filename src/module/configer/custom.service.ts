@@ -1,5 +1,5 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common'
-import { Repository, FindOneOptions } from 'typeorm'
+import { Repository, FindOneOptions, DeepPartial } from 'typeorm'
 import { divineCatchWherer } from '@/utils/utils-plugin'
 import { divineResult } from '@/utils/utils-common'
 
@@ -16,6 +16,16 @@ export class CustomService {
 			return await divineResult(node)
 		} catch (e) {
 			throw new HttpException(e.message, e.code)
+		}
+	}
+
+	/**创建数据模型**/
+	public async customeCreate<T>(model: Repository<T>, state: DeepPartial<T>) {
+		try {
+			const node = await model.create(state)
+			return model.save(node as never)
+		} catch (e) {
+			throw new HttpException('服务器开小差了', HttpStatus.INTERNAL_SERVER_ERROR)
 		}
 	}
 }
