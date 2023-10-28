@@ -37,11 +37,12 @@ async function bootstrap() {
 	app.use(cookieParser())
 	app.use(express.json())
 	app.use(express.urlencoded({ extended: true }))
+	app.setGlobalPrefix(configService.get('public.prefix.captchar'))
 	//全局注册验证管道
 	app.useGlobalPipes(new ValidationPipe({ transform: true, whitelist: true }))
 	//挂载文档
 	await useSwagger(app, {
-		authorize: configService.get('swagger.authorize')
+		authorize: configService.get('public.authorize')
 	})
 	//监听端口服务
 	await app.listen(port, () => {
