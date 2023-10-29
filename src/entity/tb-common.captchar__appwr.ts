@@ -3,11 +3,11 @@ import { ApiProperty } from '@nestjs/swagger'
 import { IsNotEmpty, IsArray, IsString } from 'class-validator'
 import { TableCommon } from '@/entity/tb-common'
 import { TableCustomer } from '@/entity/tb-common.customer'
-import { IsMobile, IsOptional } from '@/decorator/common.decorator'
+import { IsOptional } from '@/decorator/common.decorator'
 
 @Entity('tb-common_captchar__appwr')
 export class TableCaptcharAppwr extends TableCommon {
-	@ApiProperty({ description: 'App ID', example: 1 })
+	@ApiProperty({ description: 'App ID', example: `169851019895347735` })
 	@IsNotEmpty({ message: 'App ID 必填' })
 	@Column({ comment: 'App ID', update: false, nullable: false })
 	appId: string
