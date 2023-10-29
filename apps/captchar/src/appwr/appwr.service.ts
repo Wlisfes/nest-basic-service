@@ -31,7 +31,6 @@ export class AppwrService extends CustomService {
 				visible: 'hide',
 				status: 'activated',
 				appId: await divineIntNumber(8),
-				iv: await divineIntStringer(32),
 				appSecret: await divineIntStringer(64),
 				customer: data
 			})

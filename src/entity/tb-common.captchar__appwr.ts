@@ -17,11 +17,6 @@ export class TableCaptcharAppwr extends TableCommon {
 	@Column({ comment: '应用名称', nullable: false })
 	name: string
 
-	@ApiProperty({ description: '应用key', example: '猪头' })
-	@IsNotEmpty({ message: '应用key 必填' })
-	@Column({ comment: '应用key', nullable: false })
-	iv: string
-
 	@ApiProperty({ description: '应用密钥' })
 	@IsNotEmpty({ message: '应用密钥 必填' })
 	@Column({ comment: '应用密钥', nullable: false })
