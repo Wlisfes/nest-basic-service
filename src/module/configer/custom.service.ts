@@ -1,5 +1,5 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common'
-import { Repository, FindOneOptions, DeepPartial } from 'typeorm'
+import { Repository, FindOneOptions, FindManyOptions, DeepPartial } from 'typeorm'
 import { divineCatchWherer } from '@/utils/utils-plugin'
 import { divineResult } from '@/utils/utils-common'
 
@@ -26,6 +26,17 @@ export class CustomService {
 			return model.save(node as never)
 		} catch (e) {
 			throw new HttpException('服务器开小差了', HttpStatus.INTERNAL_SERVER_ERROR)
+		}
+	}
+
+	/**分页列表查询**/
+	public async customeAndCountr<T>(model: Repository<T>, state: FindOneOptions<T> | FindManyOptions<T>) {
+		try {
+			return await model.findAndCount(state).then(async ([list = [], total = 0]) => {
+				return await divineResult({ list, total })
+			})
+		} catch (e) {
+			throw new HttpException(`服务器开小差了`, HttpStatus.INTERNAL_SERVER_ERROR)
 		}
 	}
 }

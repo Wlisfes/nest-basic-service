@@ -35,7 +35,7 @@ export async function divineParameter<T>(data: T) {
 }
 
 /**条件值返回**/
-export function divineWherer<T>(where: boolean, value: T, defaultValue: T = undefined): T {
+export async function divineWherer<T>(where: boolean, value: T, defaultValue: T = undefined): Promise<T> {
 	return where ? value : defaultValue
 }
 
