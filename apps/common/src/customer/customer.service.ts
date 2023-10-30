@@ -47,8 +47,8 @@ export class CustomerService extends CustomService {
 				message: '账户密码错误'
 			})
 			return await divineCreateJwtToken({
-				expire: Number(this.configService.get('public.jwt.expire') ?? 7200),
-				secret: this.configService.get('public.jwt.secret'),
+				expire: Number(this.configService.get('jwt.expire') ?? 7200),
+				secret: this.configService.get('jwt.secret'),
 				data: {
 					keyId: data.keyId,
 					uid: data.uid,

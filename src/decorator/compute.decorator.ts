@@ -53,7 +53,7 @@ export function ApiDecorator(option: Partial<Option> = {}) {
 		/**开启登录验证**/
 		const configer = customProvider()
 		decorator.push(
-			ApiBearerAuth(configer.public.jwt.name),
+			ApiBearerAuth(configer.jwt.name),
 			ApiBearer({
 				authorize: option.authorize.login,
 				error: option.authorize.error,

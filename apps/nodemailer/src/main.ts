@@ -29,7 +29,7 @@ async function useSwagger(app, opt: { authorize: string }) {
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule)
 	const configService = app.get(ConfigService)
-	const port = Number(configService.get('port.nodemailer') ?? 5051)
+	const port = Number(configService.get('port.nodemailer') ?? 5020)
 
 	//允许跨域
 	app.enableCors()
@@ -38,12 +38,12 @@ async function bootstrap() {
 	app.use(express.json())
 	app.use(express.urlencoded({ extended: true }))
 	//接口前缀
-	app.setGlobalPrefix(configService.get('public.prefix.nodemailer'))
+	app.setGlobalPrefix(configService.get('prefix.nodemailer'))
 	//全局注册验证管道
 	app.useGlobalPipes(new ValidationPipe({ transform: true, whitelist: true }))
 	//挂载文档
 	await useSwagger(app, {
-		authorize: configService.get('public.jwt.name')
+		authorize: configService.get('jwt.name')
 	})
 	//监听端口服务
 	await app.listen(port, () => {

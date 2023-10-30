@@ -29,13 +29,13 @@ export class AuthGuard implements CanActivate {
 		/**验证登录**/
 		if (state && state.authorize) {
 			const configer = customProvider()
-			const token = request.headers[configer.public.jwt.name]
+			const token = request.headers[configer.jwt.name]
 			if (!token) {
 				//未携带token
 				await this.httpContextAuthorize(state.error, { message: '未登录' })
 			} else {
 				/**解析token**/ //prettier-ignore
-				const node = await divineParseJwtToken(token, { secret: configer.public.jwt.secret }).then(async data => {
+				const node = await divineParseJwtToken(token, { secret: configer.jwt.secret }).then(async data => {
 					await divineHandler(data.status === 'disable', () => {
 						return this.httpContextAuthorize(state.error, { message: '账户已被禁用', code: HttpStatus.FORBIDDEN })
 					})

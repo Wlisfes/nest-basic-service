@@ -1,7 +1,27 @@
-port:
-    common: 5050
-    nodemailer: 5051
+#鉴权配置
+jwt:
+    name: authorization
+    expire: 7200
+    secret: 123456
 
+#路由配置
+prefix:
+    common: /api/common
+    nodemailer: /api/nodemailer
+    captchar: /api/captchar
+
+#端口配置
+port:
+    common: 5010
+    nodemailer: 5020
+    captchar: 5030
+
+#数据库配置
 db:
     mysql:
         host: localhost
+        port: 3306
+        username: basic
+        password: 123456
+        database: base-development
+        charset: utf8mb4
