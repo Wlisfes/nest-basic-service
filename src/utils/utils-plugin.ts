@@ -21,28 +21,34 @@ export const faker = new Faker({
 })
 
 /**条件捕获、异常抛出**/
-export async function divineCatchWherer(where: boolean, option: { message: string; code?: HttpStatus }) {
+export async function divineCatchWherer(where: boolean, option: { message: string; code?: number }) {
 	return await divineHandler(where, () => {
 		throw new HttpException(option.message, option.code ?? HttpStatus.BAD_REQUEST)
 	})
 }
 
 /**创建用户JWT Token**/
-export async function divineCreateJwtToken(option: { expire: number; secret: string; data: Record<string, any> }) {
+export async function divineCreateJwtToken(option: {
+	expire: number
+	secret: string
+	data: Record<string, any>
+	message?: string
+	code?: number
+}) {
 	try {
 		const token = await jwt.signAsync({ ...option.data, expire: Date.now() + option.expire * 1000 }, { secret: option.secret })
 		return { token, expire: option.expire }
 	} catch (e) {
-		throw new HttpException('JWT创建失败', HttpStatus.UNAUTHORIZED)
+		throw new HttpException(option.message ?? 'JWT创建失败', option.code ?? HttpStatus.UNAUTHORIZED)
 	}
 }
 
 /**解析用户JWT Token***/
-export async function divineParseJwtToken<T>(token: string, option: { secret: string }) {
+export async function divineParseJwtToken<T>(token: string, option: { secret: string; message?: string; code?: number }) {
 	try {
 		return await jwt.verifyAsync(token, { secret: option.secret })
 	} catch (e) {
-		throw new HttpException('JWT解析失败', HttpStatus.UNAUTHORIZED)
+		throw new HttpException(option.message ?? 'JWT解析失败', option.code ?? HttpStatus.UNAUTHORIZED)
 	}
 }
 

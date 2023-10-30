@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository, Brackets } from 'typeorm'
 import { CustomService } from '@/module/configer/custom.service'
@@ -56,8 +56,10 @@ export class BrowserService extends CustomService {
 	/**校验凭证**/
 	public async httpAuthorizeChecker(state: http.AuthorizeChecker, referer: string) {
 		try {
-			return await divineParseJwtToken(state.token, { secret: state.appSecret }).then(async ({ session, appId }) => {
-				console.log({ session, appId })
+			return await divineParseJwtToken(state.token, {
+				secret: state.appSecret,
+				code: HttpStatus.BAD_REQUEST
+			}).then(async ({ session, appId }) => {
 				await this.validator(this.tableCaptcharRecord, {
 					message: 'token记录不存在',
 					join: { alias: 'tb' },
@@ -70,9 +72,11 @@ export class BrowserService extends CustomService {
 					})
 				})
 
-				return { session, appId }
+				return { check: true }
 			})
-		} catch (e) {}
+		} catch (e) {
+			throw new HttpException(e.message, e.status)
+		}
 
 		// return await this.validator(this.tableCaptcharAppwr, {
 		// 	message: '应用不存在',
