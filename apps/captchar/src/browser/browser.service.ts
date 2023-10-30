@@ -52,4 +52,40 @@ export class BrowserService extends CustomService {
 			return await divineResult({ session, token })
 		})
 	}
+
+	/**校验凭证**/
+	public async httpAuthorizeChecker(state: http.AuthorizeChecker, referer: string) {
+		try {
+			return await divineParseJwtToken(state.token, { secret: state.appSecret }).then(async ({ session, appId }) => {
+				console.log({ session, appId })
+				await this.validator(this.tableCaptcharRecord, {
+					message: 'token记录不存在',
+					join: { alias: 'tb' },
+					where: new Brackets(qb => {
+						qb.where('tb.session = :session', { session })
+					})
+				}).then(async data => {
+					await divineCatchWherer(['success', 'failure', 'invalid'].includes(data.status), {
+						message: 'token凭证已失效'
+					})
+				})
+
+				return { session, appId }
+			})
+		} catch (e) {}
+
+		// return await this.validator(this.tableCaptcharAppwr, {
+		// 	message: '应用不存在',
+		// 	where: new Brackets(qb => {
+		// 		qb.where('tb.appId = :appId', { appId: state.appId })
+		// 		qb.andWhere('tb.status IN(:...status)', { status: ['activated', 'disable'] })
+		// 	})
+		// }).then(async data => {
+		// 	await divineCatchWherer(data.status === 'disable', {
+		// 		message: '应用已被禁用'
+		// 	})
+
+		// 	return data
+		// })
+	}
 }

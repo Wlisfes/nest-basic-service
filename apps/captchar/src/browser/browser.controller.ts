@@ -12,10 +12,19 @@ export class BrowserController {
 
 	@Post('/authorize')
 	@ApiDecorator({
-		operation: { summary: '生成校验凭证' },
+		operation: { summary: '生成凭证' },
 		response: { status: 200, description: 'OK', type: TableCaptcharRecord }
 	})
 	public async httpAuthorizeReducer(@Headers() headers, @Body() body: http.AuthorizeReducer) {
 		return await this.browserService.httpAuthorizeReducer(body, headers.origin)
+	}
+
+	@Post('/authorize/checker')
+	@ApiDecorator({
+		operation: { summary: '校验凭证' },
+		response: { status: 200, description: 'OK', type: TableCaptcharRecord }
+	})
+	public async httpAuthorizeChecker(@Headers() headers, @Body() body: http.AuthorizeChecker) {
+		return await this.browserService.httpAuthorizeChecker(body, headers.origin)
 	}
 }
