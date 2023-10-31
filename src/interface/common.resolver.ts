@@ -11,14 +11,16 @@ export class RequestResolver {
 	@ApiProperty({ description: '当前页', required: false, example: 1 })
 	@IsOptional()
 	@IsNumber({}, { message: 'page必须是数字' })
+	@Min(1, { message: 'page必须大于0' })
 	@Type(type => Number)
-	page: number
+	page: number = 1
 
 	@ApiProperty({ description: '分页数量', required: false, example: 10 })
 	@IsOptional()
 	@IsNumber({}, { message: 'size必须是数字' })
+	@Min(1, { message: 'size必须大于0' })
 	@Type(type => Number)
-	size: number
+	size: number = 10
 }
 
 export class NoticeResolver {

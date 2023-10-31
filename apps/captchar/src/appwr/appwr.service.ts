@@ -40,8 +40,6 @@ export class AppwrService extends CustomService {
 
 	/**应用列表**/
 	public async httpColumnAppwr(state: http.ColumnAppwr, uid: string) {
-		const page = await divineWherer(Boolean(state.page), state.page, 1)
-		const size = await divineWherer(Boolean(state.size), state.size, 10)
 		return await this.customeAndCountr(this.tableCaptcharAppwr, {
 			join: {
 				alias: 'tb',
@@ -51,8 +49,8 @@ export class AppwrService extends CustomService {
 				qb.where('customer.uid = :uid', { uid })
 			}),
 			order: { createTime: 'DESC' },
-			skip: (page - 1) * size,
-			take: size
+			skip: (state.page - 1) * state.size,
+			take: state.size
 		}).then(async ({ list, total }) => {
 			return await divineResult({ total, list })
 		})
