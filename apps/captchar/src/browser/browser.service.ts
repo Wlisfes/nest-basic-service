@@ -56,6 +56,18 @@ export class BrowserService extends CustomService {
 	/**校验凭证**/
 	public async httpAuthorizeChecker(state: http.AuthorizeChecker, referer: string) {
 		try {
+			await this.validator(this.tableCaptcharAppwr, {
+				message: '应用不存在',
+				join: { alias: 'tb' },
+				where: new Brackets(qb => {
+					qb.where('tb.appId = :appId', { appId: state.appId })
+					qb.andWhere('tb.status IN(:...status)', { status: ['activated', 'disable'] })
+				})
+			}).then(async data => {
+				return await divineCatchWherer(data.status === 'disable', {
+					message: '应用已被禁用'
+				})
+			})
 			return await divineParseJwtToken(state.token, {
 				secret: state.appSecret,
 				code: HttpStatus.BAD_REQUEST

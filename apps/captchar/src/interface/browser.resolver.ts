@@ -8,5 +8,5 @@ export class AuthorizeReducer extends PickType(TableCaptcharAppwr, ['appId']) {}
 /**校验凭证**/
 export class AuthorizeChecker extends IntersectionType(
 	PickType(TableCaptcharAppwr, ['appId', 'appSecret']),
-	PickType(TableCaptcharRecord, ['token'])
+	PickType(TableCaptcharRecord, ['token', 'session'])
 ) {}
