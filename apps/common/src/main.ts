@@ -29,7 +29,7 @@ async function useSwagger(app, opt: { authorize: string }) {
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule)
 	const configService = app.get(ConfigService)
-	const port = Number(configService.get('port.common') ?? 5010)
+	const port = Number(configService.get('common.port') ?? 5010)
 
 	//允许跨域
 	app.enableCors()
@@ -38,7 +38,7 @@ async function bootstrap() {
 	app.use(express.json())
 	app.use(express.urlencoded({ extended: true }))
 	//接口前缀
-	app.setGlobalPrefix(configService.get('prefix.common'))
+	app.setGlobalPrefix(configService.get('common.prefix'))
 	//全局注册验证管道
 	app.useGlobalPipes(new ValidationPipe({ transform: true, whitelist: true }))
 	//挂载文档

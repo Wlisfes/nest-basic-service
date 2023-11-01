@@ -29,10 +29,10 @@ import { customProvider } from '@/utils/utils-configer'
 		BullModule.registerQueueAsync({
 			inject: [ConfigService],
 			useFactory: (configService: ConfigService) => ({
-				name: configService.get('kueuer.captchar.name'),
+				name: configService.get('captchar.kueuer.name'),
 				defaultJobOptions: {
-					removeOnComplete: JSON.parse(configService.get('kueuer.captchar.removeOnComplete') || 'true'),
-					removeOnFail: JSON.parse(configService.get('kueuer.captchar.removeOnFail') || 'false')
+					removeOnComplete: JSON.parse(configService.get('captchar.kueuer.removeOnComplete') || 'true'),
+					removeOnFail: JSON.parse(configService.get('captchar.kueuer.removeOnFail') || 'false')
 				}
 			})
 		}),

@@ -5,7 +5,7 @@ import { customProvider } from '@/utils/utils-configer'
 
 async function bootstrap() {
 	const configer = customProvider()
-	const port = configer.port.captcharKueuer
+	const port = configer.captchar.kueuer.port
 	const app = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule, {
 		transport: Transport.TCP,
 		options: { port }
