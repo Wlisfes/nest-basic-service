@@ -65,7 +65,7 @@ export class BrowserService extends CustomService {
 		})
 	}
 
-	/**校验凭证**/
+	/**校验凭证**/ //prettier-ignore
 	public async httpAuthorizeChecker(state: http.AuthorizeChecker, referer: string) {
 		try {
 			await this.validator(this.tableCaptcharAppwr, {
@@ -100,11 +100,25 @@ export class BrowserService extends CustomService {
 					await divineCatchWherer(jt.session !== state.session, {
 						message: 'token验证失败'
 					})
-					await this.customeUpdate(this.tableCaptcharRecord, { session: state.session }, { status: 'success' })
+					await firstValueFrom(this.client.send({ cmd: 'update_job_reducer' }, {
+						jobId: state.session,
+						option: { status: 'success' }
+					}))
+					await this.customeUpdate(this.tableCaptcharRecord,
+						{ session: state.session },
+						{ status: 'success' }
+					)
 					return await divineResult({ check: true })
 				})
 			} catch (e) {
-				await this.customeUpdate(this.tableCaptcharRecord, { session: state.session }, { status: 'failure' })
+				await firstValueFrom(this.client.send({ cmd: 'update_job_reducer' }, {
+					jobId: state.session,
+					option: { status: 'failure' }
+				}))
+				await this.customeUpdate(this.tableCaptcharRecord,
+					{ session: state.session },
+					{ status: 'failure' }
+				)
 				throw new HttpException(e.message, e.status)
 			}
 		} catch (e) {
