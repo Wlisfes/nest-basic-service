@@ -7,8 +7,8 @@ import { TableCaptcharAppwr } from '@/entity/tb-common.captchar__appwr'
 import { TableCaptcharRecord } from '@/entity/tb-common.captchar__record'
 import { divineIntNumber, divineResult } from '@/utils/utils-common'
 import { divineCatchWherer, divineCreateJwtToken, divineParseJwtToken } from '@/utils/utils-plugin'
-import * as http from '@captchar/interface/browser.resolver'
 import { firstValueFrom } from 'rxjs'
+import * as http from '@captchar/interface/browser.resolver'
 
 @Injectable()
 export class BrowserService extends CustomService {
@@ -20,11 +20,7 @@ export class BrowserService extends CustomService {
 		super()
 	}
 
-	// async OnApplicationBootstrap() {
-	// 	await this.client.connect()
-	// }
-
-	/**生成校验凭证**/
+	/**生成校验凭证**/ //prettier-ignore
 	public async httpAuthorizeReducer(state: http.AuthorizeReducer, referer: string) {
 		return await this.validator(this.tableCaptcharAppwr, {
 			message: '应用不存在',
@@ -46,12 +42,17 @@ export class BrowserService extends CustomService {
 				secret: data.appSecret,
 				data: { session: session, appId: data.appId }
 			})
-			const pattern = { cmd: 'create_job_reducer' }
-			const payload = [1, 2, 3]
-			//prettier-ignore
-			const sum = await firstValueFrom(this.client.send(pattern, { session, token }))
+			const job = await firstValueFrom(this.client.send({ cmd: 'create_job_reducer' }, {
+				session,
+				token,
+				appId: data.appId,
+				name: data.name,
+				uid: data.customer.uid,
+				nickname: data.customer.nickname,
+				status: 'none'
+			}))
 
-			console.log(`sum:`, sum)
+			console.log(`job:`, job)
 			await this.customeCreate(this.tableCaptcharRecord, {
 				appId: data.appId,
 				appName: data.name,

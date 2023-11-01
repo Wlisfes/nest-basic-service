@@ -1,13 +1,29 @@
 import { Processor, Process } from '@nestjs/bull'
+import { InjectRepository } from '@nestjs/typeorm'
+import { Repository } from 'typeorm'
 import { Job } from 'bull'
+import { CustomService } from '@/module/configer/custom.service'
+import { divineHandler } from '@/utils/utils-common'
+import { TableCaptcharRecord } from '@/entity/tb-common.captchar__record'
 import { customProvider } from '@/utils/utils-configer'
 const configer = customProvider()
 
 @Processor({ name: configer.captchar.kueuer.name })
-export class CaptcharKueuerConsumer {
-	/**队列开始执行**/
+export class AppCaptcharKueuerConsumer extends CustomService {
+	constructor(@InjectRepository(TableCaptcharRecord) public readonly tableCaptcharRecord: Repository<TableCaptcharRecord>) {
+		super()
+	}
+
+	/**队列开始执行**/ //prettier-ignore
 	@Process()
-	async process(job: Job<{ session: string; check: string }>) {
-		console.log(job.data)
+	async process(job: Job<Record<string, never>>) {
+		console.log('captchar-kueuer消费者：', job.id)
+		await divineHandler(job.data.status === 'none', async () => {
+			return await this.customeUpdate(this.tableCaptcharRecord,
+				{ session: job.data.session },
+				{ status: 'invalid' }
+			)
+		})
+		return await job.progress(100)
 	}
 }

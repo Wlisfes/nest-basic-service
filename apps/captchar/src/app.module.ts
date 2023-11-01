@@ -9,11 +9,19 @@ import { ClientsModule, Transport } from '@nestjs/microservices'
 import { customProvider } from '@/utils/utils-configer'
 const configer = customProvider()
 
+console.log(configer.captchar.kueuer.port)
+
 @Module({
 	imports: [
 		ClientsModule.register({
 			isGlobal: true,
-			clients: [{ name: 'CAPTCHAR_KUEUER', transport: Transport.TCP, options: { port: configer.captchar.kueuer.port } }]
+			clients: [
+				{
+					name: 'CAPTCHAR_KUEUER',
+					transport: Transport.TCP,
+					options: { port: configer.captchar.kueuer.port }
+				}
+			]
 		}),
 		ConfigerModule,
 		DatabaseModule,

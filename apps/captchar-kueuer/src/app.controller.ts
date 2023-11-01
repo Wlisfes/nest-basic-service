@@ -7,8 +7,7 @@ export class AppController {
 	constructor(private readonly appService: AppService) {}
 
 	@MessagePattern({ cmd: 'create_job_reducer' })
-	httpAuthorizeReducer(data: any) {
-		console.log(data)
-		return data
+	public async httpAuthorizeReducer(data: Record<string, never>) {
+		return await this.appService.createJobKueuer(data)
 	}
 }

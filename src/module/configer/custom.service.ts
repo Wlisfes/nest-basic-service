@@ -1,5 +1,5 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common'
-import { Repository, FindOneOptions, FindManyOptions, DeepPartial } from 'typeorm'
+import { Repository, FindOneOptions, FindConditions, FindManyOptions, DeepPartial } from 'typeorm'
 import { divineCatchWherer } from '@/utils/utils-plugin'
 import { divineResult } from '@/utils/utils-common'
 
@@ -25,6 +25,15 @@ export class CustomService {
 			const node = await model.create(state)
 			return model.save(node as never)
 		} catch (e) {
+			throw new HttpException('服务器开小差了', HttpStatus.INTERNAL_SERVER_ERROR)
+		}
+	}
+
+	public async customeUpdate<T>(model: Repository<T>, criter: FindConditions<T>, state: FindConditions<T>) {
+		try {
+			return await model.update(criter, state as never)
+		} catch (e) {
+			console.log(e)
 			throw new HttpException('服务器开小差了', HttpStatus.INTERNAL_SERVER_ERROR)
 		}
 	}
