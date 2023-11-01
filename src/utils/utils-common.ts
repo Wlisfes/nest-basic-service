@@ -1,8 +1,9 @@
 /**生成N位随机整数字符串**/
-export async function divineIntNumber(pad: number = 8) {
-	const flake = [Math.floor(Date.now() / 1000)]
-	const random = Array.from({ length: pad }, e => Math.floor(Math.random() * 9) + 1)
-	return flake.concat(random).join('')
+export async function divineIntNumber(pad: number = 18) {
+	const flake = [Math.floor(Date.now() / 1000).toString()]
+	const length = Math.ceil((pad - 10) / 16) + 1
+	const random = Array.from({ length }, e => Math.random().toString().slice(2))
+	return flake.concat(random).join('').slice(0, pad)
 }
 
 /**生成N位随机符串**/

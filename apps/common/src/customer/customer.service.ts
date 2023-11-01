@@ -21,7 +21,7 @@ export class CustomerService extends CustomService {
 	/**注册用户**/
 	public async httpRegisterCustomer(state: http.RegisterCustomer) {
 		const node = await this.tableCustomer.create({
-			uid: await divineIntNumber(),
+			uid: await divineIntNumber(18),
 			nickname: '妖雨纯',
 			password: 'MTIzNDU2',
 			mobile: '18676361342'

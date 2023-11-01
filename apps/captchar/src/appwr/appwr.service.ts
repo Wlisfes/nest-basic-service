@@ -30,7 +30,7 @@ export class AppwrService extends CustomService {
 				name: state.name,
 				visible: 'hide',
 				status: 'activated',
-				appId: await divineIntNumber(8),
+				appId: await divineIntNumber(18),
 				appSecret: await divineIntStringer(64),
 				customer: data
 			})

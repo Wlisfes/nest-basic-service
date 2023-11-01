@@ -40,7 +40,7 @@ export class BrowserService extends CustomService {
 			await divineCatchWherer(data.status === 'disable', {
 				message: '应用已被禁用'
 			})
-			const session = await divineIntNumber(22)
+			const session = await divineIntNumber(32)
 			const { token } = await divineCreateJwtToken({
 				expire: 300,
 				secret: data.appSecret,
