@@ -1,4 +1,5 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common'
+import { Injectable, Inject, HttpException, HttpStatus } from '@nestjs/common'
+import { ClientProxy } from '@nestjs/microservices'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository, Brackets } from 'typeorm'
 import { CustomService } from '@/module/configer/custom.service'
@@ -7,15 +8,21 @@ import { TableCaptcharRecord } from '@/entity/tb-common.captchar__record'
 import { divineIntNumber, divineResult } from '@/utils/utils-common'
 import { divineCatchWherer, divineCreateJwtToken, divineParseJwtToken } from '@/utils/utils-plugin'
 import * as http from '@captchar/interface/browser.resolver'
+import { firstValueFrom } from 'rxjs'
 
 @Injectable()
 export class BrowserService extends CustomService {
 	constructor(
+		@Inject('CAPTCHAR_KUEUER') private client: ClientProxy,
 		@InjectRepository(TableCaptcharAppwr) public readonly tableCaptcharAppwr: Repository<TableCaptcharAppwr>,
 		@InjectRepository(TableCaptcharRecord) public readonly tableCaptcharRecord: Repository<TableCaptcharRecord>
 	) {
 		super()
 	}
+
+	// async OnApplicationBootstrap() {
+	// 	await this.client.connect()
+	// }
 
 	/**生成校验凭证**/
 	public async httpAuthorizeReducer(state: http.AuthorizeReducer, referer: string) {
@@ -39,6 +46,12 @@ export class BrowserService extends CustomService {
 				secret: data.appSecret,
 				data: { session: session, appId: data.appId }
 			})
+			const pattern = { cmd: 'create_job_reducer' }
+			const payload = [1, 2, 3]
+			//prettier-ignore
+			const sum = await firstValueFrom(this.client.send(pattern, { session, token }))
+
+			console.log(`sum:`, sum)
 			await this.customeCreate(this.tableCaptcharRecord, {
 				appId: data.appId,
 				appName: data.name,
