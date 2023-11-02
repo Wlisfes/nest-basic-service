@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common'
-import { ConfigModule } from '@nestjs/config'
 import { TypeOrmModule } from '@nestjs/typeorm'
-import { DatabaseModule } from '@/module/database/database.module'
+import { ConfigerModule } from '@/module/configer.module'
+import { DatabaseModule } from '@/module/database.module'
 import { ConfigService } from '@nestjs/config'
 import { BullModule } from '@nestjs/bull'
 import { AppController } from '@captchar-kueuer/app.controller'
@@ -13,11 +13,7 @@ const configer = customProvider()
 
 @Module({
 	imports: [
-		ConfigModule.forRoot({
-			isGlobal: true,
-			cache: true,
-			load: [customProvider]
-		}),
+		ConfigerModule,
 		BullModule.forRootAsync({
 			inject: [ConfigService],
 			useFactory: (configService: ConfigService) => ({

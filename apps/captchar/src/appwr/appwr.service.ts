@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository, Brackets } from 'typeorm'
-import { CustomService } from '@/module/configer/custom.service'
+import { CustomService } from '@/service/custom.service'
 import { divineIntNumber, divineIntStringer, divineResult, divineWherer } from '@/utils/utils-common'
 import { TableCustomer } from '@/entity/tb-common.customer'
 import { TableCaptcharAppwr } from '@/entity/tb-common.captchar__appwr'
