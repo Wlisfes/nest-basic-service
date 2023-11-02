@@ -1,10 +1,12 @@
-import { Injectable } from '@nestjs/common'
+import { HttpStatus, Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
+import { HttpService } from '@nestjs/axios'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository, Brackets } from 'typeorm'
 import { compareSync } from 'bcryptjs'
 import { CustomService } from '@/module/configer/custom.service'
 import { TableCustomer } from '@/entity/tb-common.customer'
+import { TableCustomerConfigur } from '@/entity/tb-common.customer__configur'
 import { divineIntNumber, divineResult } from '@/utils/utils-common'
 import { divineCatchWherer, divineCreateJwtToken } from '@/utils/utils-plugin'
 import * as http from '@common/interface/customer.resolver'
@@ -13,24 +15,54 @@ import * as http from '@common/interface/customer.resolver'
 export class CustomerService extends CustomService {
 	constructor(
 		private readonly configService: ConfigService,
-		@InjectRepository(TableCustomer) public readonly tableCustomer: Repository<TableCustomer>
+		private readonly httpService: HttpService,
+		@InjectRepository(TableCustomer) public readonly tableCustomer: Repository<TableCustomer>,
+		@InjectRepository(TableCustomerConfigur) public readonly tableCustomerConfigur: Repository<TableCustomerConfigur>
 	) {
 		super()
 	}
 
 	/**注册用户**/
 	public async httpRegisterCustomer(state: http.RegisterCustomer) {
+		// return await this.validator(this.tableCustomer, {
+		// 	where: { uid: '169848335712346764' }
+		// }).then(async data => {
+		// 	const configur = await this.customeCreate(this.tableCustomerConfigur, {
+		// 		authorize: 'initialize',
+		// 		credit: 0,
+		// 		current: 0,
+		// 		balance: 0
+		// 	})
+		// 	await this.customeUpdate(this.tableCustomer, { uid: data.uid }, { configur: configur as never })
+		// })
 		const node = await this.tableCustomer.create({
 			uid: await divineIntNumber(18),
-			nickname: '妖雨纯',
-			password: 'MTIzNDU2',
-			mobile: '18676361342'
+			nickname: '宫新哲',
+			password: 'MTIzNDU1',
+			mobile: '18888888888'
 		})
 		return await this.tableCustomer.save(node)
 	}
 
-	/**登录**/
-	public async httpAuthorizeCustomer(state: http.AuthorizeCustomer) {
+	/**登录**/ //prettier-ignore
+	public async httpAuthorizeCustomer(state: http.AuthorizeCustomer, referer: string) {
+		await this.httpService.axiosRef.request({
+			baseURL: `http://localhost:${this.configService.get('captchar.port') ?? 5030}`,
+			url: `${this.configService.get('captchar.prefix')}/browser/authorize/checker`,
+			method: 'POST',
+			headers: { origin: referer },
+			data: {
+				appSecret: 'zzFznmt8DY64hHBnkoboTmUzFZIadSdVPL4rHr8CsStfwtvBPcAICO6KgNcPEXyD',
+				appId: '169851019895347735',
+				session: state.session,
+				token: state.token,
+			}
+		}).then(async ({ data }) => {
+			await divineCatchWherer(data.code !== HttpStatus.OK || !data.data.check, {
+				message: data.message
+			})
+			return data
+		})
 		return await this.validator(this.tableCustomer, {
 			message: '账户不存在',
 			select: ['keyId', 'uid', 'nickname', 'mobile', 'email', 'password', 'status'],
@@ -56,6 +88,8 @@ export class CustomerService extends CustomService {
 					password: data.password,
 					status: data.status
 				}
+			}).then(async ({ token, expire }) => {
+				return await divineResult({ token, expire, message: '登录成功' })
 			})
 		})
 	}

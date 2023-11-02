@@ -2,6 +2,7 @@ import { Module, Global } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { TableCustomer } from '@/entity/tb-common.customer'
+import { TableCustomerConfigur } from '@/entity/tb-common.customer__configur'
 import { TableCaptcharAppwr } from '@/entity/tb-common.captchar__appwr'
 import { TableCaptcharRecord } from '@/entity/tb-common.captchar__record'
 
@@ -20,7 +21,7 @@ import { TableCaptcharRecord } from '@/entity/tb-common.captchar__record'
 				database: configService.get('db.mysql.database'),
 				charset: configService.get('db.mysql.charset'),
 				synchronize: configService.get('NODE_ENV') === 'development',
-				entities: [TableCustomer, TableCaptcharAppwr, TableCaptcharRecord]
+				entities: [TableCustomer, TableCustomerConfigur, TableCaptcharAppwr, TableCaptcharRecord]
 			})
 		})
 	],

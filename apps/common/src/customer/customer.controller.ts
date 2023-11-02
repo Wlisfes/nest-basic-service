@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Body, Query, Request } from '@nestjs/common'
+import { Controller, Post, Get, Body, Query, Request, Headers } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { CustomerService } from '@common/customer/customer.service'
 import { ApiDecorator } from '@/decorator/compute.decorator'
@@ -16,7 +16,7 @@ export class CustomerController {
 		operation: { summary: '注册用户' },
 		response: { status: 200, description: 'OK', type: NoticeResolver }
 	})
-	public async httpRegisterCustomer(@Body() body: http.RegisterCustomer) {
+	public async httpRegisterCustomer(@Headers() headers, @Body() body: http.RegisterCustomer) {
 		return await this.customerService.httpRegisterCustomer(body)
 	}
 
@@ -25,8 +25,8 @@ export class CustomerController {
 		operation: { summary: '登录' },
 		response: { status: 200, description: 'OK' }
 	})
-	public async httpAuthorizeCustomer(@Body() body: http.AuthorizeCustomer) {
-		return await this.customerService.httpAuthorizeCustomer(body)
+	public async httpAuthorizeCustomer(@Headers() headers, @Body() body: http.AuthorizeCustomer) {
+		return await this.customerService.httpAuthorizeCustomer(body, headers.referer)
 	}
 
 	@Get('/resolver')

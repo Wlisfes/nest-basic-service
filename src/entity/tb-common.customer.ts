@@ -1,9 +1,10 @@
-import { Entity, Column, OneToMany } from 'typeorm'
+import { Entity, Column, OneToMany, OneToOne, JoinColumn } from 'typeorm'
 import { ApiProperty } from '@nestjs/swagger'
 import { IsNotEmpty, Length, IsEmail } from 'class-validator'
 import { hashSync } from 'bcryptjs'
 import { TableCommon } from '@/entity/tb-common'
 import { IsMobile, IsOptional } from '@/decorator/common.decorator'
+import { TableCustomerConfigur } from '@/entity/tb-common.customer__configur'
 import { TableCaptcharAppwr } from '@/entity/tb-common.captchar__appwr'
 
 @Entity('tb-common_customer')
@@ -60,110 +61,13 @@ export class TableCustomer extends TableCommon {
 	})
 	password: string
 
+	@OneToOne(type => TableCustomerConfigur, configur => configur.customer)
+	@JoinColumn({ name: 'configurId' })
+	configur: TableCustomerConfigur
+
 	@OneToMany(type => TableCaptcharAppwr, app => app.customer)
 	captchar: TableCaptcharAppwr[]
 
 	// @OneToMany(type => tbMailerApplication, app => app.user)
 	// mailer: tbMailerApplication[]
-}
-
-@Entity('tb-common_customer__configur')
-export class TableCustomerConfigur extends TableCommon {
-	@Column({
-		type: 'bigint',
-		comment: '用户UID',
-		readonly: true,
-		transformer: { from: value => Number(value), to: value => value }
-	})
-	userId: number
-
-	@Column({
-		comment: '套餐名称：未认证-initialize、认证中-processer、认证成功-success、认证失败-failure',
-		nullable: false,
-		default: 'initialize'
-	})
-	authorize: string
-
-	@Column({
-		type: 'bigint',
-		comment: '信用额度',
-		unsigned: true,
-		nullable: false,
-		default: 0,
-		transformer: { from: value => Number(value ?? 0), to: value => value }
-	})
-	credit: number
-
-	@Column({
-		type: 'bigint',
-		comment: '当前账号信用额度',
-		unsigned: true,
-		nullable: false,
-		default: 0,
-		transformer: { from: value => Number(value ?? 0), to: value => value }
-	})
-	current: number
-
-	@Column({
-		type: 'bigint',
-		comment: '余额',
-		unsigned: false,
-		nullable: false,
-		default: 0,
-		transformer: { from: value => Number(value ?? 0), to: value => value }
-	})
-	balance: number
-}
-
-@Entity('tb-user__consumer')
-export class tbUserConsumer extends TableCommon {
-	@Column({
-		type: 'bigint',
-		comment: '用户UID',
-		readonly: true,
-		transformer: { from: value => Number(value), to: value => value }
-	})
-	userId: number
-
-	@Column({
-		type: 'bigint',
-		comment: 'Order ID',
-		nullable: true,
-		transformer: { from: value => Number(value), to: value => value }
-	})
-	orderId: number
-
-	@Column({
-		type: 'bigint',
-		comment: '原套餐包ID',
-		readonly: true,
-		transformer: { from: value => Number(value), to: value => value }
-	})
-	bundle: number
-
-	@Column({ comment: '扣费类型：message-短信、email-邮件、人机验证-captcha', nullable: false })
-	type: string
-
-	@Column({ comment: '套餐名称', nullable: false })
-	name: string
-
-	@Column({
-		comment: `状态: 有效-effect、退款-refund、禁用-disable`,
-		default: 'effect',
-		nullable: false
-	})
-	status: string
-
-	@Column({
-		type: 'bigint',
-		comment: '扣除金额',
-		unsigned: true,
-		nullable: false,
-		default: 0,
-		transformer: {
-			from: value => Number(value ?? 0),
-			to: value => value
-		}
-	})
-	deduct: number
 }

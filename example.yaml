@@ -24,7 +24,7 @@ captchar:
     #redis队列配置
     kueuer:
         port: 5031
-        name: captchar:job:authorize
+        name: captchar:kueuer:authorize
         delay: 300000
         removeOnComplete: true
         removeOnFail: false
