@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { Repository, Brackets } from 'typeorm'
 import { compareSync } from 'bcryptjs'
 import { CustomService } from '@/service/custom.service'
+import { RedisService } from '@/service/redis.service'
 import { TableCustomer } from '@/entity/tb-common.customer'
 import { TableCustomerConfigur } from '@/entity/tb-common.customer__configur'
 import { divineIntNumber, divineResult } from '@/utils/utils-common'
@@ -16,6 +17,7 @@ export class CustomerService extends CustomService {
 	constructor(
 		private readonly configService: ConfigService,
 		private readonly httpService: HttpService,
+		private readonly redisService: RedisService,
 		@InjectRepository(TableCustomer) public readonly tableCustomer: Repository<TableCustomer>,
 		@InjectRepository(TableCustomerConfigur) public readonly tableCustomerConfigur: Repository<TableCustomerConfigur>
 	) {
