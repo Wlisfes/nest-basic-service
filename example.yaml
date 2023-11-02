@@ -4,24 +4,45 @@ jwt:
     expire: 7200
     secret: 123456
 
-#路由配置
-prefix:
-    common: /api/common
-    nodemailer: /api/nodemailer
-    captchar: /api/captchar
+#Common服务相关配置
+common:
+    port: 5010
+    prefix: /api/common
 
-#端口配置
-port:
-    common: 5010
-    nodemailer: 5020
-    captchar: 5030
+#Nodemailer服务相关配置
+nodemailer:
+    port: 5020
+    prefix: /api/nodemailer
+    #redis队列配置
+    kueuer:
+        port: 5021
+
+#Captchar服务相关配置
+captchar:
+    port: 5030
+    prefix: /api/captchar
+    #redis队列配置
+    kueuer:
+        port: 5031
+        name: captchar:job:authorize
+        delay: 300000
+        removeOnComplete: true
+        removeOnFail: false
 
 #数据库配置
 db:
     mysql:
         host: localhost
         port: 3306
-        username: basic
+        username: root
         password: 123456
         database: base-development
         charset: utf8mb4
+
+#redis配置
+redis:
+    prefix: development
+    host: localhost
+    port: 6379
+    password: 123456
+    db: 1

@@ -42,15 +42,6 @@ export class BrowserService extends CustomService {
 				secret: data.appSecret,
 				data: { session: session, appId: data.appId }
 			})
-			await firstValueFrom(this.client.send({ cmd: 'create_job_reducer' }, {
-				session,
-				token,
-				appId: data.appId,
-				name: data.name,
-				uid: data.customer.uid,
-				nickname: data.customer.nickname,
-				status: 'none'
-			}))
 			await this.customeCreate(this.tableCaptcharRecord, {
 				appId: data.appId,
 				appName: data.name,
@@ -60,6 +51,12 @@ export class BrowserService extends CustomService {
 				token: token,
 				referer: referer,
 				status: 'none'
+			}).then(async e => {
+				return await firstValueFrom(this.client.send({ cmd: 'create_job_reducer' }, {
+					session,
+					token,
+					status: 'none'
+				}))
 			})
 			return await divineResult({ session, token })
 		})
@@ -103,22 +100,24 @@ export class BrowserService extends CustomService {
 					await firstValueFrom(this.client.send({ cmd: 'update_job_reducer' }, {
 						jobId: state.session,
 						option: { status: 'success' }
-					}))
-					await this.customeUpdate(this.tableCaptcharRecord,
-						{ session: state.session },
-						{ status: 'success' }
-					)
+					})).then(async e => {
+						return await this.customeUpdate(this.tableCaptcharRecord,
+							{ session: state.session },
+							{ status: 'success' }
+						)
+					})
 					return await divineResult({ check: true })
 				})
 			} catch (e) {
 				await firstValueFrom(this.client.send({ cmd: 'update_job_reducer' }, {
 					jobId: state.session,
 					option: { status: 'failure' }
-				}))
-				await this.customeUpdate(this.tableCaptcharRecord,
-					{ session: state.session },
-					{ status: 'failure' }
-				)
+				})).then(async e => {
+					return await this.customeUpdate(this.tableCaptcharRecord,
+						{ session: state.session },
+						{ status: 'failure' }
+					)
+				})
 				throw new HttpException(e.message, e.status)
 			}
 		} catch (e) {
