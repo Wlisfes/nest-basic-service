@@ -17,7 +17,7 @@ export class AppCaptcharKueuerConsumer extends CustomService {
 	/**队列开始执行**/ //prettier-ignore
 	@Process()
 	async process(job: Job<Record<string, never>>) {
-		console.log('captchar-kueuer消费者：', job.id)
+		console.log('kueuer-captchar消费者：', job.id)
 		await divineHandler(job.data.status === 'none', async () => {
 			return await this.customeUpdate(this.tableCaptcharRecord,
 				{ session: job.data.session },

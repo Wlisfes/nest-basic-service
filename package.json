@@ -13,7 +13,7 @@
 		"start:common": "set NODE_ENV=production&& node dist/apps/common/main",
 		"start:nodemailer": "set NODE_ENV=production&& node dist/apps/nodemailer/main",
 		"start:captchar": "set NODE_ENV=production&& node dist/apps/captchar/main",
-		"start:captchar-kueuer": "set NODE_ENV=production&& node dist/apps/captchar-kueuer/main"
+		"start:kueuer-captchar": "set NODE_ENV=production&& node dist/apps/kueuer-captchar/main"
 	},
 	"dependencies": {
 		"@faker-js/faker": "^8.1.0",

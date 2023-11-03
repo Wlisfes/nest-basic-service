@@ -1,6 +1,6 @@
 import { NestFactory } from '@nestjs/core'
 import { Transport, MicroserviceOptions } from '@nestjs/microservices'
-import { AppModule } from '@captchar-kueuer/app.module'
+import { AppModule } from '@kueuer-captchar/app.module'
 import { customProvider } from '@/utils/utils-configer'
 
 async function bootstrap() {
@@ -11,7 +11,7 @@ async function bootstrap() {
 		options: { port }
 	})
 	await app.listen().then(e => {
-		console.log('Captchar-kueuer服务启动:', `TCP: ${port}`)
+		console.log('kueuer-captchar服务启动:', `TCP: ${port}`)
 	})
 }
 bootstrap()
