@@ -27,10 +27,10 @@ const configer = customProvider()
 			})
 		}),
 		BullModule.registerQueue({
-			name: configer.captchar.kueuer.name,
+			name: configer.kueuer.captchar.name,
 			defaultJobOptions: {
-				removeOnComplete: JSON.parse(configer.captchar.kueuer.removeOnComplete || 'true'),
-				removeOnFail: JSON.parse(configer.captchar.kueuer.removeOnFail || 'false')
+				removeOnComplete: JSON.parse(configer.kueuer.captchar.removeOnComplete || 'true'),
+				removeOnFail: JSON.parse(configer.kueuer.captchar.removeOnFail || 'false')
 			}
 		}),
 		DatabaseModule,

@@ -5,13 +5,13 @@ import { customProvider } from '@/utils/utils-configer'
 
 async function bootstrap() {
 	const configer = customProvider()
-	const port = configer.captchar.kueuer.port
+	const port = configer.kueuer.captchar.port
 	const app = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule, {
 		transport: Transport.TCP,
 		options: { port }
 	})
 	await app.listen().then(e => {
-		console.log('kueuer-captchar服务启动:', `TCP: ${port}`)
+		console.log('Kueuer-Captchar服务启动:', `TCP: ${port}`)
 	})
 }
 bootstrap()

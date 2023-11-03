@@ -21,10 +21,12 @@ nodemailer:
 captchar:
     port: 5030
     prefix: /api/captchar
-    #redis队列配置
-    kueuer:
+
+#redis队列配置
+kueuer:
+    captchar:
         port: 5031
-        name: captchar:kueuer:authorize
+        name: kueuer:captchar:authorize
         delay: 300000
         removeOnComplete: true
         removeOnFail: false

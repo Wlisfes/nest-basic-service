@@ -18,7 +18,7 @@ const configer = customProvider()
 				{
 					name: 'CAPTCHAR_KUEUER',
 					transport: Transport.TCP,
-					options: { port: configer.captchar.kueuer.port }
+					options: { port: configer.kueuer.captchar.port }
 				}
 			]
 		}),

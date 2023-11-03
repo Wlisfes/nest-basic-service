@@ -8,7 +8,7 @@ import { TableCaptcharRecord } from '@/entity/tb-common.captchar__record'
 import { customProvider } from '@/utils/utils-configer'
 const configer = customProvider()
 
-@Processor({ name: configer.captchar.kueuer.name })
+@Processor({ name: configer.kueuer.captchar.name })
 export class AppCaptcharKueuerConsumer extends CustomService {
 	constructor(@InjectRepository(TableCaptcharRecord) public readonly tableCaptcharRecord: Repository<TableCaptcharRecord>) {
 		super()
@@ -17,7 +17,7 @@ export class AppCaptcharKueuerConsumer extends CustomService {
 	/**队列开始执行**/ //prettier-ignore
 	@Process()
 	async process(job: Job<Record<string, never>>) {
-		console.log('kueuer-captchar消费者：', job.id)
+		console.log('Kueuer-Captchar消费者：', job.id)
 		await divineHandler(job.data.status === 'none', async () => {
 			return await this.customeUpdate(this.tableCaptcharRecord,
 				{ session: job.data.session },

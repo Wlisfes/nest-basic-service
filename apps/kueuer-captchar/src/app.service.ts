@@ -6,10 +6,10 @@ const configer = customProvider()
 
 @Injectable()
 export class AppService {
-	constructor(@InjectQueue(configer.captchar.kueuer.name) public readonly kueuer: Queue) {}
+	constructor(@InjectQueue(configer.kueuer.captchar.name) public readonly kueuer: Queue) {}
 
 	/**创建延时队列**/
-	public async createJobKueuer(data: Record<string, never>, delay: number = configer.captchar.kueuer.delay) {
+	public async createJobKueuer(data: Record<string, never>, delay: number = configer.kueuer.captchar.delay) {
 		try {
 			return await this.kueuer.add(data, { delay, jobId: data.session })
 		} catch (e) {
