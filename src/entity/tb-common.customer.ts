@@ -6,6 +6,7 @@ import { TableCommon } from '@/entity/tb-common'
 import { IsMobile, IsOptional } from '@/decorator/common.decorator'
 import { TableCustomerConfigur } from '@/entity/tb-common.customer__configur'
 import { TableCaptcharAppwr } from '@/entity/tb-common.captchar__appwr'
+import { TableNodemailerAppwr } from '@/entity/tb-common.nodemailer__appwr'
 
 @Entity('tb-common_customer')
 export class TableCustomer extends TableCommon {
@@ -68,6 +69,6 @@ export class TableCustomer extends TableCommon {
 	@OneToMany(type => TableCaptcharAppwr, app => app.customer)
 	captchar: TableCaptcharAppwr[]
 
-	// @OneToMany(type => tbMailerApplication, app => app.user)
-	// mailer: tbMailerApplication[]
+	@OneToMany(type => TableNodemailerAppwr, app => app.customer)
+	nodemailer: TableNodemailerAppwr[]
 }

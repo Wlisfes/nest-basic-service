@@ -5,6 +5,7 @@ import { TableCustomer } from '@/entity/tb-common.customer'
 import { TableCustomerConfigur } from '@/entity/tb-common.customer__configur'
 import { TableCaptcharAppwr } from '@/entity/tb-common.captchar__appwr'
 import { TableCaptcharRecord } from '@/entity/tb-common.captchar__record'
+import { TableNodemailerAppwr } from '@/entity/tb-common.nodemailer__appwr'
 
 @Global()
 @Module({
@@ -21,7 +22,7 @@ import { TableCaptcharRecord } from '@/entity/tb-common.captchar__record'
 				database: configService.get('db.mysql.database'),
 				charset: configService.get('db.mysql.charset'),
 				synchronize: configService.get('NODE_ENV') === 'development',
-				entities: [TableCustomer, TableCustomerConfigur, TableCaptcharAppwr, TableCaptcharRecord]
+				entities: [TableCustomer, TableCustomerConfigur, TableCaptcharAppwr, TableCaptcharRecord, TableNodemailerAppwr]
 			})
 		})
 	],
