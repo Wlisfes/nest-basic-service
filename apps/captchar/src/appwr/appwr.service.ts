@@ -31,7 +31,7 @@ export class AppwrService extends CustomService {
 				visible: 'hide',
 				status: 'activated',
 				appId: await divineIntNumber(18),
-				appSecret: await divineIntStringer(64),
+				appSecret: await divineIntStringer(32),
 				customer: data
 			})
 			return await divineResult({ message: '创建成功' })

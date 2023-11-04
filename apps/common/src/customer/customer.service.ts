@@ -54,7 +54,7 @@ export class CustomerService extends CustomService {
 			method: 'POST',
 			headers: { origin: referer },
 			data: {
-				appSecret: 'zzFznmt8DY64hHBnkoboTmUzFZIadSdVPL4rHr8CsStfwtvBPcAICO6KgNcPEXyD',
+				appSecret: 'zzFznmt8DY64hHBnkoboTmUzFZIadSdV',
 				appId: '169851019895347735',
 				session: state.session,
 				token: state.token,
