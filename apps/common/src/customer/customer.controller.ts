@@ -5,20 +5,7 @@ import { ApiDecorator } from '@/decorator/compute.decorator'
 import { NoticeResolver } from '@/interface/common.resolver'
 import { TableCustomer } from '@/entity/tb-common.customer'
 import * as http from '@common/interface/customer.resolver'
-
-import * as winston from 'winston'
-
-const logger = winston.createLogger({
-	level: 'debug',
-	format: winston.format.simple(),
-	transports: [
-		new winston.transports.Console(),
-		new winston.transports.File({
-			dirname: 'log',
-			filename: 'test.log'
-		})
-	]
-})
+import { logger } from '@/utils/utils-plugin'
 
 @ApiTags('用户模块')
 @Controller('customer')
@@ -40,7 +27,6 @@ export class CustomerController {
 		response: { status: 200, description: 'OK' }
 	})
 	public async httpAuthorizeCustomer(@Headers() headers, @Body() body: http.AuthorizeCustomer) {
-		logger.error(CustomerController.name, 'httpAuthorizeCustomer', body)
 		return await this.customerService.httpAuthorizeCustomer(body, headers.referer)
 	}
 
@@ -51,6 +37,7 @@ export class CustomerController {
 		authorize: { login: true, error: true }
 	})
 	public async httpResolverCustomer(@Request() request: { user: TableCustomer }) {
+		logger.error(CustomerController.name)
 		return await this.customerService.httpResolverCustomer({ uid: request.user.uid })
 	}
 }
