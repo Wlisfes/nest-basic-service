@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common'
+import { LoggerModule } from '@/module/logger.module'
 import { ConfigerModule } from '@/module/configer.module'
 import { CustomizeModule } from '@/module/customize.module'
 import { DatabaseModule } from '@/module/database.module'
@@ -22,6 +23,7 @@ const configer = customProvider()
 				}
 			]
 		}),
+		LoggerModule.forRoot({ module: 'Captchar' }),
 		ConfigerModule,
 		CustomizeModule,
 		DatabaseModule,

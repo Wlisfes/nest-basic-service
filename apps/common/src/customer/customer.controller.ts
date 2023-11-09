@@ -5,7 +5,6 @@ import { ApiDecorator } from '@/decorator/compute.decorator'
 import { NoticeResolver } from '@/interface/common.resolver'
 import { TableCustomer } from '@/entity/tb-common.customer'
 import * as http from '@common/interface/customer.resolver'
-import { logger } from '@/utils/utils-plugin'
 
 @ApiTags('用户模块')
 @Controller('customer')
@@ -37,7 +36,6 @@ export class CustomerController {
 		authorize: { login: true, error: true }
 	})
 	public async httpResolverCustomer(@Request() request: { user: TableCustomer }) {
-		logger.error(CustomerController.name)
 		return await this.customerService.httpResolverCustomer({ uid: request.user.uid })
 	}
 }

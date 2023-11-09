@@ -1,5 +1,4 @@
 import { HttpException, HttpStatus } from '@nestjs/common'
-import { createLogger, format, transports } from 'winston'
 import { JwtService } from '@nestjs/jwt'
 import { isEmail } from 'class-validator'
 import { zh_CN, Faker } from '@faker-js/faker'
@@ -19,27 +18,6 @@ export const moment = dayjs
 /**虚拟数据库**/
 export const faker = new Faker({
 	locale: [zh_CN]
-})
-
-/**日志组件**/
-export const logger = createLogger({
-	level: 'debug',
-	transports: [
-		new transports.Console(),
-		// new transports.Console({
-		// 	format: format.combine(
-		// 		format.colorize(),
-		// 		format.printf(({ context, level, message, time }) => {
-		// 			return `Nest ${time} ${level} ${context} ${message} `
-		// 		})
-		// 	)
-		// }),
-		new transports.File({
-			format: format.combine(format.timestamp(), format.json()),
-			filename: '%DATE%.log',
-			dirname: 'logs'
-		})
-	]
 })
 
 /**条件捕获、异常抛出**/
