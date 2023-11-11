@@ -1,4 +1,6 @@
-import { Module } from '@nestjs/common'
+import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common'
+import { ClientsModule, Transport } from '@nestjs/microservices'
+import { LoggerMiddleware } from '@/middleware/logger.middleware'
 import { LoggerModule } from '@/module/logger.module'
 import { ConfigerModule } from '@/module/configer.module'
 import { CustomizeModule } from '@/module/customize.module'
@@ -7,7 +9,6 @@ import { AppController } from '@captchar/app.controller'
 import { AppService } from '@captchar/app.service'
 import { AppwrModule } from '@captchar/appwr/appwr.module'
 import { BrowserModule } from '@captchar/browser/browser.module'
-import { ClientsModule, Transport } from '@nestjs/microservices'
 import { customProvider } from '@/utils/utils-configer'
 const configer = customProvider()
 
@@ -23,7 +24,7 @@ const configer = customProvider()
 				}
 			]
 		}),
-		LoggerModule.forRoot({ module: 'Captchar' }),
+		LoggerModule.forRoot({ name: 'Captchar' }),
 		ConfigerModule,
 		CustomizeModule,
 		DatabaseModule,
@@ -33,4 +34,8 @@ const configer = customProvider()
 	controllers: [AppController],
 	providers: [AppService]
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+	configure(consumer: MiddlewareConsumer) {
+		consumer.apply(LoggerMiddleware).forRoutes('*')
+	}
+}
