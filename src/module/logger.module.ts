@@ -2,7 +2,6 @@ import { Module, Global, DynamicModule } from '@nestjs/common'
 import { WinstonModule } from 'nest-winston'
 import * as winston from 'winston'
 import * as chalk from 'chalk'
-
 import 'winston-daily-rotate-file'
 
 @Global()
@@ -25,17 +24,29 @@ export class LoggerModule {
 							format: winston.format.combine(
 								winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
 								winston.format.json(),
+								//prettier-ignore
 								winston.format.printf(data => {
-									const name = chalk.red(`[${option.name}]`)
-									const pid = chalk.red(`${process.pid} -`)
+									const name = chalk.redBright(`[${option.name}]`)
+									const pid = chalk.redBright(`${process.pid} -`)
 									const timestamp = chalk.green(data.timestamp)
 									const message = chalk.yellow(`[${data.message}]`)
-									const url = chalk.yellow(`------ [${data.url ?? ''}]`)
-									const module = `${name} ${pid} ${timestamp} ${message} ${url}`
-									if (data.message === 'LoggerMiddleware') {
-										return combineLoggerMiddleware(option.name, module, data)
+									const level = data.level === 'error' ?  chalk.red.bold('ERROR') : chalk.green.bold(data.level.toUpperCase())
+									const module = `${name} ${pid} ${timestamp}  ${level}  ${message}`
+									if (typeof data.log === 'string') {
+										console[data.level](module, { log: data.log })
+										return `[${option.name}] ${process.pid} - ${data.timestamp}  ${data.level.toUpperCase()}  [${data.message}] {\n"log": ${data.log}}`
 									} else {
-										return JSON.stringify(data)
+										const text = Object.keys(data.log ?? {}).reduce((current, key) => {
+											return (current += `	"${key.toString()}": ${JSON.stringify(data.log[key.toString()])}, \n`)
+										}, '')
+										if (data.log.url) {
+											const url = chalk.redBright(` ------ [${data.log.url ?? ''}]`)
+											console[data.level](module + url, { ...data.log })
+											return `[${option.name}] ${process.pid} - ${data.timestamp}  ${data.level.toUpperCase()}  [${data.message}] ------ ${data.log.url} {\n${text}}`
+										} else {
+											console[data.level](module, { ...data.log })
+											return `[${option.name}] ${process.pid} - ${data.timestamp}  ${data.level.toUpperCase()}  [${data.message}] {\n${text}}`
+										}
 									}
 								})
 							)
@@ -45,28 +56,4 @@ export class LoggerModule {
 			]
 		}
 	}
-}
-
-/**默认日志中间件格式组合**/ //prettier-ignore
-function combineLoggerMiddleware(name: string, module: string, data) {
-	console.info(module, {
-		method: data.method,
-		body: data.body,
-		query: data.query,
-		params: data.params,
-		host: data.host,
-		origin: data.origin,
-		referer: data.referer,
-		['user-agent']: data['user-agent']
-	})
-return `[${name}] ${process.pid} - ${data.timestamp} [${data.message}] ------ ${data.url} {
-	"method": ${data.method},
-	"body": ${JSON.stringify(data.body)},
-	"query": ${JSON.stringify(data.query)},
-	"params": ${JSON.stringify(data.params)},
-	"host": ${data.host},
-	"origin": ${data.origin},
-	"referer": ${data.referer},
-	"user-agent": ${data['user-agent']}
-}`
 }

@@ -9,15 +9,17 @@ export class LoggerMiddleware implements NestMiddleware {
 	use(request: Request, response: Response, next: NextFunction) {
 		const { baseUrl, method, body, query, params, headers } = request
 		this.logger.info(LoggerMiddleware.name, {
-			url: baseUrl,
-			method,
-			body,
-			query,
-			params,
-			host: headers.host,
-			origin: headers.origin,
-			referer: headers.referer,
-			['user-agent']: headers['user-agent']
+			log: {
+				url: baseUrl,
+				method,
+				body,
+				query,
+				params,
+				host: headers.host,
+				origin: headers.origin,
+				referer: headers.referer,
+				['user-agent']: headers['user-agent']
+			}
 		})
 		next()
 	}
