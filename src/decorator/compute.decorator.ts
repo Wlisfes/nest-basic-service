@@ -2,7 +2,7 @@ import { ApiOperationOptions, ApiResponseOptions, getSchemaPath, ApiExtraModels 
 import { ApiOperation, ApiConsumes, ApiProduces, ApiResponse, ApiBearerAuth } from '@nestjs/swagger'
 import { applyDecorators, Type } from '@nestjs/common'
 import { ApiBearer } from '@/guard/auth.guard'
-import { customProvider } from '@/utils/utils-configer'
+import { CustomProvider } from '@/utils/utils-configer'
 
 interface Option {
 	operation: ApiOperationOptions
@@ -51,7 +51,7 @@ export function ApiDecorator(option: Partial<Option> = {}) {
 
 	if (option.authorize && option.authorize.login) {
 		/**开启登录验证**/
-		const configer = customProvider()
+		const configer = CustomProvider()
 		decorator.push(
 			ApiBearerAuth(configer.jwt.name),
 			ApiBearer({

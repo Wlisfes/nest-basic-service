@@ -3,7 +3,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config'
 import { RedisModule } from '@liaoliaots/nestjs-redis'
 import { JwtModule } from '@nestjs/jwt'
 import { RedisService } from '@/service/redis.service'
-import { customProvider } from '@/utils/utils-configer'
+import { CustomProvider } from '@/utils/utils-configer'
 
 @Global()
 @Module({
@@ -11,7 +11,7 @@ import { customProvider } from '@/utils/utils-configer'
 		ConfigModule.forRoot({
 			isGlobal: true,
 			cache: true,
-			load: [customProvider]
+			load: [CustomProvider]
 		}),
 		RedisModule.forRootAsync({
 			inject: [ConfigService],

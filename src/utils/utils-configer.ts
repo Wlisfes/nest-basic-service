@@ -8,7 +8,10 @@ export enum CustomConfiger {
 }
 
 /**自定义注入配置**/
-export function customProvider(): Record<string, any> {
+export function CustomProvider(): Record<string, any> {
 	const env = process.env.NODE_ENV as keyof typeof CustomConfiger
 	return yaml.load(fs.readFileSync(path.join(__dirname, `../../../${env}.yaml`), 'utf8'))
 }
+
+/**自定义配置导出**/
+export const custom = CustomProvider()

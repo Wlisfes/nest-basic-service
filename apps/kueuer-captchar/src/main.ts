@@ -1,10 +1,10 @@
 import { NestFactory } from '@nestjs/core'
 import { Transport, MicroserviceOptions } from '@nestjs/microservices'
 import { AppModule } from '@kueuer-captchar/app.module'
-import { customProvider } from '@/utils/utils-configer'
+import { CustomProvider } from '@/utils/utils-configer'
 
 async function bootstrap() {
-	const configer = customProvider()
+	const configer = CustomProvider()
 	const port = configer.kueuer.captchar.port
 	const app = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule, {
 		transport: Transport.TCP,

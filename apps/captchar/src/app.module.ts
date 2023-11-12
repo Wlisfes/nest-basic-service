@@ -9,8 +9,8 @@ import { AppController } from '@captchar/app.controller'
 import { AppService } from '@captchar/app.service'
 import { AppwrModule } from '@captchar/appwr/appwr.module'
 import { BrowserModule } from '@captchar/browser/browser.module'
-import { customProvider } from '@/utils/utils-configer'
-const configer = customProvider()
+import { CustomProvider } from '@/utils/utils-configer'
+const configer = CustomProvider()
 
 @Module({
 	imports: [

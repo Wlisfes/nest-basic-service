@@ -1,8 +1,8 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common'
 import { Queue } from 'bull'
 import { InjectQueue } from '@nestjs/bull'
-import { customProvider } from '@/utils/utils-configer'
-const configer = customProvider()
+import { CustomProvider } from '@/utils/utils-configer'
+const configer = CustomProvider()
 
 @Injectable()
 export class AppService {

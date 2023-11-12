@@ -1,6 +1,6 @@
 import { CanActivate, SetMetadata, ExecutionContext, Injectable, HttpException, HttpStatus } from '@nestjs/common'
 import { Reflector } from '@nestjs/core'
-import { customProvider } from '@/utils/utils-configer'
+import { CustomProvider } from '@/utils/utils-configer'
 import { divineParseJwtToken } from '@/utils/utils-plugin'
 import { divineHandler } from '@/utils/utils-common'
 
@@ -28,7 +28,7 @@ export class AuthGuard implements CanActivate {
 
 		/**验证登录**/
 		if (state && state.authorize) {
-			const configer = customProvider()
+			const configer = CustomProvider()
 			const token = request.headers[configer.jwt.name]
 			if (!token) {
 				//未携带token

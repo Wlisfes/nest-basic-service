@@ -8,8 +8,8 @@ import { AppController } from '@kueuer-captchar/app.controller'
 import { AppService } from '@kueuer-captchar/app.service'
 import { AppCaptcharKueuerConsumer } from '@kueuer-captchar/app.consumer'
 import { TableCaptcharRecord } from '@/entity/tb-common.captchar__record'
-import { customProvider } from '@/utils/utils-configer'
-const configer = customProvider()
+import { CustomProvider } from '@/utils/utils-configer'
+const configer = CustomProvider()
 
 @Module({
 	imports: [

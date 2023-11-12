@@ -5,8 +5,8 @@ import { Job } from 'bull'
 import { CustomService } from '@/service/custom.service'
 import { divineHandler } from '@/utils/utils-common'
 import { TableCaptcharRecord } from '@/entity/tb-common.captchar__record'
-import { customProvider } from '@/utils/utils-configer'
-const configer = customProvider()
+import { CustomProvider } from '@/utils/utils-configer'
+const configer = CustomProvider()
 
 @Processor({ name: configer.kueuer.captchar.name })
 export class AppCaptcharKueuerConsumer extends CustomService {
