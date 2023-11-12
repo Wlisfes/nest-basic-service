@@ -8,7 +8,8 @@ export class AppController {
 
 	@MessagePattern({ cmd: 'create_job_reducer' })
 	public async createJobKueuer(data: Record<string, never>) {
-		return await this.appService.createJobKueuer(data)
+		console.log(`1111111111111`, data)
+		// return await this.appService.createJobKueuer(data)
 	}
 
 	@MessagePattern({ cmd: 'update_job_reducer' })

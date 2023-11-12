@@ -1,17 +1,17 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common'
 import { Queue } from 'bull'
 import { InjectQueue } from '@nestjs/bull'
-import { CustomProvider } from '@/utils/utils-configer'
-const configer = CustomProvider()
+import { custom } from '@/utils/utils-configer'
 
 @Injectable()
 export class AppService {
-	constructor(@InjectQueue(configer.kueuer.captchar.name) public readonly kueuer: Queue) {}
+	constructor(@InjectQueue(custom.captchar.kueuer.name) public readonly kueuer: Queue) {}
 
 	/**创建延时队列**/
-	public async createJobKueuer(data: Record<string, never>, delay: number = configer.kueuer.captchar.delay) {
+	public async createJobKueuer(data: Record<string, never>, delay: number = custom.kueuer.captchar.delay) {
 		try {
-			return await this.kueuer.add(data, { delay, jobId: data.session })
+			console.log(data, this.kueuer)
+			// return await this.kueuer.add(data, { delay, jobId: data.session })
 		} catch (e) {
 			throw new HttpException('队列创建失败', HttpStatus.INTERNAL_SERVER_ERROR)
 		}

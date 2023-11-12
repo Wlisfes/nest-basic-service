@@ -5,10 +5,9 @@ import { Job } from 'bull'
 import { CustomService } from '@/service/custom.service'
 import { divineHandler } from '@/utils/utils-common'
 import { TableCaptcharRecord } from '@/entity/tb-common.captchar__record'
-import { CustomProvider } from '@/utils/utils-configer'
-const configer = CustomProvider()
+import { custom } from '@/utils/utils-configer'
 
-@Processor({ name: configer.kueuer.captchar.name })
+@Processor({ name: custom.captchar.kueuer.name })
 export class AppCaptcharKueuerConsumer extends CustomService {
 	constructor(@InjectRepository(TableCaptcharRecord) public readonly tableCaptcharRecord: Repository<TableCaptcharRecord>) {
 		super()

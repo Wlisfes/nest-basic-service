@@ -2,35 +2,30 @@ import { Module } from '@nestjs/common'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { ConfigerModule } from '@/module/configer.module'
 import { DatabaseModule } from '@/module/database.module'
-import { ConfigService } from '@nestjs/config'
 import { BullModule } from '@nestjs/bull'
 import { AppController } from '@kueuer-captchar/app.controller'
 import { AppService } from '@kueuer-captchar/app.service'
 import { AppCaptcharKueuerConsumer } from '@kueuer-captchar/app.consumer'
 import { TableCaptcharRecord } from '@/entity/tb-common.captchar__record'
-import { CustomProvider } from '@/utils/utils-configer'
-const configer = CustomProvider()
+import { custom } from '@/utils/utils-configer'
 
 @Module({
 	imports: [
 		ConfigerModule,
-		BullModule.forRootAsync({
-			inject: [ConfigService],
-			useFactory: (configService: ConfigService) => ({
-				prefix: configService.get('redis.prefix'),
-				redis: {
-					host: configService.get('redis.host'),
-					port: configService.get('redis.port'),
-					password: configService.get('redis.password'),
-					db: configService.get('redis.db')
-				}
-			})
+		BullModule.forRoot({
+			prefix: custom.redis.prefix,
+			redis: {
+				host: custom.redis.host,
+				port: custom.redis.port,
+				password: custom.redis.password,
+				db: custom.redis.db
+			}
 		}),
 		BullModule.registerQueue({
-			name: configer.kueuer.captchar.name,
+			name: custom.captchar.kueuer.name,
 			defaultJobOptions: {
-				removeOnComplete: JSON.parse(configer.kueuer.captchar.removeOnComplete || 'true'),
-				removeOnFail: JSON.parse(configer.kueuer.captchar.removeOnFail || 'false')
+				removeOnComplete: JSON.parse(custom.captchar.kueuer.removeOnComplete || 'true'),
+				removeOnFail: JSON.parse(custom.captchar.kueuer.removeOnFail || 'false')
 			}
 		}),
 		DatabaseModule,

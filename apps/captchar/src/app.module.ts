@@ -9,8 +9,7 @@ import { AppController } from '@captchar/app.controller'
 import { AppService } from '@captchar/app.service'
 import { AppwrModule } from '@captchar/appwr/appwr.module'
 import { BrowserModule } from '@captchar/browser/browser.module'
-import { CustomProvider } from '@/utils/utils-configer'
-const configer = CustomProvider()
+import { custom } from '@/utils/utils-configer'
 
 @Module({
 	imports: [
@@ -18,18 +17,12 @@ const configer = CustomProvider()
 			isGlobal: true,
 			clients: [
 				{
-					name: 'CAPTCHAR_KUEUER',
+					name: custom.captchar.kueuer.instance,
 					transport: Transport.TCP,
-					options: { port: configer.kueuer.captchar.port }
-				},
-				{
-					name: 'COMMON',
-					transport: Transport.TCP,
-					options: { port: configer.common.port }
+					options: { port: custom.captchar.kueuer.port }
 				}
 			]
 		}),
-
 		LoggerModule.forRoot({ name: 'Captchar' }),
 		ConfigerModule,
 		CustomizeModule,
