@@ -1,15 +1,19 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, Inject } from '@nestjs/common'
+import { ClientProxy } from '@nestjs/microservices'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository, Brackets } from 'typeorm'
 import { CustomService } from '@/service/custom.service'
 import { divineIntNumber, divineIntStringer, divineResult, divineWherer } from '@/utils/utils-common'
 import { TableCustomer } from '@/entity/tb-common.customer'
 import { TableCaptcharAppwr } from '@/entity/tb-common.captchar__appwr'
+import { custom } from '@/utils/utils-configer'
+import { firstValueFrom } from 'rxjs'
 import * as http from '@captchar/interface/appwr.resolver'
 
 @Injectable()
 export class AppwrService extends CustomService {
 	constructor(
+		@Inject(custom.common.instance) private commonInstance: ClientProxy,
 		@InjectRepository(TableCustomer) public readonly tableCustomer: Repository<TableCustomer>,
 		@InjectRepository(TableCaptcharAppwr) public readonly tableCaptcharAppwr: Repository<TableCaptcharAppwr>
 	) {

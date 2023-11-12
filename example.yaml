@@ -8,6 +8,10 @@ jwt:
 common:
     port: 5010
     prefix: /api/common
+    #微服务配置
+    instance: common:instance
+    cmd: #微服务通讯事件
+        CheckCustomer: captchar:instance:check:customer:pattern
 
 #Nodemailer服务相关配置
 nodemailer:
@@ -21,6 +25,10 @@ nodemailer:
 captchar:
     port: 5030
     prefix: /api/captchar
+    #微服务配置
+    instance: captchar:instance
+    cmd: #微服务通讯事件
+        AuthorizeChecker: captchar:instance:browser:authorize:checker:pattern
     #微服务队列配置
     kueuer:
         port: 5031
@@ -29,8 +37,7 @@ captchar:
         delay: 300000
         removeOnComplete: true
         removeOnFail: false
-        #微服务通讯事件
-        cmd:
+        cmd: #微服务通讯事件
             CreateJobKueuer: captchar:kueuer:create:job:pattern
             UpdateJobKueuer: captchar:kueuer:update:job:pattern
 

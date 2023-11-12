@@ -3,8 +3,6 @@ import { MessagePattern } from '@nestjs/microservices'
 import { AppService } from '@kueuer-captchar/app.service'
 import { custom } from '@/utils/utils-configer'
 
-console.log(custom.captchar.kueuer.cmd.CreateJobKueuer)
-
 @Controller()
 export class AppController {
 	constructor(private readonly appService: AppService) {}

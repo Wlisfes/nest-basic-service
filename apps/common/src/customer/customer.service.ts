@@ -1,4 +1,5 @@
-import { HttpStatus, Injectable } from '@nestjs/common'
+import { HttpStatus, Injectable, Inject } from '@nestjs/common'
+import { ClientProxy } from '@nestjs/microservices'
 import { ConfigService } from '@nestjs/config'
 import { HttpService } from '@nestjs/axios'
 import { InjectRepository } from '@nestjs/typeorm'
@@ -10,6 +11,7 @@ import { TableCustomer } from '@/entity/tb-common.customer'
 import { TableCustomerConfigur } from '@/entity/tb-common.customer__configur'
 import { divineIntNumber, divineResult } from '@/utils/utils-common'
 import { divineCatchWherer, divineCreateJwtToken } from '@/utils/utils-plugin'
+import { custom } from '@/utils/utils-configer'
 import * as http from '@common/interface/customer.resolver'
 
 @Injectable()
@@ -18,6 +20,7 @@ export class CustomerService extends CustomService {
 		private readonly configService: ConfigService,
 		private readonly httpService: HttpService,
 		private readonly redisService: RedisService,
+		@Inject(custom.captchar.instance) private commonInstance: ClientProxy,
 		@InjectRepository(TableCustomer) public readonly tableCustomer: Repository<TableCustomer>,
 		@InjectRepository(TableCustomerConfigur) public readonly tableCustomerConfigur: Repository<TableCustomerConfigur>
 	) {

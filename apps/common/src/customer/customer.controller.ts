@@ -5,6 +5,7 @@ import { CustomerService } from '@common/customer/customer.service'
 import { ApiDecorator } from '@/decorator/compute.decorator'
 import { NoticeResolver } from '@/interface/common.resolver'
 import { TableCustomer } from '@/entity/tb-common.customer'
+import { custom } from '@/utils/utils-configer'
 import * as http from '@common/interface/customer.resolver'
 
 @ApiTags('用户模块')
@@ -12,8 +13,8 @@ import * as http from '@common/interface/customer.resolver'
 export class CustomerController {
 	constructor(private readonly customerService: CustomerService) {}
 
-	@MessagePattern({ cmd: 'check_customer__pattern' })
-	public async updateJobKueuer(data: Record<string, never>) {
+	@MessagePattern({ cmd: custom.common.cmd.CheckCustomer })
+	public async CheckCustomer(data: Record<string, never>) {
 		console.log(data)
 
 		return data
