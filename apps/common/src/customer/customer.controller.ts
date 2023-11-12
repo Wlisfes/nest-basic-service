@@ -1,4 +1,5 @@
 import { Controller, Post, Get, Body, Query, Request, Headers } from '@nestjs/common'
+import { MessagePattern } from '@nestjs/microservices'
 import { ApiTags } from '@nestjs/swagger'
 import { CustomerService } from '@common/customer/customer.service'
 import { ApiDecorator } from '@/decorator/compute.decorator'
@@ -10,6 +11,13 @@ import * as http from '@common/interface/customer.resolver'
 @Controller('customer')
 export class CustomerController {
 	constructor(private readonly customerService: CustomerService) {}
+
+	@MessagePattern({ cmd: 'check_customer__pattern' })
+	public async updateJobKueuer(data: Record<string, never>) {
+		console.log(data)
+
+		return data
+	}
 
 	@Post('/register')
 	@ApiDecorator({

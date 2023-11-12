@@ -1,5 +1,6 @@
 import { NestFactory } from '@nestjs/core'
 import { ConfigService } from '@nestjs/config'
+import { Transport } from '@nestjs/microservices'
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger'
 import { ValidationPipe } from '@nestjs/common'
 import { AppModule } from '@common/app.module'
@@ -30,6 +31,10 @@ async function bootstrap() {
 	const app = await NestFactory.create(AppModule)
 	const configService = app.get(ConfigService)
 	const port = Number(configService.get('common.port') ?? 5010)
+	await app.connectMicroservice({
+		transport: Transport.TCP,
+		options: { port }
+	})
 
 	//允许跨域
 	app.enableCors()
@@ -45,6 +50,7 @@ async function bootstrap() {
 	await useSwagger(app, {
 		authorize: configService.get('jwt.name')
 	})
+	await app.startAllMicroservices()
 	//监听端口服务
 	await app.listen(port, () => {
 		console.log('Common服务启动:', `http://localhost:${port}`, `http://localhost:${port}/api-doc`)

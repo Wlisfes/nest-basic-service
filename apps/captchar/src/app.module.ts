@@ -21,9 +21,15 @@ const configer = customProvider()
 					name: 'CAPTCHAR_KUEUER',
 					transport: Transport.TCP,
 					options: { port: configer.kueuer.captchar.port }
+				},
+				{
+					name: 'COMMON',
+					transport: Transport.TCP,
+					options: { port: configer.common.port }
 				}
 			]
 		}),
+
 		LoggerModule.forRoot({ name: 'Captchar' }),
 		ConfigerModule,
 		CustomizeModule,

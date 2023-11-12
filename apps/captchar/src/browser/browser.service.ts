@@ -13,7 +13,8 @@ import * as http from '@captchar/interface/browser.resolver'
 @Injectable()
 export class BrowserService extends CustomService {
 	constructor(
-		@Inject('CAPTCHAR_KUEUER') private client: ClientProxy,
+		@Inject('CAPTCHAR_KUEUER') private kueuerCaptchar: ClientProxy,
+		@Inject('COMMON') private common: ClientProxy,
 		@InjectRepository(TableCaptcharAppwr) public readonly tableCaptcharAppwr: Repository<TableCaptcharAppwr>,
 		@InjectRepository(TableCaptcharRecord) public readonly tableCaptcharRecord: Repository<TableCaptcharRecord>
 	) {
@@ -52,7 +53,7 @@ export class BrowserService extends CustomService {
 				referer: referer,
 				status: 'none'
 			}).then(async e => {
-				return await firstValueFrom(this.client.send({ cmd: 'create_job_reducer' }, {
+				return await firstValueFrom(this.kueuerCaptchar.send({ cmd: 'create_job_reducer' }, {
 					session,
 					token,
 					status: 'none'
@@ -97,7 +98,7 @@ export class BrowserService extends CustomService {
 					await divineCatchWherer(jt.session !== state.session, {
 						message: 'token验证失败'
 					})
-					await firstValueFrom(this.client.send({ cmd: 'update_job_reducer' }, {
+					await firstValueFrom(this.kueuerCaptchar.send({ cmd: 'update_job_reducer' }, {
 						jobId: state.session,
 						option: { status: 'success' }
 					})).then(async e => {
@@ -109,7 +110,7 @@ export class BrowserService extends CustomService {
 					return await divineResult({ check: true })
 				})
 			} catch (e) {
-				await firstValueFrom(this.client.send({ cmd: 'update_job_reducer' }, {
+				await firstValueFrom(this.kueuerCaptchar.send({ cmd: 'update_job_reducer' }, {
 					jobId: state.session,
 					option: { status: 'failure' }
 				})).then(async e => {
