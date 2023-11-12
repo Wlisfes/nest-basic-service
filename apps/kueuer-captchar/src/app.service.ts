@@ -8,10 +8,9 @@ export class AppService {
 	constructor(@InjectQueue(custom.captchar.kueuer.name) public readonly kueuer: Queue) {}
 
 	/**创建延时队列**/
-	public async createJobKueuer(data: Record<string, never>, delay: number = custom.kueuer.captchar.delay) {
+	public async createJobKueuer(data: Record<string, never>, delay: number = custom.captchar.kueuer.delay) {
 		try {
-			console.log(data, this.kueuer)
-			// return await this.kueuer.add(data, { delay, jobId: data.session })
+			return await this.kueuer.add(data, { delay, jobId: data.session })
 		} catch (e) {
 			throw new HttpException('队列创建失败', HttpStatus.INTERNAL_SERVER_ERROR)
 		}

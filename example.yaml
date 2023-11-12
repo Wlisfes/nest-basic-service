@@ -21,7 +21,7 @@ nodemailer:
 captchar:
     port: 5030
     prefix: /api/captchar
-    #队列配置
+    #微服务队列配置
     kueuer:
         port: 5031
         instance: captchar:kueuer:instance
@@ -29,6 +29,10 @@ captchar:
         delay: 300000
         removeOnComplete: true
         removeOnFail: false
+        #微服务通讯事件
+        cmd:
+            CreateJobKueuer: captchar:kueuer:create:job:pattern
+            UpdateJobKueuer: captchar:kueuer:update:job:pattern
 
 #数据库配置
 db:

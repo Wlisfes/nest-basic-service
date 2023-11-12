@@ -15,7 +15,7 @@ export class LoggerModule {
 					transports: [
 						new winston.transports.DailyRotateFile({
 							level: 'debug',
-							dirname: `logs`, // 日志保存的目录
+							dirname: `logs/${option.name.toLowerCase()}`, // 日志保存的目录
 							filename: '%DATE%.log', // 日志名称，占位符 %DATE% 取值为 datePattern 值。
 							datePattern: 'YYYY-MM-DD', // 日志轮换的频率，此处表示每天。
 							zippedArchive: true, // 是否通过压缩的方式归档被轮换的日志文件。

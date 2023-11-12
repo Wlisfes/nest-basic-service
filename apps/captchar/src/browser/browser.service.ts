@@ -11,8 +11,6 @@ import { custom } from '@/utils/utils-configer'
 import { firstValueFrom } from 'rxjs'
 import * as http from '@captchar/interface/browser.resolver'
 
-console.log(custom)
-
 @Injectable()
 export class BrowserService extends CustomService {
 	constructor(
@@ -55,7 +53,7 @@ export class BrowserService extends CustomService {
 				referer: referer,
 				status: 'none'
 			}).then(async e => {
-				return await firstValueFrom(this.kueuer.send({ cmd: 'create_job_reducer' }, {
+				return await firstValueFrom(this.kueuer.send({ cmd: custom.captchar.kueuer.cmd.CreateJobKueuer }, {
 					session,
 					token,
 					status: 'none'
@@ -100,7 +98,7 @@ export class BrowserService extends CustomService {
 					await divineCatchWherer(jt.session !== state.session, {
 						message: 'token验证失败'
 					})
-					await firstValueFrom(this.kueuer.send({ cmd: 'update_job_reducer' }, {
+					await firstValueFrom(this.kueuer.send({ cmd: custom.captchar.kueuer.cmd.UpdateJobKueuer }, {
 						jobId: state.session,
 						option: { status: 'success' }
 					})).then(async e => {
@@ -112,7 +110,7 @@ export class BrowserService extends CustomService {
 					return await divineResult({ check: true })
 				})
 			} catch (e) {
-				await firstValueFrom(this.kueuer.send({ cmd: 'update_job_reducer' }, {
+				await firstValueFrom(this.kueuer.send({ cmd: custom.captchar.kueuer.cmd.UpdateJobKueuer }, {
 					jobId: state.session,
 					option: { status: 'failure' }
 				})).then(async e => {
