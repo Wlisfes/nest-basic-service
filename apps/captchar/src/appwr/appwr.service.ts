@@ -38,6 +38,9 @@ export class AppwrService extends CustomService {
 		})
 	}
 
+	/**编辑应用**/
+	public async httpUpdateAppwr(state: http.UpdateAppwr, uid: string) {}
+
 	/**应用列表**/
 	public async httpColumnAppwr(state: http.ColumnAppwr, uid: string) {
 		return await this.customeAndCountr(this.tableCaptcharAppwr, {

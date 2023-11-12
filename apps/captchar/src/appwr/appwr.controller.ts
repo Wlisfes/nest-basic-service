@@ -21,6 +21,16 @@ export class AppwrController {
 		return await this.appwrService.httpCreateAppwr(body, request.user.uid)
 	}
 
+	@Post('/update')
+	@ApiDecorator({
+		operation: { summary: '编辑应用' },
+		response: { status: 200, description: 'OK', type: NoticeResolver },
+		authorize: { login: true, error: true }
+	})
+	public async httpUpdateAppwr(@Request() request, @Body() body: http.UpdateAppwr) {
+		return await this.appwrService.httpUpdateAppwr(body, request.user.uid)
+	}
+
 	@Get('/column')
 	@ApiDecorator({
 		operation: { summary: '应用列表' },
