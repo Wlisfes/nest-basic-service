@@ -27,6 +27,11 @@ export class CustomerService extends CustomService {
 		super()
 	}
 
+	/**用户校验**/
+	public async httpCheckCustomer(state: { uid: string; command: Array<string> }) {
+		console.log(state)
+	}
+
 	/**注册用户**/
 	public async httpRegisterCustomer(state: http.RegisterCustomer) {
 		// return await this.validator(this.tableCustomer, {

@@ -14,10 +14,8 @@ export class CustomerController {
 	constructor(private readonly customerService: CustomerService) {}
 
 	@MessagePattern({ cmd: custom.common.cmd.CheckCustomer })
-	public async CheckCustomer(data: Record<string, never>) {
-		console.log(data)
-
-		return data
+	public async httpCheckCustomer(data: { uid: string; command: Array<string> }) {
+		return await this.customerService.httpCheckCustomer(data)
 	}
 
 	@Post('/register')
@@ -26,6 +24,7 @@ export class CustomerController {
 		response: { status: 200, description: 'OK', type: NoticeResolver }
 	})
 	public async httpRegisterCustomer(@Headers() headers, @Body() body: http.RegisterCustomer) {
+		console.log(`1211111`)
 		return await this.customerService.httpRegisterCustomer(body)
 	}
 
