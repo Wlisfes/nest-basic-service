@@ -29,15 +29,14 @@ async function useSwagger(app, opt: { authorize: string }) {
 
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule)
-	const port = custom.common.port
+	//开启TCP连接
 	await app.connectMicroservice({
 		transport: Transport.TCP,
 		options: {
 			host: '0.0.0.0',
-			port
+			port: custom.common.port
 		}
 	})
-
 	//允许跨域
 	app.enableCors()
 	//解析body参数
@@ -49,13 +48,10 @@ async function bootstrap() {
 	//全局注册验证管道
 	app.useGlobalPipes(new ValidationPipe({ transform: true, whitelist: true }))
 	//挂载文档
-	await useSwagger(app, {
-		authorize: custom.jwt.name
-	})
-	await app.startAllMicroservices()
+	await useSwagger(app, { authorize: custom.jwt.name })
 	//监听端口服务
-	await app.listen(port, () => {
-		console.log('Common服务启动:', `http://localhost:${port}`, `http://localhost:${port}/api-doc`)
+	await app.listen(custom.common.port, () => {
+		console.log('Common服务启动:', `http://localhost:${custom.common.port}`, `http://localhost:${custom.common.port}/api-doc`)
 	})
 }
 bootstrap()
