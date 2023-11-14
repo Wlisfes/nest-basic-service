@@ -29,31 +29,29 @@ async function useSwagger(app, opt: { authorize: string }) {
 
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule)
-	const port = custom.captchar.port
+	//开启TCP连接
 	await app.connectMicroservice({
 		transport: Transport.TCP,
 		options: {
 			host: '0.0.0.0',
-			port
+			port: custom.captchar.port
 		}
 	})
-
 	//允许跨域
 	app.enableCors()
 	//解析body参数
 	app.use(cookieParser())
 	app.use(express.json())
 	app.use(express.urlencoded({ extended: true }))
+	//接口前缀
 	app.setGlobalPrefix(custom.captchar.prefix)
 	//全局注册验证管道
 	app.useGlobalPipes(new ValidationPipe({ transform: true, whitelist: true }))
 	//挂载文档
-	await useSwagger(app, {
-		authorize: custom.jwt.name
-	})
+	await useSwagger(app, { authorize: custom.jwt.name })
 	//监听端口服务
-	await app.listen(port, () => {
-		console.log('Captchar服务启动:', `http://localhost:${port}`, `http://localhost:${port}/api-doc`)
+	await app.listen(custom.captchar.port, () => {
+		console.log('Captchar服务启动:', `http://localhost:${custom.captchar.port}`, `http://localhost:${custom.captchar.port}/api-doc`)
 	})
 }
 bootstrap()
