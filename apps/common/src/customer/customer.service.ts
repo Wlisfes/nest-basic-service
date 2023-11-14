@@ -30,6 +30,7 @@ export class CustomerService extends CustomService {
 	/**用户校验**/
 	public async httpCheckCustomer(state: { uid: string; command: Array<string> }) {
 		console.log(state)
+		return state
 	}
 
 	/**注册用户**/

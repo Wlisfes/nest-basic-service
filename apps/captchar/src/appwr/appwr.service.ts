@@ -1,19 +1,15 @@
 import { Injectable, Inject } from '@nestjs/common'
-import { ClientProxy } from '@nestjs/microservices'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository, Brackets } from 'typeorm'
 import { CustomService } from '@/service/custom.service'
 import { divineIntNumber, divineIntStringer, divineResult, divineWherer } from '@/utils/utils-common'
 import { TableCustomer } from '@/entity/tb-common.customer'
 import { TableCaptcharAppwr } from '@/entity/tb-common.captchar__appwr'
-import { custom } from '@/utils/utils-configer'
-import { firstValueFrom } from 'rxjs'
 import * as http from '@captchar/interface/appwr.resolver'
 
 @Injectable()
 export class AppwrService extends CustomService {
 	constructor(
-		@Inject(custom.common.instance) private clientCommon: ClientProxy,
 		@InjectRepository(TableCustomer) public readonly tableCustomer: Repository<TableCustomer>,
 		@InjectRepository(TableCaptcharAppwr) public readonly tableCaptcharAppwr: Repository<TableCaptcharAppwr>
 	) {
@@ -22,32 +18,24 @@ export class AppwrService extends CustomService {
 
 	/**创建应用**/
 	public async httpCreateAppwr(state: http.CreateAppwr, uid: string) {
-		await firstValueFrom(
-			this.clientCommon.send(custom.common.cmd.CheckCustomer, {
-				uid,
-				command: ['delete', 'disable']
+		return await this.validator(this.tableCustomer, {
+			message: '账户不存在',
+			join: { alias: 'tb' },
+			where: new Brackets(qb => {
+				qb.where('tb.uid = :uid', { uid })
+				qb.andWhere('tb.status IN(:...status)', { status: ['enable', 'disable'] })
 			})
-		)
-		return await divineResult({ message: '创建成功' })
-
-		// return await this.validator(this.tableCustomer, {
-		// 	message: '账户不存在',
-		// 	join: { alias: 'tb' },
-		// 	where: new Brackets(qb => {
-		// 		qb.where('tb.uid = :uid', { uid })
-		// 		qb.andWhere('tb.status IN(:...status)', { status: ['enable', 'disable'] })
-		// 	})
-		// }).then(async data => {
-		// 	await this.customeCreate(this.tableCaptcharAppwr, {
-		// 		name: state.name,
-		// 		visible: 'hide',
-		// 		status: 'activated',
-		// 		appId: await divineIntNumber(18),
-		// 		appSecret: await divineIntStringer(32),
-		// 		customer: data
-		// 	})
-		// 	return await divineResult({ message: '创建成功' })
-		// })
+		}).then(async data => {
+			await this.customeCreate(this.tableCaptcharAppwr, {
+				name: state.name,
+				visible: 'hide',
+				status: 'activated',
+				appId: await divineIntNumber(18),
+				appSecret: await divineIntStringer(32),
+				customer: data
+			})
+			return await divineResult({ message: '创建成功' })
+		})
 	}
 
 	/**编辑应用**/

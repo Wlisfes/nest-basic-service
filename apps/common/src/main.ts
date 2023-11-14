@@ -29,14 +29,6 @@ async function useSwagger(app, opt: { authorize: string }) {
 
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule)
-	//开启TCP连接
-	await app.connectMicroservice({
-		transport: Transport.TCP,
-		options: {
-			host: '0.0.0.0',
-			port: custom.common.port
-		}
-	})
 	//允许跨域
 	app.enableCors()
 	//解析body参数

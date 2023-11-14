@@ -1,22 +1,15 @@
 import { Controller, Post, Get, Body, Query, Request, Headers } from '@nestjs/common'
-import { MessagePattern } from '@nestjs/microservices'
 import { ApiTags } from '@nestjs/swagger'
 import { CustomerService } from '@common/customer/customer.service'
 import { ApiDecorator } from '@/decorator/compute.decorator'
 import { NoticeResolver } from '@/interface/common.resolver'
 import { TableCustomer } from '@/entity/tb-common.customer'
-import { custom } from '@/utils/utils-configer'
 import * as http from '@common/interface/customer.resolver'
 
 @ApiTags('用户模块')
 @Controller('customer')
 export class CustomerController {
 	constructor(private readonly customerService: CustomerService) {}
-
-	@MessagePattern({ cmd: custom.common.cmd.CheckCustomer })
-	public async httpCheckCustomer(data: { uid: string; command: Array<string> }) {
-		return await this.customerService.httpCheckCustomer(data)
-	}
 
 	@Post('/register')
 	@ApiDecorator({
