@@ -1,9 +1,9 @@
 import { Module, Global } from '@nestjs/common'
-import { ConfigModule, ConfigService } from '@nestjs/config'
+import { ConfigModule } from '@nestjs/config'
 import { RedisModule } from '@liaoliaots/nestjs-redis'
 import { JwtModule } from '@nestjs/jwt'
 import { RedisService } from '@/service/redis.service'
-import { CustomProvider } from '@/utils/utils-configer'
+import { CustomProvider, custom } from '@/utils/utils-configer'
 
 @Global()
 @Module({
@@ -13,18 +13,15 @@ import { CustomProvider } from '@/utils/utils-configer'
 			cache: true,
 			load: [CustomProvider]
 		}),
-		RedisModule.forRootAsync({
-			inject: [ConfigService],
-			useFactory: (configService: ConfigService) => ({
-				readyLog: true,
-				config: {
-					keyPrefix: configService.get('redis.prefix'),
-					host: configService.get('redis.host'),
-					port: configService.get('redis.port'),
-					password: configService.get('redis.password'),
-					db: configService.get('redis.db')
-				}
-			})
+		RedisModule.forRoot({
+			readyLog: true,
+			config: {
+				keyPrefix: custom.redis.prefix,
+				host: custom.redis.host,
+				port: custom.redis.port,
+				password: custom.redis.password,
+				db: custom.redis.db
+			}
 		}),
 		JwtModule
 	],

@@ -1,6 +1,6 @@
 import { Module, Global } from '@nestjs/common'
-import { ConfigService } from '@nestjs/config'
 import { TypeOrmModule } from '@nestjs/typeorm'
+import { custom } from '@/utils/utils-configer'
 import { TableCustomer } from '@/entity/tb-common.customer'
 import { TableCustomerConfigur } from '@/entity/tb-common.customer__configur'
 import { TableCaptcharAppwr } from '@/entity/tb-common.captchar__appwr'
@@ -10,24 +10,18 @@ import { TableNodemailerAppwr } from '@/entity/tb-common.nodemailer__appwr'
 @Global()
 @Module({
 	imports: [
-		TypeOrmModule.forRootAsync({
-			inject: [ConfigService],
-			useFactory: (configService: ConfigService) => ({
-				global: true,
-				type: 'mysql',
-				host: configService.get('db.mysql.host'),
-				port: configService.get('db.mysql.port'),
-				username: configService.get('db.mysql.username'),
-				password: configService.get('db.mysql.password'),
-				database: configService.get('db.mysql.database'),
-				charset: configService.get('db.mysql.charset'),
-				synchronize: configService.get('NODE_ENV') === 'development',
-				entities: [TableCustomer, TableCustomerConfigur, TableCaptcharAppwr, TableCaptcharRecord, TableNodemailerAppwr]
-			})
+		TypeOrmModule.forRoot({
+			global: true,
+			type: 'mysql',
+			host: custom.db.mysql.host,
+			port: custom.db.mysql.port,
+			username: custom.db.mysql.username,
+			password: custom.db.mysql.password,
+			database: custom.db.mysql.database,
+			charset: custom.db.mysql.charset,
+			synchronize: custom.NODE_ENV === 'development',
+			entities: [TableCustomer, TableCustomerConfigur, TableCaptcharAppwr, TableCaptcharRecord, TableNodemailerAppwr]
 		})
-	],
-	controllers: [],
-	providers: [],
-	exports: []
+	]
 })
 export class DatabaseModule {}
