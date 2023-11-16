@@ -7,7 +7,7 @@ import { custom } from '@/utils/utils-configer'
 export class AppController {
 	constructor(private readonly appService: AppService) {}
 
-	@MessagePattern({ cmd: custom.captchar.kueuer.instance.cmd.httpUpdateJobKueuer })
+	@MessagePattern({ cmd: custom.captchar.kueuer.instance.cmd.httpCreateJobKueuer })
 	public async httpCreateJobKueuer(data: Record<string, never>) {
 		return await this.appService.httpCreateJobKueuer(data)
 	}

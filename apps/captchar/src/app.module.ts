@@ -19,12 +19,16 @@ import { custom } from '@/utils/utils-configer'
 				{
 					name: custom.common.instance.name,
 					transport: Transport.TCP,
-					options: { port: custom.common.port }
+					options: {
+						port: custom.common.port
+					}
 				},
 				{
 					name: custom.captchar.kueuer.instance.name,
 					transport: Transport.TCP,
-					options: { port: custom.captchar.kueuer.port }
+					options: {
+						port: custom.captchar.kueuer.port
+					}
 				}
 			]
 		}),

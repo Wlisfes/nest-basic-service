@@ -10,6 +10,7 @@ import { TableCustomer } from '@/entity/tb-common.customer'
 import { TableCustomerConfigur } from '@/entity/tb-common.customer__configur'
 import { divineIntNumber, divineResult } from '@/utils/utils-common'
 import { divineCatchWherer, divineCreateJwtToken } from '@/utils/utils-plugin'
+import { custom } from '@/utils/utils-configer'
 import * as http from '@common/interface/customer.resolver'
 
 @Injectable()
@@ -55,8 +56,8 @@ export class CustomerService extends CustomService {
 	/**登录**/ //prettier-ignore
 	public async httpAuthorizeCustomer(state: http.AuthorizeCustomer, referer: string) {
 		await this.httpService.axiosRef.request({
-			baseURL: `http://localhost:${this.configService.get('captchar.port') ?? 5030}`,
-			url: `${this.configService.get('captchar.prefix')}/browser/authorize/checker`,
+			baseURL: `http://127.0.0.1:${custom.captchar.port ?? 5030}`,
+			url: `${custom.captchar.prefix}/browser/authorize/checker`,
 			method: 'POST',
 			headers: { origin: referer },
 			data: {
