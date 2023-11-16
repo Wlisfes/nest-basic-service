@@ -7,7 +7,7 @@ import { divineHandler } from '@/utils/utils-common'
 import { TableCaptcharRecord } from '@/entity/tb-common.captchar__record'
 import { custom } from '@/utils/utils-configer'
 
-@Processor({ name: custom.captchar.kueuer.name })
+@Processor({ name: custom.captchar.kueuer.bull.name })
 export class AppCaptcharKueuerConsumer extends CustomService {
 	constructor(@InjectRepository(TableCaptcharRecord) public readonly tableCaptcharRecord: Repository<TableCaptcharRecord>) {
 		super()

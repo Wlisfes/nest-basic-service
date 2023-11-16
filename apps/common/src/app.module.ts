@@ -16,7 +16,7 @@ import { custom } from '@/utils/utils-configer'
 			isGlobal: true,
 			clients: [
 				{
-					name: 'CAPTCHAR_INSTANCE',
+					name: custom.captchar.instance.name,
 					transport: Transport.TCP,
 					options: { port: custom.captchar.port }
 				}

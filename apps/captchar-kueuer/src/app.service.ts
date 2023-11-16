@@ -5,10 +5,10 @@ import { custom } from '@/utils/utils-configer'
 
 @Injectable()
 export class AppService {
-	constructor(@InjectQueue(custom.captchar.kueuer.name) public readonly kueuer: Queue) {}
+	constructor(@InjectQueue(custom.captchar.kueuer.bull.name) public readonly kueuer: Queue) {}
 
 	/**创建延时队列**/
-	public async createJobKueuer(data: Record<string, never>, delay: number = custom.captchar.kueuer.delay) {
+	public async httpCreateJobKueuer(data: Record<string, never>, delay: number = custom.captchar.kueuer.bull.delay) {
 		try {
 			return await this.kueuer.add(data, { delay, jobId: data.session })
 		} catch (e) {
@@ -17,7 +17,7 @@ export class AppService {
 	}
 
 	/**更新队列data信息**/
-	public async updateJobKueuer(jobId: string, data: Record<string, never>) {
+	public async httpUpdateJobKueuer(jobId: string, data: Record<string, never>) {
 		try {
 			return await this.kueuer.getJob(jobId).then(async job => {
 				return await job.update({ ...job.data, ...data })

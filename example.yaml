@@ -1,18 +1,24 @@
 #环境相关配置
 NODE_ENV: development
 
-#鉴权配置
+#鉴权配置#################################################################################
 jwt:
     name: authorization
     expire: 7200
     secret: 123456
 
-#Common服务相关配置
+#Common服务相关配置########################################################################
 common:
     port: 5010
     prefix: /api/common
+    #微服务配置
+    instance:
+        name: common:instance
+        cmd: #微服务通讯事件
+            httpConnect: common:instance:cmd:httpConnect:pattern
+            httpCheckCustomer: common:instance:cmd:customer:httpCheckCustomer:pattern
 
-#Nodemailer服务相关配置
+#Nodemailer服务相关配置####################################################################
 nodemailer:
     port: 5020
     prefix: /api/nodemailer
@@ -20,23 +26,31 @@ nodemailer:
     kueuer:
         port: 5021
 
-#Captchar服务相关配置
+#Captchar服务相关配置######################################################################
 captchar:
     port: 5030
     prefix: /api/captchar
+    #微服务配置
+    instance:
+        name: captchar:instance
+        cmd: #微服务通讯事件
+            httpConnect: captchar:instance:cmd:httpConnect:pattern
+            AuthorizeChecker: captchar:instance:browser:authorize:checker:pattern
     #微服务队列配置
     kueuer:
         port: 5031
-        instance: captchar:kueuer:instance
-        name: captchar:kueuer:authorize
-        delay: 300000
-        removeOnComplete: true
-        removeOnFail: false
-        cmd: #微服务通讯事件
-            CreateJobKueuer: captchar:kueuer:create:job:pattern
-            UpdateJobKueuer: captchar:kueuer:update:job:pattern
+        bull:
+            name: captchar:kueuer:bull:authorize
+            delay: 300000
+            removeOnComplete: true
+            removeOnFail: false
+        instance:
+            name: captchar:kueuer:instance
+            cmd: #微服务通讯事件
+                httpCreateJobKueuer: captchar:kueuer:instance:app:httpCreateJobKueuer:pattern
+                httpUpdateJobKueuer: captchar:kueuer:instance:app:httpUpdateJobKueuer:pattern
 
-#数据库配置
+#数据库配置################################################################################
 db:
     mysql:
         host: localhost
@@ -46,7 +60,7 @@ db:
         database: base-development
         charset: utf8mb4
 
-#redis配置
+#redis配置#################################################################################
 redis:
     prefix: development
     host: localhost

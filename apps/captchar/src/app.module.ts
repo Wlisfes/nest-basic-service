@@ -17,12 +17,12 @@ import { custom } from '@/utils/utils-configer'
 			isGlobal: true,
 			clients: [
 				{
-					name: 'COMMON_INSTANCE',
+					name: custom.common.instance.name,
 					transport: Transport.TCP,
 					options: { port: custom.common.port }
 				},
 				{
-					name: custom.captchar.kueuer.instance,
+					name: custom.captchar.kueuer.instance.name,
 					transport: Transport.TCP,
 					options: { port: custom.captchar.kueuer.port }
 				}

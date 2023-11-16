@@ -22,10 +22,10 @@ import { custom } from '@/utils/utils-configer'
 			}
 		}),
 		BullModule.registerQueue({
-			name: custom.captchar.kueuer.name,
+			name: custom.captchar.kueuer.bull.name,
 			defaultJobOptions: {
-				removeOnComplete: JSON.parse(custom.captchar.kueuer.removeOnComplete || 'true'),
-				removeOnFail: JSON.parse(custom.captchar.kueuer.removeOnFail || 'false')
+				removeOnComplete: custom.captchar.kueuer.bull.removeOnComplete,
+				removeOnFail: custom.captchar.kueuer.bull.removeOnFail
 			}
 		}),
 		DatabaseModule,

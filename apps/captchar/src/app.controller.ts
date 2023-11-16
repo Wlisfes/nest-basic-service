@@ -1,22 +1,19 @@
-import { Controller, Inject, Get } from '@nestjs/common'
+import { Controller, Get } from '@nestjs/common'
 import { MessagePattern } from '@nestjs/microservices'
-import { ClientProxy } from '@nestjs/microservices'
-import { firstValueFrom } from 'rxjs'
 import { AppService } from '@captchar/app.service'
+import { custom } from '@/utils/utils-configer'
 
 @Controller()
 export class AppController {
-	constructor(@Inject('COMMON_INSTANCE') private common: ClientProxy, private readonly appService: AppService) {}
+	constructor(private readonly appService: AppService) {}
 
-	@MessagePattern({ cmd: 'connect:captchar' })
-	public async createJobKueuer(data: Record<string, never>) {
-		console.log(data)
+	@MessagePattern({ cmd: custom.captchar.instance.cmd.httpConnect })
+	public async httpConnect(data: Record<string, never>) {
 		return data
 	}
 
 	@Get()
 	async httpHelloer() {
-		await firstValueFrom(this.common.send({ cmd: 'connect:common' }, { datetime: Date.now() }))
 		return `Hello World: captchar`
 	}
 }
