@@ -1,4 +1,5 @@
 import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common'
+import { ClientsModule, Transport } from '@nestjs/microservices'
 import { LoggerMiddleware } from '@/middleware/logger.middleware'
 import { LoggerModule } from '@/module/logger.module'
 import { ConfigerModule } from '@/module/configer.module'
@@ -7,9 +8,26 @@ import { DatabaseModule } from '@/module/database.module'
 import { AppController } from '@common/app.controller'
 import { AppService } from '@common/app.service'
 import { CustomerModule } from '@common/customer/customer.module'
+import { custom } from '@/utils/utils-configer'
 
 @Module({
-	imports: [LoggerModule.forRoot({ name: 'Common' }), ConfigerModule, CustomizeModule, DatabaseModule, CustomerModule],
+	imports: [
+		ClientsModule.register({
+			isGlobal: true,
+			clients: [
+				{
+					name: 'CAPTCHAR_INSTANCE',
+					transport: Transport.TCP,
+					options: { port: custom.captchar.port }
+				}
+			]
+		}),
+		LoggerModule.forRoot({ name: 'Common' }),
+		ConfigerModule,
+		CustomizeModule,
+		DatabaseModule,
+		CustomerModule
+	],
 	controllers: [AppController],
 	providers: [AppService]
 })
