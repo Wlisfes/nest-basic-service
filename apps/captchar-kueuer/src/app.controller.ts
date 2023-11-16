@@ -1,6 +1,6 @@
 import { Controller } from '@nestjs/common'
 import { MessagePattern } from '@nestjs/microservices'
-import { AppService } from '@kueuer-captchar/app.service'
+import { AppService } from '@captchar-kueuer/app.service'
 import { custom } from '@/utils/utils-configer'
 
 @Controller()

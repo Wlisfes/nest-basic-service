@@ -40,13 +40,13 @@
 				"tsConfigPath": "apps/captchar/tsconfig.app.json"
 			}
 		},
-		"kueuer-captchar": {
+		"captchar-kueuer": {
 			"type": "application",
-			"root": "apps/kueuer-captchar",
+			"root": "apps/captchar-kueuer",
 			"entryFile": "main",
-			"sourceRoot": "apps/kueuer-captchar/src",
+			"sourceRoot": "apps/captchar-kueuer/src",
 			"compilerOptions": {
-				"tsConfigPath": "apps/kueuer-captchar/tsconfig.app.json"
+				"tsConfigPath": "apps/captchar-kueuer/tsconfig.app.json"
 			}
 		}
 	}
