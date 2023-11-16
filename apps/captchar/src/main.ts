@@ -1,5 +1,5 @@
 import { NestFactory } from '@nestjs/core'
-import { Transport } from '@nestjs/microservices'
+import { Transport, MicroserviceOptions } from '@nestjs/microservices'
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger'
 import { ValidationPipe } from '@nestjs/common'
 import { AppModule } from '@captchar/app.module'
@@ -29,6 +29,13 @@ async function useSwagger(app, opt: { authorize: string }) {
 
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule)
+	//开启TCP连接
+	await app.connectMicroservice<MicroserviceOptions>({
+		transport: Transport.TCP,
+		options: {
+			port: custom.common.port
+		}
+	})
 	//允许跨域
 	app.enableCors()
 	//解析body参数
@@ -41,6 +48,8 @@ async function bootstrap() {
 	app.useGlobalPipes(new ValidationPipe({ transform: true, whitelist: true }))
 	//挂载文档
 	await useSwagger(app, { authorize: custom.jwt.name })
+	//启动微服务
+	await app.startAllMicroservices()
 	//监听端口服务
 	await app.listen(custom.captchar.port, () => {
 		console.log(
