@@ -43,7 +43,11 @@ async function bootstrap() {
 	await useSwagger(app, { authorize: custom.jwt.name })
 	//监听端口服务
 	await app.listen(custom.captchar.port, () => {
-		console.log('Captchar服务启动:', `http://localhost:${custom.captchar.port}`, `http://localhost:${custom.captchar.port}/api-doc`)
+		console.log(
+			'Captchar服务启动:',
+			`http://localhost:${custom.captchar.port}${custom.captchar.prefix}`,
+			`http://localhost:${custom.captchar.port}/api-doc`
+		)
 	})
 }
 bootstrap()

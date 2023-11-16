@@ -43,7 +43,11 @@ async function bootstrap() {
 	await useSwagger(app, { authorize: custom.jwt.name })
 	//监听端口服务
 	await app.listen(custom.common.port, () => {
-		console.log('Common服务启动:', `http://localhost:${custom.common.port}`, `http://localhost:${custom.common.port}/api-doc`)
+		console.log(
+			'Common服务启动:',
+			`http://localhost:${custom.common.port}${custom.common.prefix}`,
+			`http://localhost:${custom.common.port}/api-doc`
+		)
 	})
 }
 bootstrap()
