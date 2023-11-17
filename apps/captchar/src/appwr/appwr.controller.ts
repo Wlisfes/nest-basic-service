@@ -27,8 +27,8 @@ export class AppwrController {
 		response: { status: 200, description: 'OK', type: NoticeResolver },
 		authorize: { login: true, error: true }
 	})
-	public async httpUpdateAppwr(@Request() request, @Body() body: http.UpdateAppwr) {
-		return await this.appwrService.httpUpdateAppwr(body, request.user.uid)
+	public async httpUpdateCaptcharAppwr(@Request() request, @Body() body: http.UpdateCaptcharAppwr) {
+		return await this.appwrService.httpUpdateCaptcharAppwr(body, request.user.uid)
 	}
 
 	@Get('/column')
@@ -37,7 +37,7 @@ export class AppwrController {
 		customize: { status: 200, description: 'OK', type: TableCaptcharAppwr },
 		authorize: { login: true, error: true }
 	})
-	public async httpColumnAppwr(@Request() request, @Query() query: http.ColumnAppwr) {
-		return await this.appwrService.httpColumnAppwr(query, request.user.uid)
+	public async httpColumnCaptcharAppwr(@Request() request, @Query() query: http.ColumnCaptcharAppwr) {
+		return await this.appwrService.httpColumnCaptcharAppwr(query, request.user.uid)
 	}
 }

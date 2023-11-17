@@ -27,31 +27,31 @@ export class AppwrService extends CustomService {
 			data: { uid, command: ['enable', 'disable'] }
 		})
 		console.log(user)
-		return await this.validator(this.tableCustomer, {
-			message: '账户不存在',
-			join: { alias: 'tb' },
-			where: new Brackets(qb => {
-				qb.where('tb.uid = :uid', { uid })
-				qb.andWhere('tb.status IN(:...status)', { status: ['enable', 'disable'] })
-			})
-		}).then(async data => {
-			await this.customeCreate(this.tableCaptcharAppwr, {
-				name: state.name,
-				visible: 'hide',
-				status: 'activated',
-				appId: await divineIntNumber(18),
-				appSecret: await divineIntStringer(32),
-				customer: data
-			})
-			return await divineResult({ message: '创建成功' })
-		})
+		// return await this.validator(this.tableCustomer, {
+		// 	message: '账户不存在',
+		// 	join: { alias: 'tb' },
+		// 	where: new Brackets(qb => {
+		// 		qb.where('tb.uid = :uid', { uid })
+		// 		qb.andWhere('tb.status IN(:...status)', { status: ['enable', 'disable'] })
+		// 	})
+		// }).then(async data => {
+		// 	await this.customeCreate(this.tableCaptcharAppwr, {
+		// 		name: state.name,
+		// 		visible: 'hide',
+		// 		status: 'activated',
+		// 		appId: await divineIntNumber(18),
+		// 		appSecret: await divineIntStringer(32),
+		// 		customer: data
+		// 	})
+		return await divineResult({ message: '创建成功' })
+		// })
 	}
 
 	/**编辑应用**/
-	public async httpUpdateAppwr(state: http.UpdateAppwr, uid: string) {}
+	public async httpUpdateCaptcharAppwr(state: http.UpdateCaptcharAppwr, uid: string) {}
 
 	/**应用列表**/
-	public async httpColumnAppwr(state: http.ColumnAppwr, uid: string) {
+	public async httpColumnCaptcharAppwr(state: http.ColumnCaptcharAppwr, uid: string) {
 		return await this.customeAndCountr(this.tableCaptcharAppwr, {
 			join: {
 				alias: 'tb',

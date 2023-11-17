@@ -6,6 +6,7 @@ import { ApiDecorator } from '@/decorator/compute.decorator'
 import { NoticeResolver } from '@/interface/common.resolver'
 import { TableCustomer } from '@/entity/tb-common.customer'
 import { custom } from '@/utils/utils-configer'
+import { divineResult } from '@/utils/utils-common'
 import * as http from '@common/interface/customer.resolver'
 
 @ApiTags('用户模块')
@@ -15,7 +16,11 @@ export class CustomerController {
 
 	@MessagePattern({ cmd: custom.common.instance.cmd.httpCheckCustomer })
 	public async httpCheckCustomer(data: { uid: string; command: Array<string> }) {
-		return await this.customerService.httpCheckCustomer(data)
+		try {
+			return await this.customerService.httpCheckCustomer(data)
+		} catch (e) {
+			return await divineResult({ data: null, message: e.message, code: e.status })
+		}
 	}
 
 	@Post('/register')
