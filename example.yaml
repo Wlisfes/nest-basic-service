@@ -15,8 +15,8 @@ common:
     instance:
         name: common:instance
         cmd: #微服务通讯事件
-            httpConnect: common:instance:cmd:httpConnect:pattern
-            httpCheckCustomer: common:instance:cmd:customer:httpCheckCustomer:pattern
+            httpConnect: common:instance:cmd:app:httpConnect
+            httpCheckCustomer: common:instance:cmd:customer:httpCheckCustomer
 
 #Nodemailer服务相关配置####################################################################
 nodemailer:
@@ -34,8 +34,8 @@ captchar:
     instance:
         name: captchar:instance
         cmd: #微服务通讯事件
-            httpConnect: captchar:instance:cmd:httpConnect:pattern
-            AuthorizeChecker: captchar:instance:browser:authorize:checker:pattern
+            httpConnect: captchar:instance:cmd:app:httpConnect
+            httpAuthorizeChecker: captchar:instance:cmd:browser:httpAuthorizeChecker
     #微服务队列配置
     kueuer:
         port: 5031
@@ -47,8 +47,9 @@ captchar:
         instance:
             name: captchar:kueuer:instance
             cmd: #微服务通讯事件
-                httpCreateJobKueuer: captchar:kueuer:instance:app:httpCreateJobKueuer:pattern
-                httpUpdateJobKueuer: captchar:kueuer:instance:app:httpUpdateJobKueuer:pattern
+                httpConnect: captchar:kueuer:instance:cmd:app:httpConnect
+                httpCreateJobKueuer: captchar:kueuer:instance:cmd:app:httpCreateJobKueuer
+                httpUpdateJobKueuer: captchar:kueuer:instance:cmd:app:httpUpdateJobKueuer
 
 #数据库配置################################################################################
 db:
