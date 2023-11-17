@@ -27,8 +27,19 @@ export class CustomerService extends CustomService {
 
 	/**用户校验**/
 	public async httpCheckCustomer(state: { uid: string; command: Array<string> }) {
-		console.log(state)
-		return state
+		return await this.validator(this.tableCustomer, {
+			message: '账户不存在',
+			join: { alias: 'tb' },
+			where: new Brackets(qb => {
+				qb.where('tb.uid = :uid', { uid: state.uid })
+				qb.andWhere('tb.status IN(:...status)', { status: ['enable', 'disable'] })
+			})
+		}).then(async data => {
+			await divineCatchWherer(state.command.includes(data.status), {
+				message: '账户已被禁用'
+			})
+			return await divineResult(data)
+		})
 	}
 
 	/**注册用户**/
