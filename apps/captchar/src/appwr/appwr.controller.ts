@@ -17,8 +17,8 @@ export class AppwrController {
 		response: { status: 200, description: 'OK', type: NoticeResolver },
 		authorize: { login: true, error: true }
 	})
-	public async httpCreateAppwr(@Request() request, @Body() body: http.CreateAppwr) {
-		return await this.appwrService.httpCreateAppwr(body, request.user.uid)
+	public async httpCreateCaptcharAppwr(@Request() request, @Body() body: http.CreateCaptcharAppwr) {
+		return await this.appwrService.httpCreateCaptcharAppwr(body, request.user.uid)
 	}
 
 	@Post('/update')

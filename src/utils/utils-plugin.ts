@@ -1,5 +1,7 @@
 import { HttpException, HttpStatus } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
+import { ClientProxy } from '@nestjs/microservices'
+import { firstValueFrom } from 'rxjs'
 import { isEmail } from 'class-validator'
 import { zh_CN, Faker } from '@faker-js/faker'
 import { divineParameter, divineHandler } from '@/utils/utils-common'
@@ -134,5 +136,14 @@ export async function divineWritesheet(
 		return (await excel.xlsx.writeBuffer()) as Buffer
 	} catch (e) {
 		throw new HttpException('JSON转换失败', HttpStatus.INTERNAL_SERVER_ERROR)
+	}
+}
+
+/**微服务send事件推送**/
+export async function divineClientSender(client: ClientProxy, option: { cmd: string; data: Record<string, any> }) {
+	try {
+		return await firstValueFrom(client.send({ cmd: option.cmd }, option.data))
+	} catch (e) {
+		throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR)
 	}
 }

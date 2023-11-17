@@ -33,7 +33,8 @@ async function bootstrap() {
 	await app.connectMicroservice<MicroserviceOptions>({
 		transport: Transport.TCP,
 		options: {
-			port: custom.captchar.port
+			port: custom.captchar.port,
+			host: '0.0.0.0'
 		}
 	})
 	//允许跨域

@@ -3,7 +3,7 @@ import { RequestResolver } from '@/interface/common.resolver'
 import { TableCaptcharAppwr } from '@/entity/tb-common.captchar__appwr'
 
 /**创建应用**/
-export class CreateAppwr extends PickType(TableCaptcharAppwr, ['name']) {}
+export class CreateCaptcharAppwr extends PickType(TableCaptcharAppwr, ['name']) {}
 
 export class UpdateAppwr extends PickType(TableCaptcharAppwr, ['appId', 'name']) {}
 

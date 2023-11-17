@@ -1,15 +1,19 @@
 import { Injectable, Inject } from '@nestjs/common'
+import { ClientProxy } from '@nestjs/microservices'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository, Brackets } from 'typeorm'
 import { CustomService } from '@/service/custom.service'
-import { divineIntNumber, divineIntStringer, divineResult, divineWherer } from '@/utils/utils-common'
 import { TableCustomer } from '@/entity/tb-common.customer'
 import { TableCaptcharAppwr } from '@/entity/tb-common.captchar__appwr'
+import { divineIntNumber, divineIntStringer, divineResult, divineWherer } from '@/utils/utils-common'
+import { divineClientSender } from '@/utils/utils-plugin'
+import { custom } from '@/utils/utils-configer'
 import * as http from '@captchar/interface/appwr.resolver'
 
 @Injectable()
 export class AppwrService extends CustomService {
 	constructor(
+		@Inject(custom.common.instance.name) private common: ClientProxy,
 		@InjectRepository(TableCustomer) public readonly tableCustomer: Repository<TableCustomer>,
 		@InjectRepository(TableCaptcharAppwr) public readonly tableCaptcharAppwr: Repository<TableCaptcharAppwr>
 	) {
@@ -17,7 +21,12 @@ export class AppwrService extends CustomService {
 	}
 
 	/**创建应用**/
-	public async httpCreateAppwr(state: http.CreateAppwr, uid: string) {
+	public async httpCreateCaptcharAppwr(state: http.CreateCaptcharAppwr, uid: string) {
+		const user = await divineClientSender(this.common, {
+			cmd: custom.common.instance.cmd.httpCheckCustomer,
+			data: { uid, command: ['enable', 'disable'] }
+		})
+		console.log(user)
 		return await this.validator(this.tableCustomer, {
 			message: '账户不存在',
 			join: { alias: 'tb' },
