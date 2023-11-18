@@ -1,11 +1,10 @@
 import { HttpStatus, Injectable } from '@nestjs/common'
-import { ConfigService } from '@nestjs/config'
 import { HttpService } from '@nestjs/axios'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository, Brackets } from 'typeorm'
 import { compareSync } from 'bcryptjs'
 import { CustomService } from '@/service/custom.service'
-import { RedisService } from '@/service/redis.service'
+import { CommonCacheCustomerService } from '@/cache/common-customer.service'
 import { TableCustomer } from '@/entity/tb-common.customer'
 import { TableCustomerConfigur } from '@/entity/tb-common.customer__configur'
 import { divineIntNumber, divineResult } from '@/utils/utils-common'
@@ -16,9 +15,8 @@ import * as http from '@common/interface/customer.resolver'
 @Injectable()
 export class CustomerService extends CustomService {
 	constructor(
-		private readonly configService: ConfigService,
 		private readonly httpService: HttpService,
-		private readonly redisService: RedisService,
+		private readonly cacheCustomer: CommonCacheCustomerService,
 		@InjectRepository(TableCustomer) public readonly tableCustomer: Repository<TableCustomer>,
 		@InjectRepository(TableCustomerConfigur) public readonly tableCustomerConfigur: Repository<TableCustomerConfigur>
 	) {
@@ -99,8 +97,8 @@ export class CustomerService extends CustomService {
 				message: '账户密码错误'
 			})
 			return await divineCreateJwtToken({
-				expire: Number(this.configService.get('jwt.expire') ?? 7200),
-				secret: this.configService.get('jwt.secret'),
+				expire: custom.jwt.expire ?? 7200,
+				secret: custom.jwt.secret,
 				data: {
 					keyId: data.keyId,
 					uid: data.uid,
@@ -109,6 +107,14 @@ export class CustomerService extends CustomService {
 					status: data.status
 				}
 			}).then(async ({ token, expire }) => {
+				await this.cacheCustomer.writeCustomer(data.uid, {
+					uid: data.uid,
+					nickname: data.nickname,
+					email: data.email,
+					avatar: data.avatar,
+					status: data.status,
+					mobile: data.mobile
+				})
 				return await divineResult({ token, expire, message: '登录成功' })
 			})
 		})
@@ -127,6 +133,8 @@ export class CustomerService extends CustomService {
 			await divineCatchWherer(data.status === 'disable', {
 				message: '账户已被禁用'
 			})
+			const node = await this.cacheCustomer.readCustomer(data.uid)
+			console.log(node)
 			return await divineResult(data)
 		})
 	}
