@@ -1,5 +1,5 @@
-import { HttpStatus, Injectable } from '@nestjs/common'
-import { HttpService } from '@nestjs/axios'
+import { HttpStatus, Injectable, Inject } from '@nestjs/common'
+import { ClientProxy } from '@nestjs/microservices'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository, Brackets } from 'typeorm'
 import { compareSync } from 'bcryptjs'
@@ -8,15 +8,15 @@ import { CommonCacheCustomerService } from '@/cache/common-customer.service'
 import { TableCustomer } from '@/entity/tb-common.customer'
 import { TableCustomerConfigur } from '@/entity/tb-common.customer__configur'
 import { divineIntNumber, divineResult } from '@/utils/utils-common'
-import { divineCatchWherer, divineCreateJwtToken } from '@/utils/utils-plugin'
+import { divineCatchWherer, divineCreateJwtToken, divineClientSender } from '@/utils/utils-plugin'
 import { custom } from '@/utils/utils-configer'
 import * as http from '@common/interface/customer.resolver'
 
 @Injectable()
 export class CustomerService extends CustomService {
 	constructor(
-		private readonly httpService: HttpService,
 		private readonly cacheCustomer: CommonCacheCustomerService,
+		@Inject(custom.captchar.instance.name) private captchar: ClientProxy,
 		@InjectRepository(TableCustomer) public readonly tableCustomer: Repository<TableCustomer>,
 		@InjectRepository(TableCustomerConfigur) public readonly tableCustomerConfigur: Repository<TableCustomerConfigur>
 	) {
@@ -62,28 +62,26 @@ export class CustomerService extends CustomService {
 		return await this.tableCustomer.save(node)
 	}
 
-	/**登录**/ //prettier-ignore
+	/**登录**/
 	public async httpAuthorizeCustomer(state: http.AuthorizeCustomer, referer: string) {
-		await this.httpService.axiosRef.request({
-			baseURL: `http://127.0.0.1:${custom.captchar.port ?? 5030}`,
-			url: `${custom.captchar.prefix}/browser/authorize/checker`,
-			method: 'POST',
-			headers: { origin: referer },
+		/**验证服务校验**/
+		await divineClientSender(this.captchar, {
+			cmd: custom.captchar.instance.cmd.httpAuthorizeCheckerPattern,
 			data: {
+				referer,
 				appSecret: 'zzFznmt8DY64hHBnkoboTmUzFZIadSdV',
 				appId: '169851019895347735',
 				session: state.session,
-				token: state.token,
+				token: state.token
 			}
-		}).then(async ({ data }) => {
-			await divineCatchWherer(data.code !== HttpStatus.OK || !data.data.check, {
-				message: data.message
-			})
-			return data
+		}).then(async data => {
+			return await divineCatchWherer(data.check, { message: data.message })
 		})
-		return await this.validator(this.tableCustomer, {
+
+		/**查询登录用户**/
+		const node = await this.validator(this.tableCustomer, {
 			message: '账户不存在',
-			select: ['keyId', 'uid', 'nickname', 'mobile', 'email', 'password', 'status'],
+			select: ['keyId', 'uid', 'nickname', 'avatar', 'mobile', 'email', 'password', 'status', 'createTime', 'updateTime'],
 			join: { alias: 'tb' },
 			where: new Brackets(qb => {
 				qb.where('tb.mobile = :mobile', { mobile: state.mobile })
@@ -96,27 +94,27 @@ export class CustomerService extends CustomService {
 			await divineCatchWherer(!compareSync(state.password, data.password), {
 				message: '账户密码错误'
 			})
-			return await divineCreateJwtToken({
-				expire: custom.jwt.expire ?? 7200,
-				secret: custom.jwt.secret,
-				data: {
-					keyId: data.keyId,
-					uid: data.uid,
-					nickname: data.nickname,
-					password: data.password,
-					status: data.status
-				}
-			}).then(async ({ token, expire }) => {
-				await this.cacheCustomer.writeCustomer(data.uid, {
-					uid: data.uid,
-					nickname: data.nickname,
-					email: data.email,
-					avatar: data.avatar,
-					status: data.status,
-					mobile: data.mobile
-				})
-				return await divineResult({ token, expire, message: '登录成功' })
+			return data
+		})
+
+		/**生成token**/
+		return await divineCreateJwtToken({
+			expire: custom.jwt.expire ?? 7200,
+			secret: custom.jwt.secret,
+			data: { keyId: node.keyId, uid: node.uid, nickname: node.nickname, password: node.password, status: node.status }
+		}).then(async ({ token, expire }) => {
+			await this.cacheCustomer.writeCustomer(node.uid, {
+				keyId: node.keyId,
+				uid: node.uid,
+				createTime: node.createTime,
+				updateTime: node.updateTime,
+				nickname: node.nickname,
+				email: node.email,
+				avatar: node.avatar,
+				status: node.status,
+				mobile: node.mobile
 			})
+			return await divineResult({ token, expire, message: '登录成功' })
 		})
 	}
 
