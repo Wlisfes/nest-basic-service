@@ -1,18 +1,18 @@
 import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
-import * as database from '@/entity'
+import * as dataBase from '@/entity'
 
 @Injectable()
 export class DataBaseService {
 	constructor(
 		//Common
-		@InjectRepository(database.TableCustomer) public readonly tableCustomer: Repository<database.TableCustomer>,
-		@InjectRepository(database.TableCustomerConfigur) public readonly tableCustomerConfigur: Repository<database.TableCustomerConfigur>,
+		@InjectRepository(dataBase.TableCustomer) public readonly tableCustomer: Repository<dataBase.TableCustomer>,
+		@InjectRepository(dataBase.TableCustomerConfigur) public readonly tableCustomerConfigur: Repository<dataBase.TableCustomerConfigur>,
 		//Captchar
-		@InjectRepository(database.TableCaptcharAppwr) public readonly tableCaptcharAppwr: Repository<database.TableCaptcharAppwr>,
-		@InjectRepository(database.TableCaptcharRecord) public readonly tableCaptcharRecord: Repository<database.TableCaptcharRecord>,
+		@InjectRepository(dataBase.TableCaptcharAppwr) public readonly tableCaptcharAppwr: Repository<dataBase.TableCaptcharAppwr>,
+		@InjectRepository(dataBase.TableCaptcharRecord) public readonly tableCaptcharRecord: Repository<dataBase.TableCaptcharRecord>,
 		//Nodemailer
-		@InjectRepository(database.TableNodemailerAppwr) public readonly tableNodemailerAppwr: Repository<database.TableNodemailerAppwr>
+		@InjectRepository(dataBase.TableNodemailerAppwr) public readonly tableNodemailerAppwr: Repository<dataBase.TableNodemailerAppwr>
 	) {}
 }

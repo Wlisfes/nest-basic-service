@@ -2,10 +2,10 @@ import { Module, Global } from '@nestjs/common'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { DataBaseService } from '@/service/database.service'
 import { custom } from '@/utils/utils-configer'
-import * as database from '@/entity'
+import * as dataBase from '@/entity'
 
 /**数据库表实体**/
-export const TableDatabase = Object.values(database)
+export const TableDatabase = Object.values(dataBase)
 
 @Global()
 @Module({

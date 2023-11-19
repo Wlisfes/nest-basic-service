@@ -4,9 +4,9 @@ import { ApiTags } from '@nestjs/swagger'
 import { CustomerService } from '@common/customer/customer.service'
 import { ApiDecorator } from '@/decorator/compute.decorator'
 import { NoticeResolver } from '@/interface/common.resolver'
-import { TableCustomer } from '@/entity/tb-common.customer'
 import { custom } from '@/utils/utils-configer'
 import { divineResult } from '@/utils/utils-common'
+import * as dataBase from '@/entity'
 import * as http from '@common/interface/customer.resolver'
 
 @ApiTags('用户模块')
@@ -45,10 +45,10 @@ export class CustomerController {
 	@Get('/resolver')
 	@ApiDecorator({
 		operation: { summary: '获取用户信息' },
-		response: { status: 200, description: 'OK', type: TableCustomer },
+		response: { status: 200, description: 'OK', type: dataBase.TableCustomer },
 		authorize: { login: true, error: true }
 	})
-	public async httpResolverCustomer(@Request() request: { user: TableCustomer }) {
+	public async httpResolverCustomer(@Request() request: { user: dataBase.TableCustomer }) {
 		return await this.customerService.httpResolverCustomer({ uid: request.user.uid })
 	}
 }

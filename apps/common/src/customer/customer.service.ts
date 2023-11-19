@@ -1,12 +1,10 @@
 import { HttpStatus, Injectable, Inject } from '@nestjs/common'
 import { ClientProxy } from '@nestjs/microservices'
-import { InjectRepository } from '@nestjs/typeorm'
-import { Repository, Brackets } from 'typeorm'
+import { Brackets } from 'typeorm'
 import { compareSync } from 'bcryptjs'
 import { CustomService } from '@/service/custom.service'
 import { CommonCacheCustomerService } from '@/cache/common-customer.service'
-import { TableCustomer } from '@/entity/tb-common.customer'
-import { TableCustomerConfigur } from '@/entity/tb-common.customer__configur'
+import { DataBaseService } from '@/service/database.service'
 import { divineIntNumber, divineResult } from '@/utils/utils-common'
 import { divineCatchWherer, divineCreateJwtToken, divineClientSender } from '@/utils/utils-plugin'
 import { custom } from '@/utils/utils-configer'
@@ -16,16 +14,15 @@ import * as http from '@common/interface/customer.resolver'
 export class CustomerService extends CustomService {
 	constructor(
 		private readonly cacheCustomer: CommonCacheCustomerService,
-		@Inject(custom.captchar.instance.name) private captchar: ClientProxy,
-		@InjectRepository(TableCustomer) public readonly tableCustomer: Repository<TableCustomer>,
-		@InjectRepository(TableCustomerConfigur) public readonly tableCustomerConfigur: Repository<TableCustomerConfigur>
+		private readonly dataBase: DataBaseService,
+		@Inject(custom.captchar.instance.name) private captchar: ClientProxy
 	) {
 		super()
 	}
 
 	/**用户校验**/
 	public async httpCheckCustomer(state: { uid: string; command: Array<string> }) {
-		return await this.validator(this.tableCustomer, {
+		return await this.validator(this.dataBase.tableCustomer, {
 			message: '账户不存在',
 			join: { alias: 'tb' },
 			where: new Brackets(qb => {
@@ -53,13 +50,13 @@ export class CustomerService extends CustomService {
 		// 	})
 		// 	await this.customeUpdate(this.tableCustomer, { uid: data.uid }, { configur: configur as never })
 		// })
-		const node = await this.tableCustomer.create({
+		const node = await this.dataBase.tableCustomer.create({
 			uid: await divineIntNumber(18),
 			nickname: '宫新哲',
 			password: 'MTIzNDU1',
 			mobile: '18888888888'
 		})
-		return await this.tableCustomer.save(node)
+		return await this.dataBase.tableCustomer.save(node)
 	}
 
 	/**登录**/
@@ -79,7 +76,7 @@ export class CustomerService extends CustomService {
 		})
 
 		/**查询登录用户**/
-		const node = await this.validator(this.tableCustomer, {
+		const node = await this.validator(this.dataBase.tableCustomer, {
 			message: '账户不存在',
 			select: ['keyId', 'uid', 'nickname', 'avatar', 'mobile', 'email', 'password', 'status', 'createTime', 'updateTime'],
 			join: { alias: 'tb' },
@@ -120,7 +117,7 @@ export class CustomerService extends CustomService {
 
 	/**获取用户信息**/
 	public async httpResolverCustomer(state: http.ResolverCustomer) {
-		return await this.validator(this.tableCustomer, {
+		return await this.validator(this.dataBase.tableCustomer, {
 			message: '账户不存在',
 			join: { alias: 'tb' },
 			where: new Brackets(qb => {
