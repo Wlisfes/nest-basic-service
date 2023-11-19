@@ -1,11 +1,11 @@
 import { Module, Global } from '@nestjs/common'
 import { TypeOrmModule } from '@nestjs/typeorm'
+import { DataBaseService } from '@/service/database.service'
 import { custom } from '@/utils/utils-configer'
-import { TableCustomer } from '@/entity/tb-common.customer'
-import { TableCustomerConfigur } from '@/entity/tb-common.customer__configur'
-import { TableCaptcharAppwr } from '@/entity/tb-common.captchar__appwr'
-import { TableCaptcharRecord } from '@/entity/tb-common.captchar__record'
-import { TableNodemailerAppwr } from '@/entity/tb-common.nodemailer__appwr'
+import * as database from '@/entity'
+
+/**数据库表实体**/
+export const TableDatabase = Object.values(database)
 
 @Global()
 @Module({
@@ -20,8 +20,11 @@ import { TableNodemailerAppwr } from '@/entity/tb-common.nodemailer__appwr'
 			database: custom.db.mysql.database,
 			charset: custom.db.mysql.charset,
 			synchronize: custom.NODE_ENV === 'development',
-			entities: [TableCustomer, TableCustomerConfigur, TableCaptcharAppwr, TableCaptcharRecord, TableNodemailerAppwr]
-		})
-	]
+			entities: TableDatabase
+		}),
+		TypeOrmModule.forFeature(TableDatabase)
+	],
+	providers: [DataBaseService],
+	exports: [DataBaseService]
 })
 export class DatabaseModule {}
