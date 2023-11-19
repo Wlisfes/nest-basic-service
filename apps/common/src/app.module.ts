@@ -9,6 +9,7 @@ import { CacheModule } from '@/module/cache.module'
 import { AppController } from '@common/app.controller'
 import { AppService } from '@common/app.service'
 import { CustomerModule } from '@common/customer/customer.module'
+import { AliyunModule } from '@common/aliyun/aliyun.module'
 import { custom } from '@/utils/utils-configer'
 
 @Module({
@@ -28,7 +29,8 @@ import { custom } from '@/utils/utils-configer'
 		CustomizeModule,
 		DatabaseModule,
 		CacheModule,
-		CustomerModule
+		CustomerModule,
+		AliyunModule
 	],
 	controllers: [AppController],
 	providers: [AppService]
