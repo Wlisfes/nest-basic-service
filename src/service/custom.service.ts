@@ -20,20 +20,20 @@ export class CustomService {
 	}
 
 	/**创建数据模型**/
-	public async customeCreate<T>(model: Repository<T>, state: DeepPartial<T>) {
+	public async customeCreate<T>(model: Repository<T>, state: DeepPartial<T>): Promise<T> {
 		try {
 			const node = await model.create(state)
-			return model.save(node as never)
+			return model.save(node as any)
 		} catch (e) {
 			throw new HttpException('服务器开小差了', HttpStatus.INTERNAL_SERVER_ERROR)
 		}
 	}
 
+	/**更新数据模型**/
 	public async customeUpdate<T>(model: Repository<T>, criter: FindConditions<T>, state: FindConditions<T>) {
 		try {
 			return await model.update(criter, state as never)
 		} catch (e) {
-			console.log(e)
 			throw new HttpException('服务器开小差了', HttpStatus.INTERNAL_SERVER_ERROR)
 		}
 	}

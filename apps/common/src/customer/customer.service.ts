@@ -7,13 +7,14 @@ import { CommonCacheCustomerService } from '@/cache/common-customer.service'
 import { DataBaseService } from '@/service/database.service'
 import { divineIntNumber, divineResult } from '@/utils/utils-common'
 import { divineCatchWherer, divineCreateJwtToken, divineClientSender } from '@/utils/utils-plugin'
+import { divineOmitDatePatter } from '@/utils/utils-process'
 import { custom } from '@/utils/utils-configer'
 import * as http from '@common/interface/customer.resolver'
 
 @Injectable()
 export class CustomerService extends CustomService {
 	constructor(
-		private readonly cacheCustomer: CommonCacheCustomerService,
+		private readonly customer: CommonCacheCustomerService,
 		private readonly dataBase: DataBaseService,
 		@Inject(custom.captchar.instance.name) private captchar: ClientProxy
 	) {
@@ -22,41 +23,37 @@ export class CustomerService extends CustomService {
 
 	/**用户校验**/
 	public async httpCheckCustomer(state: { uid: string; command: Array<string> }) {
-		return await this.validator(this.dataBase.tableCustomer, {
-			message: '账户不存在',
-			join: { alias: 'tb' },
-			where: new Brackets(qb => {
-				qb.where('tb.uid = :uid', { uid: state.uid })
-				qb.andWhere('tb.status IN(:...status)', { status: ['enable', 'disable'] })
-			})
-		}).then(async data => {
-			await divineCatchWherer(state.command.includes(data.status), {
-				message: '账户已被禁用'
-			})
-			return await divineResult(data)
-		})
+		return await this.customer.checkCustomer(state.uid, state.command)
 	}
 
 	/**注册用户**/
 	public async httpRegisterCustomer(state: http.RegisterCustomer) {
-		// return await this.validator(this.tableCustomer, {
-		// 	where: { uid: '169848335712346764' }
-		// }).then(async data => {
-		// 	const configur = await this.customeCreate(this.tableCustomerConfigur, {
-		// 		authorize: 'initialize',
-		// 		credit: 0,
-		// 		current: 0,
-		// 		balance: 0
-		// 	})
-		// 	await this.customeUpdate(this.tableCustomer, { uid: data.uid }, { configur: configur as never })
-		// })
-		const node = await this.dataBase.tableCustomer.create({
-			uid: await divineIntNumber(18),
-			nickname: '宫新哲',
-			password: 'MTIzNDU1',
-			mobile: '18888888888'
+		/**验证手机号**/
+		await this.validator(this.dataBase.tableCustomer, {
+			where: { mobile: state.mobile }
+		}).then(async data => {
+			return await divineCatchWherer(Boolean(data), {
+				message: '手机号已注册',
+				code: HttpStatus.BAD_REQUEST
+			})
 		})
-		return await this.dataBase.tableCustomer.save(node)
+		/**用户数据入库**/
+		return await this.customeCreate(this.dataBase.tableCustomer, {
+			uid: await divineIntNumber(18),
+			nickname: state.nickname,
+			password: state.password,
+			mobile: state.mobile
+		}).then(async node => {
+			await this.customeCreate(this.dataBase.tableCustomerConfigur, {
+				uid: node.uid,
+				customer: node,
+				credit: 0,
+				current: 0,
+				balance: 0,
+				authorize: 'initialize'
+			})
+			return await divineResult({ message: '注册成功' })
+		})
 	}
 
 	/**登录**/
@@ -71,8 +68,11 @@ export class CustomerService extends CustomService {
 				session: state.session,
 				token: state.token
 			}
-		}).then(async data => {
-			return await divineCatchWherer(data.check, { message: data.message })
+		}).then(async node => {
+			return await divineCatchWherer(!node.check, {
+				message: node.message,
+				code: node.status ?? HttpStatus.BAD_REQUEST
+			})
 		})
 
 		/**查询登录用户**/
@@ -98,39 +98,24 @@ export class CustomerService extends CustomService {
 		return await divineCreateJwtToken({
 			expire: custom.jwt.expire ?? 7200,
 			secret: custom.jwt.secret,
-			data: { keyId: node.keyId, uid: node.uid, nickname: node.nickname, password: node.password, status: node.status }
-		}).then(async ({ token, expire }) => {
-			await this.cacheCustomer.writeCustomer(node.uid, {
+			data: {
 				keyId: node.keyId,
 				uid: node.uid,
-				createTime: node.createTime,
-				updateTime: node.updateTime,
 				nickname: node.nickname,
-				email: node.email,
-				avatar: node.avatar,
-				status: node.status,
-				mobile: node.mobile
-			})
+				password: node.password,
+				status: node.status
+			}
+		}).then(async ({ token, expire }) => {
+			await this.customer.writeCustomer(node.uid, { ...node })
 			return await divineResult({ token, expire, message: '登录成功' })
 		})
 	}
 
 	/**获取用户信息**/
 	public async httpResolverCustomer(state: http.ResolverCustomer) {
-		return await this.validator(this.dataBase.tableCustomer, {
-			message: '账户不存在',
-			join: { alias: 'tb' },
-			where: new Brackets(qb => {
-				qb.where('tb.uid = :uid', { uid: state.uid })
-				qb.andWhere('tb.status IN(:...status)', { status: ['enable', 'disable'] })
-			})
-		}).then(async data => {
-			await divineCatchWherer(data.status === 'disable', {
-				message: '账户已被禁用'
-			})
-			const node = await this.cacheCustomer.readCustomer(data.uid)
-			console.log(node)
-			return await divineResult(data)
+		const node = await this.customer.checkCustomer(state.uid, ['disable']).then(async node => {
+			return await divineOmitDatePatter(node, ['password'])
 		})
+		return await divineResult(node)
 	}
 }
