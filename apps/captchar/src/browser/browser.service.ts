@@ -1,10 +1,8 @@
 import { Injectable, Inject, HttpException, HttpStatus } from '@nestjs/common'
 import { ClientProxy } from '@nestjs/microservices'
-import { InjectRepository } from '@nestjs/typeorm'
-import { Repository, Brackets } from 'typeorm'
+import { Brackets } from 'typeorm'
 import { CustomService } from '@/service/custom.service'
-import { TableCaptcharAppwr } from '@/entity/tb-common.captchar__appwr'
-import { TableCaptcharRecord } from '@/entity/tb-common.captchar__record'
+import { DataBaseService } from '@/service/database.service'
 import { divineIntNumber, divineResult } from '@/utils/utils-common'
 import { divineCatchWherer, divineCreateJwtToken, divineParseJwtToken } from '@/utils/utils-plugin'
 import { custom } from '@/utils/utils-configer'
@@ -13,17 +11,13 @@ import * as http from '@captchar/interface/browser.resolver'
 
 @Injectable()
 export class BrowserService extends CustomService {
-	constructor(
-		@Inject(custom.captchar.kueuer.instance.name) private kueuer: ClientProxy,
-		@InjectRepository(TableCaptcharAppwr) public readonly tableCaptcharAppwr: Repository<TableCaptcharAppwr>,
-		@InjectRepository(TableCaptcharRecord) public readonly tableCaptcharRecord: Repository<TableCaptcharRecord>
-	) {
+	constructor(private readonly dataBase: DataBaseService, @Inject(custom.captchar.kueuer.instance.name) private kueuer: ClientProxy) {
 		super()
 	}
 
 	/**生成校验凭证**/ //prettier-ignore
 	public async httpAuthorizeReducer(state: http.AuthorizeReducer, referer: string) {
-		return await this.validator(this.tableCaptcharAppwr, {
+		return await this.validator(this.dataBase.tableCaptcharAppwr, {
 			message: '应用不存在',
 			join: {
 				alias: 'tb',
@@ -43,7 +37,7 @@ export class BrowserService extends CustomService {
 				secret: data.appSecret,
 				data: { session: session, appId: data.appId }
 			})
-			await this.customeCreate(this.tableCaptcharRecord, {
+			await this.customeCreate(this.dataBase.tableCaptcharRecord, {
 				appId: data.appId,
 				appName: data.name,
 				uid: data.customer.uid,
@@ -66,7 +60,7 @@ export class BrowserService extends CustomService {
 	/**校验凭证**/ //prettier-ignore
 	public async httpAuthorizeChecker(state: http.AuthorizeChecker, referer: string) {
 		try {
-			await this.validator(this.tableCaptcharAppwr, {
+			await this.validator(this.dataBase.tableCaptcharAppwr, {
 				message: '应用不存在',
 				join: { alias: 'tb' },
 				where: new Brackets(qb => {
@@ -78,7 +72,7 @@ export class BrowserService extends CustomService {
 					message: '应用已被禁用'
 				})
 			})
-			await this.validator(this.tableCaptcharRecord, {
+			await this.validator(this.dataBase.tableCaptcharRecord, {
 				message: 'token记录不存在',
 				join: { alias: 'tb' },
 				where: new Brackets(qb => {
@@ -102,7 +96,7 @@ export class BrowserService extends CustomService {
 						jobId: state.session,
 						option: { status: 'success' }
 					})).then(async e => {
-						return await this.customeUpdate(this.tableCaptcharRecord,
+						return await this.customeUpdate(this.dataBase.tableCaptcharRecord,
 							{ session: state.session },
 							{ status: 'success' }
 						)
@@ -114,7 +108,7 @@ export class BrowserService extends CustomService {
 					jobId: state.session,
 					option: { status: 'failure' }
 				})).then(async e => {
-					return await this.customeUpdate(this.tableCaptcharRecord,
+					return await this.customeUpdate(this.dataBase.tableCaptcharRecord,
 						{ session: state.session },
 						{ status: 'failure' }
 					)

@@ -1,10 +1,8 @@
 import { Injectable, Inject } from '@nestjs/common'
 import { ClientProxy } from '@nestjs/microservices'
-import { InjectRepository } from '@nestjs/typeorm'
-import { Repository, Brackets } from 'typeorm'
+import { Brackets } from 'typeorm'
 import { CustomService } from '@/service/custom.service'
-import { TableCustomer } from '@/entity/tb-common.customer'
-import { TableCaptcharAppwr } from '@/entity/tb-common.captchar__appwr'
+import { DataBaseService } from '@/service/database.service'
 import { divineIntNumber, divineIntStringer, divineResult, divineWherer } from '@/utils/utils-common'
 import { divineClientSender } from '@/utils/utils-plugin'
 import { custom } from '@/utils/utils-configer'
@@ -12,11 +10,7 @@ import * as http from '@captchar/interface/appwr.resolver'
 
 @Injectable()
 export class AppwrService extends CustomService {
-	constructor(
-		@Inject(custom.common.instance.name) private common: ClientProxy,
-		@InjectRepository(TableCustomer) public readonly tableCustomer: Repository<TableCustomer>,
-		@InjectRepository(TableCaptcharAppwr) public readonly tableCaptcharAppwr: Repository<TableCaptcharAppwr>
-	) {
+	constructor(private readonly dataBase: DataBaseService, @Inject(custom.common.instance.name) private common: ClientProxy) {
 		super()
 	}
 
@@ -52,7 +46,7 @@ export class AppwrService extends CustomService {
 
 	/**应用列表**/
 	public async httpColumnCaptcharAppwr(state: http.ColumnCaptcharAppwr, uid: string) {
-		return await this.customeAndCountr(this.tableCaptcharAppwr, {
+		return await this.customeAndCountr(this.dataBase.tableCaptcharAppwr, {
 			join: {
 				alias: 'tb',
 				leftJoinAndSelect: { customer: 'tb.customer' }
