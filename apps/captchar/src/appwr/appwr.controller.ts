@@ -3,7 +3,7 @@ import { ApiTags } from '@nestjs/swagger'
 import { ApiDecorator } from '@/decorator/compute.decorator'
 import { AppwrService } from '@captchar/appwr/appwr.service'
 import { NoticeResolver } from '@/interface/common.resolver'
-import { TableCaptcharAppwr } from '@/entity/tb-common.captchar__appwr'
+import * as dataBase from '@/entity'
 import * as http from '@captchar/interface/appwr.resolver'
 
 @ApiTags('验证码应用模块')
@@ -34,7 +34,7 @@ export class AppwrController {
 	@Get('/column')
 	@ApiDecorator({
 		operation: { summary: '应用列表' },
-		customize: { status: 200, description: 'OK', type: TableCaptcharAppwr },
+		customize: { status: 200, description: 'OK', type: dataBase.TableCaptcharAppwr },
 		authorize: { login: true, error: true }
 	})
 	public async httpColumnCaptcharAppwr(@Request() request, @Query() query: http.ColumnCaptcharAppwr) {

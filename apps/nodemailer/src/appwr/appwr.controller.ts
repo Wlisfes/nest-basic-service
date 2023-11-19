@@ -3,7 +3,7 @@ import { ApiTags } from '@nestjs/swagger'
 import { ApiDecorator } from '@/decorator/compute.decorator'
 import { AppwrService } from '@nodemailer/appwr/appwr.service'
 import { NoticeResolver } from '@/interface/common.resolver'
-import { TableNodemailerAppwr } from '@/entity/tb-common.nodemailer__appwr'
+import * as dataBase from '@/entity'
 import * as http from '@nodemailer/interface/appwr.resolver'
 
 @ApiTags('邮件应用模块')
@@ -24,7 +24,7 @@ export class AppwrController {
 	@Get('/column')
 	@ApiDecorator({
 		operation: { summary: '应用列表' },
-		customize: { status: 200, description: 'OK', type: TableNodemailerAppwr },
+		customize: { status: 200, description: 'OK', type: dataBase.TableNodemailerAppwr },
 		authorize: { login: true, error: true }
 	})
 	public async httpColumnAppwr(@Request() request, @Query() query: http.ColumnAppwr) {
