@@ -1,11 +1,42 @@
 #环境相关配置
 NODE_ENV: development
 
+#阿里云配置
+aliyun:
+    oss:
+        region:
+        endpoint:
+        accessKeyId:
+        accessKeySecret:
+        bucket:
+        timeout: 60000
+        internal: false
+        secure: true
+        cname: true
+
+#数据库配置################################################################################
+db:
+    mysql:
+        host: 121.199.41.193
+        port: 3306
+        username: admin
+        password: T6rAB6XmmSxkBaJ2
+        database: base-development
+        charset: utf8mb4
+
+#redis配置#################################################################################
+redis:
+    prefix: development
+    host: 121.199.41.193
+    port: 6379
+    password: 7724300
+    db: 1
+
 #鉴权配置#################################################################################
 jwt:
     name: authorization
     expire: 7200
-    secret: 123456
+    secret: T6rAB6XmmSxkBaJ2
 
 #Common服务相关配置########################################################################
 common:
@@ -15,8 +46,8 @@ common:
     instance:
         name: common:instance
         cmd: #微服务通讯事件
-            httpConnect: common:instance:cmd:app:httpConnect
-            httpCheckCustomer: common:instance:cmd:customer:httpCheckCustomer
+            httpConnect: common:instance:cmd:httpConnect:pattern
+            httpCheckCustomer: common:instance:cmd:customer:httpCheckCustomer:pattern
 
 #Nodemailer服务相关配置####################################################################
 nodemailer:
@@ -34,37 +65,18 @@ captchar:
     instance:
         name: captchar:instance
         cmd: #微服务通讯事件
-            httpConnect: captchar:instance:cmd:app:httpConnect
-            httpAuthorizeChecker: captchar:instance:cmd:browser:httpAuthorizeChecker
+            httpConnect: captchar:instance:cmd:httpConnect:pattern
+            httpAuthorizeCheckerPattern: captchar:instance:browser:httpAuthorizeCheckerPattern
     #微服务队列配置
     kueuer:
         port: 5031
         bull:
-            name: captchar:kueuer:bull:authorize
+            name: captchar:kueuer:authorize
             delay: 300000
             removeOnComplete: true
             removeOnFail: false
         instance:
             name: captchar:kueuer:instance
             cmd: #微服务通讯事件
-                httpConnect: captchar:kueuer:instance:cmd:app:httpConnect
-                httpCreateJobKueuer: captchar:kueuer:instance:cmd:app:httpCreateJobKueuer
-                httpUpdateJobKueuer: captchar:kueuer:instance:cmd:app:httpUpdateJobKueuer
-
-#数据库配置################################################################################
-db:
-    mysql:
-        host: localhost
-        port: 3306
-        username: root
-        password: 123456
-        database: base-development
-        charset: utf8mb4
-
-#redis配置#################################################################################
-redis:
-    prefix: development
-    host: localhost
-    port: 6379
-    password: 123456
-    db: 1
+                httpCreateJobKueuer: captchar:kueuer:instance:app:httpCreateJobKueuer:pattern
+                httpUpdateJobKueuer: captchar:kueuer:instance:app:httpUpdateJobKueuer:pattern
