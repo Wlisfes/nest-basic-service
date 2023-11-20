@@ -13,6 +13,8 @@ aliyun:
         internal: false
         secure: true
         cname: true
+        rolearn: acs:ram::******
+        sessionname: Alice
 
 #数据库配置################################################################################
 db:
