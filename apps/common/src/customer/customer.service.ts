@@ -3,7 +3,7 @@ import { ClientProxy } from '@nestjs/microservices'
 import { Brackets } from 'typeorm'
 import { compareSync } from 'bcryptjs'
 import { CustomService } from '@/service/custom.service'
-import { CommonCacheCustomerService } from '@/cache/common-customer.service'
+import { CacheCustomer } from '@/cache/cache-customer.service'
 import { DataBaseService } from '@/service/database.service'
 import { divineIntNumber, divineResult } from '@/utils/utils-common'
 import { divineCatchWherer, divineCreateJwtToken, divineClientSender } from '@/utils/utils-plugin'
@@ -14,7 +14,7 @@ import * as http from '@common/interface/customer.resolver'
 @Injectable()
 export class CustomerService extends CustomService {
 	constructor(
-		private readonly customer: CommonCacheCustomerService,
+		private readonly customer: CacheCustomer,
 		private readonly dataBase: DataBaseService,
 		@Inject(custom.captchar.instance.name) private captchar: ClientProxy
 	) {

@@ -8,7 +8,7 @@ import { divineCatchWherer, divineCreateJwtToken, divineClientSender } from '@/u
 import * as dataBase from '@/entity'
 
 @Injectable()
-export class CommonCacheCustomerService extends CustomService {
+export class CacheCustomer extends CustomService {
 	constructor(private readonly redisService: RedisService, private readonly dataBase: DataBaseService) {
 		super()
 	}
