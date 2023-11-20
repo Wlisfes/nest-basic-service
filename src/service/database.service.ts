@@ -9,6 +9,7 @@ export class DataBaseService {
 		//Common
 		@InjectRepository(dataBase.TableCustomer) public readonly tableCustomer: Repository<dataBase.TableCustomer>,
 		@InjectRepository(dataBase.TableCustomerConfigur) public readonly tableCustomerConfigur: Repository<dataBase.TableCustomerConfigur>,
+		@InjectRepository(dataBase.TableExceler) public readonly tableExceler: Repository<dataBase.TableExceler>,
 		//Captchar
 		@InjectRepository(dataBase.TableCaptcharAppwr) public readonly tableCaptcharAppwr: Repository<dataBase.TableCaptcharAppwr>,
 		@InjectRepository(dataBase.TableCaptcharRecord) public readonly tableCaptcharRecord: Repository<dataBase.TableCaptcharRecord>,
