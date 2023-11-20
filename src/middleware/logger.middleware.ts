@@ -21,7 +21,8 @@ export class LoggerMiddleware implements NestMiddleware {
 				origin: headers.origin ?? '',
 				referer: headers.referer ?? '',
 				ip: ['localhost', '::1', '::ffff:127.0.0.1'].includes(ip) ? '127.0.0.1' : ip,
-				['user-agent']: headers['user-agent']
+				['user-agent']: headers['user-agent'],
+				['authorization']: headers['authorization']
 			}
 		})
 		next()

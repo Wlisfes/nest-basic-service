@@ -26,26 +26,27 @@ export class LoggerModule {
 								winston.format.json(),
 								//prettier-ignore
 								winston.format.printf(data => {
-									const name = chalk.redBright(`[${option.name}]`)
-									const pid = chalk.redBright(`${process.pid} -`)
-									const timestamp = chalk.green(data.timestamp)
+									const name = chalk.hex('#ff5c93')(`[${option.name}]`)
+									const pid = chalk.green(process.pid)
+									const timestamp = chalk.hex('#fb9300')(`--- ${data.timestamp} ---`)
 									const message = chalk.yellow(`[${data.message}]`)
-									const level = data.level === 'error' ?  chalk.red.bold('ERROR') : chalk.green.bold(data.level.toUpperCase())
+									const level = data.level === 'error' ?  chalk.red('ERROR') : chalk.green(data.level.toUpperCase())
 									const module = `${name} ${pid} ${timestamp}  ${level}  ${message}`
 									if (typeof data.log === 'string') {
 										console[data.level](module, { log: data.log })
-										return `[${option.name}] ${process.pid} - ${data.timestamp}  ${data.level.toUpperCase()}  [${data.message}] {\n"log": ${data.log}}`
+										return `[${option.name}] ${process.pid} --- ${data.timestamp} --- ${data.level.toUpperCase()}  [${data.message}] {\n"log": ${data.log}}`
 									} else {
 										const text = Object.keys(data.log ?? {}).reduce((current, key) => {
 											return (current += `	"${key.toString()}": ${JSON.stringify(data.log[key.toString()])}, \n`)
 										}, '')
 										if (data.log.url) {
-											const url = chalk.redBright(` ------ [${data.log.url ?? ''}]`)
-											console[data.level](module + url, { ...data.log })
-											return `[${option.name}] ${process.pid} - ${data.timestamp}  ${data.level.toUpperCase()}  [${data.message}] ------ ${data.log.url} {\n${text}}`
+											const url = chalk.hex('#fc5404')(`${data.log.url ?? ''}`)
+											const d = chalk.yellow(': ')
+											console[data.level](module + d + url, { ...data.log })
+											return `[${option.name}] ${process.pid} --- ${data.timestamp} --- ${data.level.toUpperCase()}  [${data.message}]: ${data.log.url} {\n${text}}`
 										} else {
 											console[data.level](module, { ...data.log })
-											return `[${option.name}] ${process.pid} - ${data.timestamp}  ${data.level.toUpperCase()}  [${data.message}] {\n${text}}`
+											return `[${option.name}] ${process.pid} --- ${data.timestamp} --- ${data.level.toUpperCase()}  [${data.message}] {\n${text}}`
 										}
 									}
 								})
