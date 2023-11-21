@@ -23,7 +23,7 @@ export class CustomService {
 	public async customeCreate<T>(model: Repository<T>, state: DeepPartial<T>): Promise<T> {
 		try {
 			const node = await model.create(state)
-			return model.save(node as any)
+			return model.save(node as typeof state)
 		} catch (e) {
 			throw new HttpException('服务器开小差了', HttpStatus.INTERNAL_SERVER_ERROR)
 		}
@@ -44,6 +44,14 @@ export class CustomService {
 			return await model.findAndCount(state).then(async ([list = [], total = 0]) => {
 				return await divineResult({ list, total })
 			})
+		} catch (e) {
+			throw new HttpException(`服务器开小差了`, HttpStatus.INTERNAL_SERVER_ERROR)
+		}
+	}
+
+	/**自定义查询**/
+	public async customeBuilder<T>(model: Repository<T>) {
+		try {
 		} catch (e) {
 			throw new HttpException(`服务器开小差了`, HttpStatus.INTERNAL_SERVER_ERROR)
 		}

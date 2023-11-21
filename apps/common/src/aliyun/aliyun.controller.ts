@@ -1,4 +1,4 @@
-import { Controller, Post, Request, HttpStatus, HttpException, UseInterceptors } from '@nestjs/common'
+import { Controller, Post, Get, Query, Request, HttpStatus, HttpException, UseInterceptors } from '@nestjs/common'
 import { UploadedFile, ParseFilePipe, MaxFileSizeValidator, FileTypeValidator } from '@nestjs/common'
 import { FileInterceptor } from '@nestjs/platform-express'
 import { ApiTags, ApiBody } from '@nestjs/swagger'
@@ -31,7 +31,7 @@ export class AliyunController {
 	})
 	@ApiBody({ type: http.CreateUploadExceler })
 	@UseInterceptors(FileInterceptor('file'))
-	public async httpCreateUploadExceler(
+	public async httpUploadStorageExceler(
 		@Request() request,
 		@UploadedFile(
 			new ParseFilePipe({
@@ -51,6 +51,16 @@ export class AliyunController {
 		)
 		file
 	) {
-		return await this.aliyunService.httpCreateUploadExceler(file, request.user.uid)
+		return await this.aliyunService.httpUploadStorageExceler(file, request.user.uid)
+	}
+
+	@Get('/column/storage/exceler')
+	@ApiDecorator({
+		operation: { summary: 'excel文件列表' },
+		customize: { status: 200, description: 'OK', type: dataBase.TableExceler },
+		authorize: { login: true, error: true }
+	})
+	public async httpColumnStorageExceler(@Request() request, @Query() query: http.ColumnStorageExceler) {
+		return await this.aliyunService.httpColumnStorageExceler(query, request.user.uid)
 	}
 }

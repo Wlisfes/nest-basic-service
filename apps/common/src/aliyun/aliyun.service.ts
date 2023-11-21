@@ -1,4 +1,5 @@
 import { Injectable, Inject, HttpStatus, HttpException } from '@nestjs/common'
+import { Brackets } from 'typeorm'
 import { CustomService } from '@/service/custom.service'
 import { CacheCustomer } from '@/cache/cache-customer.service'
 import { DataBaseService } from '@/service/database.service'
@@ -7,6 +8,8 @@ import { moment, divineCatchWherer, divineParsesheet, divineBufferToStream, divi
 import { divineIntNumber, divineResult } from '@/utils/utils-common'
 import { custom } from '@/utils/utils-configer'
 import * as Client from 'ali-oss'
+import * as dataBase from '@/entity'
+import * as http from '@common/interface/aliyun.resolver'
 
 @Injectable()
 export class AliyunService extends CustomService {
@@ -60,13 +63,44 @@ export class AliyunService extends CustomService {
 	}
 
 	/**上传excel文件**/
-	public async httpCreateUploadExceler(file, uid: string) {
+	public async httpUploadStorageExceler(file, uid: string) {
 		try {
 			const sheet = await divineParsesheet(file.buffer, 10)
-			const excel = await this.createStream(file, 'excel')
-			console.log(sheet)
+			const node = await this.createStream(file, 'excel')
+			return this.customeCreate(this.dataBase.tableExceler, {
+				uid,
+				fileId: node.fileId,
+				fieldName: node.fieldName,
+				fileName: node.fileName,
+				suffix: node.suffix,
+				folder: node.folder,
+				total: sheet.total,
+				fileURL: `https://oss.lisfes.cn/basic/excel/2023-10/35871977524518149842.xlsx`
+			}).then(async data => {
+				return await divineResult({ ...data, list: sheet.list })
+			})
+		} catch (e) {
+			throw new HttpException(e.message, HttpStatus.BAD_REQUEST)
+		}
+	}
 
-			return sheet
-		} catch (e) {}
+	/**excel文件列表**/
+	public async httpColumnStorageExceler(state: http.ColumnStorageExceler, uid: string) {
+		// return this.dataBase.tableExceler
+		// 	.createQueryBuilder('tb')
+		// 	.leftJoinAndMapOne('tb.user', dataBase.TableCustomer, 'user', 'user.uid = tb.uid')
+		// 	.getMany()
+
+		return await this.customeAndCountr(this.dataBase.tableExceler, {
+			join: { alias: 'tb' },
+			where: new Brackets(qb => {
+				qb.where('tb.uid = :uid', { uid })
+			}),
+			order: { createTime: 'DESC' },
+			skip: (state.page - 1) * state.size,
+			take: state.size
+		}).then(async ({ list, total }) => {
+			return await divineResult({ total, list, size: state.size, page: state.page })
+		})
 	}
 }
