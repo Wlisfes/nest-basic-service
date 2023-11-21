@@ -3,7 +3,7 @@ import { CustomService } from '@/service/custom.service'
 import { CacheCustomer } from '@/cache/cache-customer.service'
 import { DataBaseService } from '@/service/database.service'
 import { OSS_CLIENT, OSS_STS_CLIENT } from '@common/aliyun/aliyun.provider'
-import { moment, divineCatchWherer, divineBufferToStream } from '@/utils/utils-plugin'
+import { moment, divineCatchWherer, divineParsesheet, divineBufferToStream, divineStreamToBuffer } from '@/utils/utils-plugin'
 import { divineIntNumber, divineResult } from '@/utils/utils-common'
 import { custom } from '@/utils/utils-configer'
 import * as Client from 'ali-oss'
@@ -57,5 +57,16 @@ export class AliyunService extends CustomService {
 		} catch (e) {
 			throw new HttpException(e.message, HttpStatus.BAD_REQUEST)
 		}
+	}
+
+	/**上传excel文件**/
+	public async httpCreateUploadExceler(file, uid: string) {
+		try {
+			const sheet = await divineParsesheet(file.buffer, 10)
+			const excel = await this.createStream(file, 'excel')
+			console.log(sheet)
+
+			return sheet
+		} catch (e) {}
 	}
 }
