@@ -82,6 +82,16 @@ export class AppwrService extends CustomService {
 		})
 	}
 
+	/**获取应用信息**/
+	public async httpResolverCaptcharAppwr(state: http.ResolverCaptcharAppwr, uid: string) {
+		return await this.cacheAppwr.checkCache(state.appId, []).then(async data => {
+			await divineCatchWherer(data.uid !== uid, {
+				message: '应用不存在'
+			})
+			return await divineResult({ ...data })
+		})
+	}
+
 	/**应用列表**/
 	public async httpColumnCaptcharAppwr(state: http.ColumnCaptcharAppwr, uid: string) {
 		return await this.customeBuilder(this.dataBase.tableCaptcharAppwr, qb => {

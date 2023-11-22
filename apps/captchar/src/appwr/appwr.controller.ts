@@ -31,6 +31,19 @@ export class AppwrController {
 		return await this.appwrService.httpUpdateCaptcharAppwr(body, request.user.uid)
 	}
 
+	@Get('/resolver')
+	@ApiDecorator({
+		operation: { summary: '获取应用信息' },
+		response: { status: 200, description: 'OK', type: dataBase.TableCustomer },
+		authorize: { login: true, error: true }
+	})
+	public async httpResolverCaptcharAppwr(
+		@Request() request: { user: dataBase.TableCustomer },
+		@Query() query: http.ResolverCaptcharAppwr
+	) {
+		return await this.appwrService.httpResolverCaptcharAppwr(query, request.user.uid)
+	}
+
 	@Get('/column')
 	@ApiDecorator({
 		operation: { summary: '应用列表' },
