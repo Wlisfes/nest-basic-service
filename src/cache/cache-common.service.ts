@@ -15,13 +15,13 @@ export class CacheCustomer extends CustomService {
 	}
 
 	/**缓存键**/
-	public async createWriteName(uid: string) {
+	public async cacheName(uid: string) {
 		return `:common:cache:customer:${uid}`
 	}
 
 	/**读取用户缓存**/
 	public async readCustomer(uid: string) {
-		return await this.createWriteName(uid).then(async cacheName => {
+		return await this.cacheName(uid).then(async cacheName => {
 			const cacheNode = await this.redisService.getStore<dataBase.TableCustomer>(cacheName)
 			if (isEmpty(cacheNode)) {
 				return await this.validator(this.dataBase.tableCustomer, {
@@ -42,7 +42,7 @@ export class CacheCustomer extends CustomService {
 
 	/**写入用户缓存**/
 	public async writeCustomer(uid: string, data: Record<string, any>) {
-		return await this.createWriteName(uid).then(async cacheName => {
+		return await this.cacheName(uid).then(async cacheName => {
 			return await this.redisService.setStore(cacheName, data)
 		})
 	}

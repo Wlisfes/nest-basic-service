@@ -1,6 +1,6 @@
 import { Module, Global } from '@nestjs/common'
 import { RedisService } from '@/service/redis.service'
-import { CacheCustomer } from '@/cache/cache-customer.service'
+import { CacheCustomer } from '@/cache/cache-common.service'
 
 @Global()
 @Module({

@@ -1,7 +1,7 @@
 import { Controller, Post, Get, Body, Query, Request, Headers } from '@nestjs/common'
 import { MessagePattern } from '@nestjs/microservices'
 import { ApiTags } from '@nestjs/swagger'
-import { CacheCustomer } from '@/cache/cache-customer.service'
+import { CacheCustomer } from '@/cache/cache-common.service'
 import { CustomerService } from '@common/customer/customer.service'
 import { ApiDecorator } from '@/decorator/compute.decorator'
 import { NoticeResolver } from '@/interface/common.resolver'

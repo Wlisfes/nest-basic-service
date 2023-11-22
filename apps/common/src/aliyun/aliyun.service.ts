@@ -1,7 +1,7 @@
 import { Injectable, Inject, HttpStatus, HttpException } from '@nestjs/common'
 import { Brackets } from 'typeorm'
 import { CustomService } from '@/service/custom.service'
-import { CacheCustomer } from '@/cache/cache-customer.service'
+import { CacheCustomer } from '@/cache/cache-common.service'
 import { DataBaseService } from '@/service/database.service'
 import { OSS_CLIENT, OSS_STS_CLIENT } from '@common/aliyun/aliyun.provider'
 import { moment, divineCatchWherer, divineParsesheet, divineBufferToStream, divineStreamToBuffer } from '@/utils/utils-plugin'
