@@ -54,8 +54,8 @@ async function bootstrap() {
 	await app.listen(custom.common.port, () => {
 		console.log(
 			'Common服务启动:',
-			`http://127.0.0.1:${custom.common.port}${custom.common.prefix}`,
-			`http://127.0.0.1:${custom.common.port}/api-doc`
+			`http://${custom.ipv4}:${custom.common.port}${custom.common.prefix}`,
+			`http://${custom.ipv4}:${custom.common.port}/api-doc`
 		)
 	})
 }

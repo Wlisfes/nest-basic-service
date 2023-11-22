@@ -52,6 +52,7 @@ export class CustomService {
 	/**自定义查询**/
 	public async customeBuilder<T>(model: Repository<T>) {
 		try {
+			const qb = model.createQueryBuilder('tb')
 		} catch (e) {
 			throw new HttpException(`服务器开小差了`, HttpStatus.INTERNAL_SERVER_ERROR)
 		}

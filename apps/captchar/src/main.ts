@@ -54,8 +54,8 @@ async function bootstrap() {
 	await app.listen(custom.captchar.port, () => {
 		console.log(
 			'Captchar服务启动:',
-			`http://127.0.0.1:${custom.captchar.port}${custom.captchar.prefix}`,
-			`http://127.0.0.1:${custom.captchar.port}/api-doc`
+			`http://${custom.ipv4}:${custom.captchar.port}${custom.captchar.prefix}`,
+			`http://${custom.ipv4}:${custom.captchar.port}/api-doc`
 		)
 	})
 }

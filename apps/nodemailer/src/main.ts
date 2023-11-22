@@ -47,8 +47,8 @@ async function bootstrap() {
 	await app.listen(custom.nodemailer.port, () => {
 		console.log(
 			'Nodemailer服务启动:',
-			`http://localhost:${custom.nodemailer.port}${custom.nodemailer.prefix}`,
-			`http://localhost:${custom.nodemailer.port}/api-doc`
+			`http://${custom.ipv4}:${custom.nodemailer.port}${custom.nodemailer.prefix}`,
+			`http://${custom.ipv4}:${custom.nodemailer.port}/api-doc`
 		)
 	})
 }
