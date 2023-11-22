@@ -14,16 +14,11 @@ import * as http from '@common/interface/customer.resolver'
 @Injectable()
 export class CustomerService extends CustomService {
 	constructor(
-		private readonly customer: CacheCustomer,
+		private readonly cacheCustomer: CacheCustomer,
 		private readonly dataBase: DataBaseService,
 		@Inject(custom.captchar.instance.name) private captchar: ClientProxy
 	) {
 		super()
-	}
-
-	/**用户校验**/
-	public async httpCheckCustomer(state: { uid: string; command: Array<string> }) {
-		return await this.customer.checkCustomer(state.uid, state.command)
 	}
 
 	/**注册用户**/
@@ -105,14 +100,14 @@ export class CustomerService extends CustomService {
 				status: node.status
 			}
 		}).then(async ({ token, expire }) => {
-			await this.customer.writeCustomer(node.uid, { ...node })
+			await this.cacheCustomer.writeCustomer(node.uid, { ...node })
 			return await divineResult({ token, expire, message: '登录成功' })
 		})
 	}
 
 	/**获取用户信息**/
 	public async httpResolverCustomer(state: http.ResolverCustomer) {
-		const node = await this.customer.checkCustomer(state.uid, ['disable']).then(async node => {
+		const node = await this.cacheCustomer.checkCustomer(state.uid, ['disable']).then(async node => {
 			return await divineOmitDatePatter(node, ['password'])
 		})
 		return await divineResult(node)

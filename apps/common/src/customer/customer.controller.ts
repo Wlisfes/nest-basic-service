@@ -1,6 +1,7 @@
 import { Controller, Post, Get, Body, Query, Request, Headers } from '@nestjs/common'
 import { MessagePattern } from '@nestjs/microservices'
 import { ApiTags } from '@nestjs/swagger'
+import { CacheCustomer } from '@/cache/cache-customer.service'
 import { CustomerService } from '@common/customer/customer.service'
 import { ApiDecorator } from '@/decorator/compute.decorator'
 import { NoticeResolver } from '@/interface/common.resolver'
@@ -12,12 +13,12 @@ import * as http from '@common/interface/customer.resolver'
 @ApiTags('用户模块')
 @Controller('customer')
 export class CustomerController {
-	constructor(private readonly customerService: CustomerService) {}
+	constructor(private readonly cacheCustomer: CacheCustomer, private readonly customerService: CustomerService) {}
 
 	@MessagePattern({ cmd: custom.common.instance.cmd.httpCheckCustomer })
 	public async httpCheckCustomer(data: { uid: string; command: Array<string> }) {
 		try {
-			return await this.customerService.httpCheckCustomer(data)
+			return await this.cacheCustomer.checkCustomer(data.uid, data.command)
 		} catch (e) {
 			return await divineResult({ data: null, message: e.message, code: e.status })
 		}

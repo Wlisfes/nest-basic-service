@@ -4,6 +4,7 @@ import { isEmpty } from 'class-validator'
 import { CustomService } from '@/service/custom.service'
 import { RedisService } from '@/service/redis.service'
 import { DataBaseService } from '@/service/database.service'
+import { divineResult } from '@/utils/utils-common'
 import { divineCatchWherer, divineCreateJwtToken, divineClientSender } from '@/utils/utils-plugin'
 import * as dataBase from '@/entity'
 
@@ -30,6 +31,9 @@ export class CacheCustomer extends CustomService {
 						qb.where('tb.uid = :uid', { uid })
 						qb.andWhere('tb.status IN(:...status)', { status: ['enable', 'disable'] })
 					})
+				}).then(async data => {
+					await this.writeCustomer(uid, { ...data })
+					return await divineResult({ ...data })
 				})
 			}
 			return cacheNode
