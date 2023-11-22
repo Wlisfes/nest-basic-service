@@ -1,8 +1,9 @@
-import { Entity, Column, ManyToOne } from 'typeorm'
+import { Entity, Column } from 'typeorm'
 import { ApiProperty } from '@nestjs/swagger'
 import { IsNotEmpty, IsArray, IsString } from 'class-validator'
-import { TableCommon } from '@/entity/tb-common'
 import { IsOptional } from '@/decorator/common.decorator'
+import { divineSplitTransformer, divineJoinTransformer } from '@/utils/utils-database'
+import { TableCommon } from '@/entity/tb-common'
 
 @Entity('tb-common_captchar__appwr')
 export class TableCaptcharAppwr extends TableCommon {
@@ -49,13 +50,31 @@ export class TableCaptcharAppwr extends TableCommon {
 	@IsOptional()
 	@IsArray()
 	@IsString({ each: true })
-	@Column({ type: 'varchar', length: 2000, comment: '授权地址', nullable: true })
+	@Column({
+		type: 'varchar',
+		length: 2000,
+		comment: '授权地址',
+		nullable: true,
+		transformer: {
+			from: divineSplitTransformer,
+			to: divineJoinTransformer
+		}
+	})
 	bucket: string[]
 
 	@ApiProperty({ description: '授权IP', required: false })
 	@IsOptional()
 	@IsArray()
 	@IsString({ each: true })
-	@Column({ type: 'varchar', length: 2000, comment: '授权IP', nullable: true })
+	@Column({
+		type: 'varchar',
+		length: 2000,
+		comment: '授权IP',
+		nullable: true,
+		transformer: {
+			from: divineSplitTransformer,
+			to: divineJoinTransformer
+		}
+	})
 	ip: string[]
 }
