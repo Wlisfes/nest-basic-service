@@ -24,7 +24,7 @@ export class AppwrService extends CustomService {
 	/**创建应用**/
 	public async httpCreateCaptcharAppwr(state: http.CreateCaptcharAppwr, uid: string) {
 		//验证用户缓存
-		await this.cacheCustomer.checkCache(uid, ['disable'])
+		await this.cacheCustomer.checkCustomer(uid, ['disable'])
 		//验证重复性
 		await this.customeRepeat(this.dataBase.tableCaptcharAppwr, {
 			message: `${state.name}已存在`,
@@ -54,7 +54,7 @@ export class AppwrService extends CustomService {
 
 	/**编辑应用**/
 	public async httpUpdateCaptcharAppwr(state: http.UpdateCaptcharAppwr, uid: string) {
-		return await this.cacheAppwr.checkCache(state.appId, ['disable']).then(async data => {
+		return await this.cacheAppwr.checkAppwr(state.appId, ['disable']).then(async data => {
 			await divineCatchWherer(data.uid !== uid, {
 				message: '应用不存在'
 			})
@@ -84,7 +84,7 @@ export class AppwrService extends CustomService {
 
 	/**获取应用信息**/
 	public async httpResolverCaptcharAppwr(state: http.ResolverCaptcharAppwr, uid: string) {
-		return await this.cacheAppwr.checkCache(state.appId, []).then(async data => {
+		return await this.cacheAppwr.checkAppwr(state.appId, []).then(async data => {
 			await divineCatchWherer(data.uid !== uid, {
 				message: '应用不存在'
 			})
