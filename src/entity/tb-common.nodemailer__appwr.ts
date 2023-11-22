@@ -2,7 +2,6 @@ import { Entity, Column, ManyToOne } from 'typeorm'
 import { ApiProperty } from '@nestjs/swagger'
 import { IsNotEmpty, IsArray, IsString, IsBoolean } from 'class-validator'
 import { TableCommon } from '@/entity/tb-common'
-import { TableCustomer } from '@/entity/tb-common.customer'
 import { IsOptional } from '@/decorator/common.decorator'
 
 @Entity('tb-common_nodemailer__appwr')
@@ -87,7 +86,4 @@ export class TableNodemailerAppwr extends TableCommon {
 	@IsNotEmpty({ message: '服务类型 必填' })
 	@Column({ comment: '服务类型', nullable: true })
 	type: string
-
-	@ManyToOne(type => TableCustomer, customer => customer.nodemailer)
-	customer: TableCustomer
 }

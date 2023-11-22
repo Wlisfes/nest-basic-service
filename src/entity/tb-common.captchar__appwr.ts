@@ -2,7 +2,6 @@ import { Entity, Column, ManyToOne } from 'typeorm'
 import { ApiProperty } from '@nestjs/swagger'
 import { IsNotEmpty, IsArray, IsString } from 'class-validator'
 import { TableCommon } from '@/entity/tb-common'
-import { TableCustomer } from '@/entity/tb-common.customer'
 import { IsOptional } from '@/decorator/common.decorator'
 
 @Entity('tb-common_captchar__appwr')
@@ -54,7 +53,4 @@ export class TableCaptcharAppwr extends TableCommon {
 	@IsString({ each: true })
 	@Column({ type: 'varchar', length: 2000, comment: '授权IP', nullable: true })
 	ip: string[]
-
-	@ManyToOne(type => TableCustomer, customer => customer.captchar)
-	customer: TableCustomer
 }

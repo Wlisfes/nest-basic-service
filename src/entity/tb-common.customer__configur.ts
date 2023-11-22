@@ -1,8 +1,7 @@
-import { Entity, Column, OneToOne } from 'typeorm'
+import { Entity, Column } from 'typeorm'
 import { ApiProperty } from '@nestjs/swagger'
 import { IsNotEmpty } from 'class-validator'
 import { TableCommon } from '@/entity/tb-common'
-import { TableCustomer } from '@/entity/tb-common.customer'
 
 @Entity('tb-common_customer__configur')
 export class TableCustomerConfigur extends TableCommon {
@@ -59,7 +58,4 @@ export class TableCustomerConfigur extends TableCommon {
 		transformer: { from: value => Number(value ?? 0), to: value => value }
 	})
 	balance: number
-
-	@OneToOne(type => TableCustomer, customer => customer.configur)
-	customer: TableCustomer
 }

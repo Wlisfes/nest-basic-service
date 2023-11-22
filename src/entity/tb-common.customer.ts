@@ -4,9 +4,6 @@ import { IsNotEmpty, Length, IsEmail } from 'class-validator'
 import { hashSync } from 'bcryptjs'
 import { TableCommon } from '@/entity/tb-common'
 import { IsMobile, IsOptional } from '@/decorator/common.decorator'
-import { TableCustomerConfigur } from '@/entity/tb-common.customer__configur'
-import { TableCaptcharAppwr } from '@/entity/tb-common.captchar__appwr'
-import { TableNodemailerAppwr } from '@/entity/tb-common.nodemailer__appwr'
 
 @Entity('tb-common_customer')
 export class TableCustomer extends TableCommon {
@@ -61,14 +58,4 @@ export class TableCustomer extends TableCommon {
 		transformer: { from: value => value, to: value => hashSync(value) }
 	})
 	password: string
-
-	@OneToOne(type => TableCustomerConfigur, configur => configur.customer)
-	@JoinColumn({ name: 'configurId' })
-	configur: TableCustomerConfigur
-
-	@OneToMany(type => TableCaptcharAppwr, app => app.customer)
-	captchar: TableCaptcharAppwr[]
-
-	@OneToMany(type => TableNodemailerAppwr, app => app.customer)
-	nodemailer: TableNodemailerAppwr[]
 }
