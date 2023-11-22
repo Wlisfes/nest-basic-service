@@ -1,5 +1,5 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common'
-import { Repository, FindOneOptions, FindConditions, FindManyOptions, DeepPartial } from 'typeorm'
+import { Repository, FindOneOptions, FindConditions, FindManyOptions, DeepPartial, SelectQueryBuilder } from 'typeorm'
 import { divineCatchWherer } from '@/utils/utils-plugin'
 import { divineResult } from '@/utils/utils-common'
 
@@ -50,9 +50,10 @@ export class CustomService {
 	}
 
 	/**自定义查询**/
-	public async customeBuilder<T>(model: Repository<T>) {
+	public async customeBuilder<T, R>(model: Repository<T>, callback: (qb: SelectQueryBuilder<T>) => Promise<R>) {
 		try {
 			const qb = model.createQueryBuilder('tb')
+			return await callback(qb)
 		} catch (e) {
 			throw new HttpException(`服务器开小差了`, HttpStatus.INTERNAL_SERVER_ERROR)
 		}

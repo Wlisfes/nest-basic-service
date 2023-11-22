@@ -86,21 +86,13 @@ export class AliyunService extends CustomService {
 
 	/**excel文件列表**/
 	public async httpColumnStorageExceler(state: http.ColumnStorageExceler, uid: string) {
-		// return this.dataBase.tableExceler
-		// 	.createQueryBuilder('tb')
-		// 	.leftJoinAndMapOne('tb.user', dataBase.TableCustomer, 'user', 'user.uid = tb.uid')
-		// 	.getMany()
-
-		return await this.customeAndCountr(this.dataBase.tableExceler, {
-			join: { alias: 'tb' },
-			where: new Brackets(qb => {
-				qb.where('tb.uid = :uid', { uid })
-			}),
-			order: { createTime: 'DESC' },
-			skip: (state.page - 1) * state.size,
-			take: state.size
-		}).then(async ({ list, total }) => {
-			return await divineResult({ total, list, size: state.size, page: state.page })
+		return await this.customeBuilder(this.dataBase.tableExceler, qb => {
+			qb.leftJoinAndMapOne('tb.customer', dataBase.TableCustomer, 'customer', 'customer.uid = tb.uid')
+			qb.skip((state.page - 1) * state.size)
+			qb.take(state.size)
+			return qb.getManyAndCount()
+		}).then(([list = [], total = 0]) => {
+			return divineResult({ total, list, size: state.size, page: state.page })
 		})
 	}
 }
