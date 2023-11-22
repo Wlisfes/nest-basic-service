@@ -18,7 +18,7 @@ export class CustomerController {
 	@MessagePattern({ cmd: custom.common.instance.cmd.httpCheckCustomer })
 	public async httpCheckCustomer(data: { uid: string; command: Array<string> }) {
 		try {
-			return await this.cacheCustomer.checkCustomer(data.uid, data.command)
+			return await this.cacheCustomer.checkCache(data.uid, data.command)
 		} catch (e) {
 			return await divineResult({ data: null, message: e.message, code: e.status })
 		}

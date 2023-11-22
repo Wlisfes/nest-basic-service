@@ -20,7 +20,7 @@ export class CacheCustomer extends CustomService {
 	}
 
 	/**读取用户缓存**/
-	public async readCustomer(uid: string) {
+	public async readCache(uid: string) {
 		return await this.cacheName(uid).then(async cacheName => {
 			const cacheNode = await this.redisService.getStore<dataBase.TableCustomer>(cacheName)
 			if (isEmpty(cacheNode)) {
@@ -32,28 +32,29 @@ export class CacheCustomer extends CustomService {
 						qb.andWhere('tb.status IN(:...status)', { status: ['enable', 'disable'] })
 					})
 				}).then(async data => {
-					await this.writeCustomer(uid, { ...data })
+					await this.writeCache(uid, { ...data })
 					return await divineResult({ ...data })
 				})
 			}
-			return cacheNode
+			return await divineResult({ ...cacheNode })
 		})
 	}
 
 	/**写入用户缓存**/
-	public async writeCustomer(uid: string, data: Record<string, any>) {
+	public async writeCache(uid: string, data: Record<string, any>) {
 		return await this.cacheName(uid).then(async cacheName => {
-			return await this.redisService.setStore(cacheName, data)
+			await this.redisService.setStore(cacheName, data)
+			return await divineResult({ ...data })
 		})
 	}
 
 	/**校验当前用户**/
-	public async checkCustomer(uid: string, command: Array<string>) {
-		return await this.readCustomer(uid).then(async data => {
+	public async checkCache(uid: string, command: Array<string>) {
+		return await this.readCache(uid).then(async data => {
 			await divineCatchWherer(command.includes(data.status), {
 				message: '账户已被禁用'
 			})
-			return data
+			return await divineResult({ ...data })
 		})
 	}
 }

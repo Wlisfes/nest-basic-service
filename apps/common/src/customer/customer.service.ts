@@ -100,14 +100,14 @@ export class CustomerService extends CustomService {
 				status: node.status
 			}
 		}).then(async ({ token, expire }) => {
-			await this.cacheCustomer.writeCustomer(node.uid, { ...node })
+			await this.cacheCustomer.writeCache(node.uid, { ...node })
 			return await divineResult({ token, expire, message: '登录成功' })
 		})
 	}
 
 	/**获取用户信息**/
 	public async httpResolverCustomer(state: http.ResolverCustomer) {
-		const node = await this.cacheCustomer.checkCustomer(state.uid, ['disable']).then(async node => {
+		const node = await this.cacheCustomer.checkCache(state.uid, ['disable']).then(async node => {
 			return await divineOmitDatePatter(node, ['password'])
 		})
 		return await divineResult(node)
