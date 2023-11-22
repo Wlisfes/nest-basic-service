@@ -10,20 +10,10 @@ export class TableCaptcharRecord extends TableCommon {
 	@Column({ comment: 'App ID', update: false, nullable: false })
 	appId: string
 
-	@ApiProperty({ description: '应用名称', example: '猪头' })
-	@IsNotEmpty({ message: '应用名称 必填' })
-	@Column({ comment: '应用名称', update: false, nullable: false })
-	appName: string
-
 	@ApiProperty({ description: '用户唯一UID', example: 1 })
 	@IsNotEmpty({ message: 'UID 必填' })
 	@Column({ comment: 'uid', update: false, nullable: false })
 	uid: string
-
-	@ApiProperty({ description: '用户昵称', example: '妖雨纯' })
-	@IsNotEmpty({ message: '用户昵称 必填' })
-	@Column({ comment: '昵称', update: false, nullable: false })
-	nickname: string
 
 	@ApiProperty({ description: 'session记录', example: '16985101989534773582638456124453' })
 	@IsNotEmpty({ message: 'session记录 必填' })

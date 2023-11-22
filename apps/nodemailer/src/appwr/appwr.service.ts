@@ -25,11 +25,11 @@ export class AppwrService extends CustomService {
 			})
 		}).then(async customer => {
 			await this.customeCreate(this.dataBase.tableNodemailerAppwr, {
+				uid,
 				name: state.name,
 				status: 'inactivated',
 				appId: await divineIntNumber(18),
-				appSecret: await divineIntStringer(32),
-				customer: customer
+				appSecret: await divineIntStringer(32)
 			})
 			return await divineResult({ message: '创建成功' })
 		})
@@ -38,13 +38,10 @@ export class AppwrService extends CustomService {
 	/**应用列表**/
 	public async httpColumnAppwr(state: http.ColumnAppwr, uid: string) {
 		return await this.customeAndCountr(this.dataBase.tableNodemailerAppwr, {
-			join: {
-				alias: 'tb',
-				leftJoinAndSelect: { customer: 'tb.customer' }
-			},
-			where: new Brackets(qb => {
-				qb.where('customer.uid = :uid', { uid })
-			}),
+			join: { alias: 'tb' },
+			// where: new Brackets(qb => {
+			// 	qb.where('customer.uid = :uid', { uid })
+			// }),
 			order: { createTime: 'DESC' },
 			skip: (state.page - 1) * state.size,
 			take: state.size

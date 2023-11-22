@@ -19,10 +19,7 @@ export class BrowserService extends CustomService {
 	public async httpAuthorizeReducer(state: http.AuthorizeReducer, referer: string) {
 		return await this.validator(this.dataBase.tableCaptcharAppwr, {
 			message: '应用不存在',
-			join: {
-				alias: 'tb',
-				leftJoinAndSelect: { customer: 'tb.customer' }
-			},
+			join: { alias: 'tb' },
 			where: new Brackets(qb => {
 				qb.where('tb.appId = :appId', { appId: state.appId })
 				qb.andWhere('tb.status IN(:...status)', { status: ['activated', 'disable'] })
@@ -39,9 +36,7 @@ export class BrowserService extends CustomService {
 			})
 			await this.customeCreate(this.dataBase.tableCaptcharRecord, {
 				appId: data.appId,
-				appName: data.name,
-				uid: data.customer.uid,
-				nickname: data.customer.nickname,
+				uid: data.uid,
 				session: session,
 				token: token,
 				referer: referer,

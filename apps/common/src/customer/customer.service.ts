@@ -46,7 +46,6 @@ export class CustomerService extends CustomService {
 		}).then(async node => {
 			await this.customeCreate(this.dataBase.tableCustomerConfigur, {
 				uid: node.uid,
-				customer: node,
 				credit: 0,
 				current: 0,
 				balance: 0,

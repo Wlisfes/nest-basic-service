@@ -6,6 +6,11 @@ import { IsOptional } from '@/decorator/common.decorator'
 
 @Entity('tb-common_nodemailer__appwr')
 export class TableNodemailerAppwr extends TableCommon {
+	@ApiProperty({ description: '用户唯一UID', example: 1 })
+	@IsNotEmpty({ message: 'UID 必填' })
+	@Column({ comment: 'uid', update: false, nullable: false })
+	uid: string
+
 	@ApiProperty({ description: 'App ID', example: `169851019895347735` })
 	@IsNotEmpty({ message: 'App ID 必填' })
 	@Column({ comment: 'App ID', update: false, nullable: false })
