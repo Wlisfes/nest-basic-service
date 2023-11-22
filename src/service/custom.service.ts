@@ -9,11 +9,24 @@ export class CustomService {
 	public async validator<T>(model: Repository<T>, state: FindOneOptions<T> & Partial<{ message: string; code: number }>) {
 		try {
 			const node = await model.findOne(state)
-			await divineCatchWherer(!node && !!state.message, {
-				message: state.message ?? '服务器开小差了',
-				code: state.code ?? (state.message ? HttpStatus.BAD_REQUEST : HttpStatus.INTERNAL_SERVER_ERROR)
+			await divineCatchWherer(!node && Boolean(state.message), {
+				message: state.message,
+				code: state.code ?? HttpStatus.BAD_REQUEST
 			})
 			return await divineResult(node)
+		} catch (e) {
+			throw new HttpException(e.message, e.code)
+		}
+	}
+
+	/**验证数据重复性**/
+	public async customeRepeat<T>(model: Repository<T>, state: FindOneOptions<T> & Partial<{ message: string; code: number }>) {
+		try {
+			const node = await model.findOne(state)
+			return await divineCatchWherer(node && Boolean(state.message), {
+				message: state.message,
+				code: state.code ?? HttpStatus.BAD_REQUEST
+			})
 		} catch (e) {
 			throw new HttpException(e.message, e.code)
 		}

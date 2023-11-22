@@ -42,8 +42,8 @@ export class TableCaptcharAppwr extends TableCommon {
 
 	@ApiProperty({ description: '默认展示首页' })
 	@IsOptional()
-	@Column({ comment: '默认展示首页', nullable: false, default: 'hide' })
-	visible: string
+	@Column({ comment: '默认展示首页', nullable: false, default: false })
+	visible: boolean
 
 	@ApiProperty({ description: '授权地址' })
 	@IsOptional()

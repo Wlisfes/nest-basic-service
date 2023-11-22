@@ -51,7 +51,7 @@ export class CacheCustomer extends CustomService {
 	/**校验当前用户**/
 	public async checkCache(uid: string, command: Array<string>) {
 		return await this.readCache(uid).then(async data => {
-			await divineCatchWherer(command.includes(data.status), {
+			await divineCatchWherer(data.status === 'disable' && command.includes(data.status), {
 				message: '账户已被禁用'
 			})
 			return await divineResult({ ...data })

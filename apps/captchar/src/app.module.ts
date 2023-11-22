@@ -5,6 +5,7 @@ import { LoggerModule } from '@/module/logger.module'
 import { ConfigerModule } from '@/module/configer.module'
 import { CustomizeModule } from '@/module/customize.module'
 import { DatabaseModule } from '@/module/database.module'
+import { CacheModule } from '@/module/cache.module'
 import { AppController } from '@captchar/app.controller'
 import { AppService } from '@captchar/app.service'
 import { AppwrModule } from '@captchar/appwr/appwr.module'
@@ -16,13 +17,6 @@ import { custom } from '@/utils/utils-configer'
 		ClientsModule.register({
 			isGlobal: true,
 			clients: [
-				{
-					name: custom.common.instance.name,
-					transport: Transport.TCP,
-					options: {
-						port: custom.common.port
-					}
-				},
 				{
 					name: custom.captchar.kueuer.instance.name,
 					transport: Transport.TCP,
@@ -36,6 +30,7 @@ import { custom } from '@/utils/utils-configer'
 		ConfigerModule,
 		CustomizeModule,
 		DatabaseModule,
+		CacheModule,
 		AppwrModule,
 		BrowserModule
 	],
