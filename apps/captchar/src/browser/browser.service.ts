@@ -8,6 +8,7 @@ import { divineIntNumber, divineResult } from '@/utils/utils-common'
 import { divineCatchWherer, divineCreateJwtToken, divineParseJwtToken } from '@/utils/utils-plugin'
 import { custom } from '@/utils/utils-configer'
 import { firstValueFrom } from 'rxjs'
+import * as dataBase from '@/entity'
 import * as http from '@captchar/interface/browser.resolver'
 
 @Injectable()
@@ -21,7 +22,7 @@ export class BrowserService extends CustomService {
 	}
 
 	/**生成校验凭证**/
-	public async httpAuthorizeReducer(state: http.AuthorizeReducer, referer: string) {
+	public async httpAuthorizeCaptcharReducer(state: http.AuthorizeCaptcharReducer, referer: string) {
 		//验证应用缓存
 		return await this.cacheAppwr.checkAppwr(state.appId, ['disable']).then(async data => {
 			const session = await divineIntNumber(32)
@@ -49,7 +50,7 @@ export class BrowserService extends CustomService {
 	}
 
 	/**校验凭证**/
-	public async httpAuthorizeChecker(state: http.AuthorizeChecker, referer: string) {
+	public async httpAuthorizeCaptcharChecker(state: http.AuthorizeCaptcharChecker, referer: string) {
 		//验证应用缓存
 		return await this.cacheAppwr.checkAppwr(state.appId, ['disable']).then(async data => {
 			await this.validator(this.dataBase.tableCaptcharRecord, {
@@ -103,6 +104,19 @@ export class BrowserService extends CustomService {
 				})
 				throw new HttpException(e.message, e.status)
 			}
+		})
+	}
+
+	/**校验记录列表**/
+	public async httpColumnCaptcharRecorder(state: http.ColumnCaptcharRecorder, uid: string) {
+		return await this.customeBuilder(this.dataBase.tableCaptcharRecord, async qb => {
+			qb.leftJoinAndMapOne('tb.customer', dataBase.TableCustomer, 'customer', 'customer.uid = tb.uid')
+			qb.leftJoinAndMapOne('tb.appwr', dataBase.TableCaptcharAppwr, 'appwr', 'appwr.appId = tb.appId')
+			qb.skip((state.page - 1) * state.size)
+			qb.take(state.size)
+			return await qb.getManyAndCount()
+		}).then(async ([list = [], total = 0]) => {
+			return await divineResult({ total, list, size: state.size, page: state.page })
 		})
 	}
 }

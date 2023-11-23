@@ -24,15 +24,15 @@ export class CacheAppwr extends CustomService {
 		return await this.cacheNameAppwr(appId).then(async cacheName => {
 			const cacheNode = await this.redisService.getStore<dataBase.TableCaptcharAppwr>(cacheName)
 			if (isEmpty(cacheNode)) {
-				return await this.validator(this.dataBase.tableCaptcharAppwr, {
-					message: '应用不存在',
-					join: { alias: 'tb' },
-					where: new Brackets(qb => {
-						qb.where('tb.appId = :appId', { appId })
-						qb.andWhere('tb.status IN(:...status)', { status: ['activated', 'disable'] })
-					})
+				return await this.customeBuilder(this.dataBase.tableCaptcharAppwr, async qb => {
+					qb.where('tb.appId = :appId', { appId })
+					qb.andWhere('tb.status IN(:...status)', { status: ['activated', 'disable'] })
+					qb.addSelect('tb.appSecret')
+					return await qb.getOne()
 				}).then(async data => {
-					await this.setAppwr(appId, { ...data })
+					await this.nodeValidator(data, { message: '应用不存在' }).then(async () => {
+						return await this.setAppwr(appId, data)
+					})
 					return await divineResult({ ...data })
 				})
 			}
@@ -51,8 +51,10 @@ export class CacheAppwr extends CustomService {
 	/**更新缓存**/
 	public async writeCache(appId: string) {
 		return await this.cacheNameAppwr(appId).then(async cacheName => {
-			const data = await this.validator(this.dataBase.tableCaptcharAppwr, {
-				where: { appId }
+			const data = await this.customeBuilder(this.dataBase.tableCaptcharAppwr, async qb => {
+				qb.where('tb.appId = :appId', { appId })
+				qb.addSelect('tb.appSecret')
+				return await qb.getOne()
 			})
 			await this.redisService.setStore(cacheName, data)
 			return await divineResult({ ...data })

@@ -1,5 +1,4 @@
-import { Injectable, Inject } from '@nestjs/common'
-import { ClientProxy } from '@nestjs/microservices'
+import { Injectable } from '@nestjs/common'
 import { Brackets, Not } from 'typeorm'
 import { CustomService } from '@/service/custom.service'
 import { CacheCustomer } from '@/cache/cache-common.service'
@@ -7,7 +6,6 @@ import { CacheAppwr } from '@/cache/cache-captchar.service'
 import { DataBaseService } from '@/service/database.service'
 import { divineIntNumber, divineIntStringer, divineResult, divineWherer } from '@/utils/utils-common'
 import { divineCatchWherer } from '@/utils/utils-plugin'
-import { custom } from '@/utils/utils-configer'
 import * as dataBase from '@/entity'
 import * as http from '@captchar/interface/appwr.resolver'
 
@@ -97,13 +95,14 @@ export class AppwrService extends CustomService {
 
 	/**应用列表**/
 	public async httpColumnCaptcharAppwr(state: http.ColumnCaptcharAppwr, uid: string) {
-		return await this.customeBuilder(this.dataBase.tableCaptcharAppwr, qb => {
+		return await this.customeBuilder(this.dataBase.tableCaptcharAppwr, async qb => {
 			qb.leftJoinAndMapOne('tb.customer', dataBase.TableCustomer, 'customer', 'customer.uid = tb.uid')
+			qb.addSelect('tb.appSecret')
 			qb.skip((state.page - 1) * state.size)
 			qb.take(state.size)
-			return qb.getManyAndCount()
-		}).then(([list = [], total = 0]) => {
-			return divineResult({ total, list, size: state.size, page: state.page })
+			return await qb.getManyAndCount()
+		}).then(async ([list = [], total = 0]) => {
+			return await divineResult({ total, list, size: state.size, page: state.page })
 		})
 	}
 }

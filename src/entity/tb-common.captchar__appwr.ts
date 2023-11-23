@@ -24,7 +24,7 @@ export class TableCaptcharAppwr extends TableCommon {
 
 	@ApiProperty({ description: '应用密钥', example: 'zzFznmt8DY64hHBnkoboTmUzFZIadSdVPL4rHr8CsStfwtvBPcAICO6KgNcPEXyD' })
 	@IsNotEmpty({ message: '应用密钥 必填' })
-	@Column({ comment: '应用密钥', nullable: false })
+	@Column({ comment: '应用密钥', select: false, nullable: false })
 	appSecret: string
 
 	@ApiProperty({
