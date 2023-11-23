@@ -3,9 +3,9 @@ import { MessagePattern } from '@nestjs/microservices'
 import { ApiTags } from '@nestjs/swagger'
 import { BrowserService } from '@captchar/browser/browser.service'
 import { ApiDecorator } from '@/decorator/compute.decorator'
-import { TableCaptcharRecord } from '@/entity/tb-common.captchar__record'
 import { divineResult } from '@/utils/utils-common'
 import { custom } from '@/utils/utils-configer'
+import * as dataBase from '@/entity'
 import * as http from '@captchar/interface/browser.resolver'
 
 @ApiTags('验证码校验模块')
@@ -25,7 +25,7 @@ export class BrowserController {
 	@Post('/authorize')
 	@ApiDecorator({
 		operation: { summary: '生成凭证' },
-		response: { status: 200, description: 'OK', type: TableCaptcharRecord }
+		response: { status: 200, description: 'OK', type: dataBase.TableCaptcharRecord }
 	})
 	public async httpAuthorizeReducer(@Headers() headers, @Body() body: http.AuthorizeReducer) {
 		return await this.browserService.httpAuthorizeReducer(body, headers.origin)
@@ -34,7 +34,7 @@ export class BrowserController {
 	@Post('/authorize/checker')
 	@ApiDecorator({
 		operation: { summary: '校验凭证' },
-		response: { status: 200, description: 'OK', type: TableCaptcharRecord }
+		response: { status: 200, description: 'OK', type: dataBase.TableCaptcharRecord }
 	})
 	public async httpAuthorizeChecker(@Headers() headers, @Body() body: http.AuthorizeChecker) {
 		return await this.browserService.httpAuthorizeChecker(body, headers.origin)
