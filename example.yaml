@@ -49,7 +49,6 @@ common:
         name: common:instance
         cmd: #微服务通讯事件
             httpConnect: common:instance:cmd:httpConnect:pattern
-            httpCheckCustomer: common:instance:cmd:customer:httpCheckCustomer:pattern
 
 #Nodemailer服务相关配置####################################################################
 nodemailer:

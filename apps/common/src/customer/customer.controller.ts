@@ -1,12 +1,9 @@
 import { Controller, Post, Get, Body, Query, Request, Headers } from '@nestjs/common'
-import { MessagePattern } from '@nestjs/microservices'
 import { ApiTags } from '@nestjs/swagger'
 import { CacheCustomer } from '@/cache/cache-common.service'
 import { CustomerService } from '@common/customer/customer.service'
 import { ApiDecorator } from '@/decorator/compute.decorator'
 import { NoticeResolver } from '@/interface/common.resolver'
-import { custom } from '@/utils/utils-configer'
-import { divineResult } from '@/utils/utils-common'
 import * as dataBase from '@/entity'
 import * as http from '@common/interface/customer.resolver'
 
@@ -14,15 +11,6 @@ import * as http from '@common/interface/customer.resolver'
 @Controller('customer')
 export class CustomerController {
 	constructor(private readonly cacheCustomer: CacheCustomer, private readonly customerService: CustomerService) {}
-
-	@MessagePattern({ cmd: custom.common.instance.cmd.httpCheckCustomer })
-	public async httpCheckCustomer(data: { uid: string; command: Array<string> }) {
-		try {
-			return await this.cacheCustomer.checkCustomer(data.uid, data.command)
-		} catch (e) {
-			return await divineResult({ data: null, message: e.message, code: e.status })
-		}
-	}
 
 	@Post('/register')
 	@ApiDecorator({
