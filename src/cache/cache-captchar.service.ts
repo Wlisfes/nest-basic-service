@@ -48,6 +48,17 @@ export class CacheAppwr extends CustomService {
 		})
 	}
 
+	/**更新缓存**/
+	public async writeCache(appId: string) {
+		return await this.cacheNameAppwr(appId).then(async cacheName => {
+			const data = await this.validator(this.dataBase.tableCaptcharAppwr, {
+				where: { appId }
+			})
+			await this.redisService.setStore(cacheName, data)
+			return await divineResult({ ...data })
+		})
+	}
+
 	/**校验当前应用**/
 	public async checkAppwr(appId: string, command: Array<string>) {
 		return await this.getAppwr(appId).then(async data => {

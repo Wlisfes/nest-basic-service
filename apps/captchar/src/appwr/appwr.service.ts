@@ -40,14 +40,16 @@ export class AppwrService extends CustomService {
 			where: { uid, status: Not('delete') }
 		})
 		//写入表
-		return await this.customeCreate(this.dataBase.tableCaptcharAppwr, {
+		const node = await this.customeCreate(this.dataBase.tableCaptcharAppwr, {
 			uid,
 			name: state.name,
 			status: 'activated',
 			visible: count === 0,
 			appId: await divineIntNumber(18),
 			appSecret: await divineIntStringer(32)
-		}).then(async data => {
+		})
+		//更新缓存
+		return await this.cacheAppwr.writeCache(node.appId).then(async () => {
 			return await divineResult({ message: '创建成功' })
 		})
 	}
@@ -71,13 +73,15 @@ export class AppwrService extends CustomService {
 					message: `${state.name}已存在`
 				})
 			})
+			//更新数据表
 			await this.customeUpdate(this.dataBase.tableCaptcharAppwr, {
 				condition: { appId: state.appId },
-				state: {
-					name: state.name
-				}
+				state: { name: state.name }
 			})
-			return await divineResult({ message: '编辑成功' })
+			//更新缓存
+			return await this.cacheAppwr.writeCache(state.appId).then(async () => {
+				return await divineResult({ message: '编辑成功' })
+			})
 		})
 	}
 
