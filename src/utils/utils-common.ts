@@ -1,9 +1,12 @@
+import { divineCatchWherer } from '@/utils/utils-plugin'
+
 /**生成N位随机整数字符串**/
 export async function divineIntNumber(pad: number = 18) {
-	const flake = [Math.floor(Date.now() / 1000).toString()]
-	const length = Math.ceil((pad - 10) / 16) + 1
-	const random = Array.from({ length }, e => Math.random().toString().slice(2))
-	return flake.concat(random).join('').slice(0, pad)
+	return await divineCatchWherer(pad < 13, { message: '长度不能小于13' }).then(() => {
+		const flake = [Date.now().toString()]
+		const random = Array.from({ length: pad - 13 }, e => Math.floor(Math.random() * 9).toString())
+		return flake.concat(random).join('').slice(0, pad)
+	})
 }
 
 /**生成N位随机符串**/
@@ -12,6 +15,13 @@ export async function divineIntStringer(
 	character: string = `ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789`
 ) {
 	return Array.from({ length: pad }, e => character.charAt(Math.floor(Math.random() * character.length))).join('')
+}
+
+/**字符串转化星号**/
+export function divineConfuse(value: string, option: { start: number; end: number }) {
+	const start = value.toString().slice(0, option.start)
+	const end = value.toString().slice(value.length - option.end, value.length)
+	return start.padEnd(value.length - (option.start + option.end), '*') + end
 }
 
 /**返回包装**/

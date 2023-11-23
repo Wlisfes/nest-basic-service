@@ -112,6 +112,7 @@ export class BrowserService extends CustomService {
 		return await this.customeBuilder(this.dataBase.tableCaptcharRecord, async qb => {
 			qb.leftJoinAndMapOne('tb.customer', dataBase.TableCustomer, 'customer', 'customer.uid = tb.uid')
 			qb.leftJoinAndMapOne('tb.appwr', dataBase.TableCaptcharAppwr, 'appwr', 'appwr.appId = tb.appId')
+			qb.where('tb.uid = :uid', { uid })
 			qb.skip((state.page - 1) * state.size)
 			qb.take(state.size)
 			return await qb.getManyAndCount()

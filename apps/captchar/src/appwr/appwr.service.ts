@@ -4,7 +4,7 @@ import { CustomService } from '@/service/custom.service'
 import { CacheCustomer } from '@/cache/cache-common.service'
 import { CacheAppwr } from '@/cache/cache-captchar.service'
 import { DataBaseService } from '@/service/database.service'
-import { divineIntNumber, divineIntStringer, divineResult, divineWherer } from '@/utils/utils-common'
+import { divineIntNumber, divineIntStringer, divineResult } from '@/utils/utils-common'
 import { divineCatchWherer } from '@/utils/utils-plugin'
 import * as dataBase from '@/entity'
 import * as http from '@captchar/interface/appwr.resolver'
@@ -98,6 +98,7 @@ export class AppwrService extends CustomService {
 		return await this.customeBuilder(this.dataBase.tableCaptcharAppwr, async qb => {
 			qb.leftJoinAndMapOne('tb.customer', dataBase.TableCustomer, 'customer', 'customer.uid = tb.uid')
 			qb.addSelect('tb.appSecret')
+			qb.where('tb.uid = :uid', { uid })
 			qb.skip((state.page - 1) * state.size)
 			qb.take(state.size)
 			return await qb.getManyAndCount()
