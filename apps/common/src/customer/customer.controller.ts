@@ -1,6 +1,5 @@
 import { Controller, Post, Get, Body, Query, Request, Headers } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
-import { CacheCustomer } from '@/cache/cache-common.service'
 import { CustomerService } from '@common/customer/customer.service'
 import { ApiDecorator } from '@/decorator/compute.decorator'
 import { NoticeResolver } from '@/interface/common.resolver'
@@ -10,7 +9,7 @@ import * as http from '@common/interface/customer.resolver'
 @ApiTags('用户模块')
 @Controller('customer')
 export class CustomerController {
-	constructor(private readonly cacheCustomer: CacheCustomer, private readonly customerService: CustomerService) {}
+	constructor(private readonly customerService: CustomerService) {}
 
 	@Post('/register')
 	@ApiDecorator({
