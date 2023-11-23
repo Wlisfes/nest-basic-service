@@ -43,9 +43,9 @@ export class CustomService {
 	}
 
 	/**更新数据模型**/
-	public async customeUpdate<T>(model: Repository<T>, criter: FindConditions<T>, state: FindConditions<T>) {
+	public async customeUpdate<T>(model: Repository<T>, option: { condition: FindConditions<T>; state: FindConditions<T> }) {
 		try {
-			return await model.update(criter, state as never)
+			return await model.update(option.condition, option.state as never)
 		} catch (e) {
 			throw new HttpException('服务器开小差了', HttpStatus.INTERNAL_SERVER_ERROR)
 		}

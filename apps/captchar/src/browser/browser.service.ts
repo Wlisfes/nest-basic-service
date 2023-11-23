@@ -91,9 +91,12 @@ export class BrowserService extends CustomService {
 						jobId: state.session,
 						option: { status: 'success' }
 					})).then(async e => {
-						return await this.customeUpdate(this.dataBase.tableCaptcharRecord,
-							{ session: state.session },
-							{ status: 'success' }
+						return await this.customeUpdate(
+							this.dataBase.tableCaptcharRecord,
+							{
+								condition: { session: state.session },
+								state: { status: 'success' }
+							}
 						)
 					})
 					return await divineResult({ check: true })
@@ -104,8 +107,10 @@ export class BrowserService extends CustomService {
 					option: { status: 'failure' }
 				})).then(async e => {
 					return await this.customeUpdate(this.dataBase.tableCaptcharRecord,
-						{ session: state.session },
-						{ status: 'failure' }
+						{
+							condition: { session: state.session },
+							state: { status: 'failure' }
+						}
 					)
 				})
 				throw new HttpException(e.message, e.status)

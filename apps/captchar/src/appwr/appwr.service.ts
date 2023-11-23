@@ -71,13 +71,12 @@ export class AppwrService extends CustomService {
 					message: `${state.name}已存在`
 				})
 			})
-			await this.customeUpdate(
-				this.dataBase.tableCaptcharAppwr,
-				{ appId: state.appId },
-				{
+			await this.customeUpdate(this.dataBase.tableCaptcharAppwr, {
+				condition: { appId: state.appId },
+				state: {
 					name: state.name
 				}
-			)
+			})
 			return await divineResult({ message: '编辑成功' })
 		})
 	}

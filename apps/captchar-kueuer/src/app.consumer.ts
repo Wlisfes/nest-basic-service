@@ -13,15 +13,15 @@ export class AppCaptcharKueuerConsumer extends CustomService {
 		super()
 	}
 
-	/**队列开始执行**/ //prettier-ignore
+	/**队列开始执行**/
 	@Process()
 	async process(job: Job<Record<string, never>>) {
 		console.log('Captchar-Kueuer消费者：', job.id)
 		await divineHandler(job.data.status === 'none', async () => {
-			return await this.customeUpdate(this.tableCaptcharRecord,
-				{ session: job.data.session },
-				{ status: 'invalid' }
-			)
+			return await this.customeUpdate(this.tableCaptcharRecord, {
+				condition: { session: job.data.session },
+				state: { status: 'invalid' }
+			})
 		})
 		return await job.progress(100)
 	}
