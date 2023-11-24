@@ -14,12 +14,17 @@ export class CacheCustomer extends CustomService {
 		super()
 	}
 
-	/**缓存键**/
+	/**用户信息缓存键**/
 	public async cacheNameCustomer(uid: string) {
 		return `:common:cache:customer:resolver:${uid}`
 	}
 
-	/**读取用户缓存**/
+	/**用户配置缓存键**/
+	public async cacheNameConfigur(uid: string) {
+		return `:common:cache:customer:configur:${uid}`
+	}
+
+	/**读取用户信息缓存**/
 	public async getCustomer(uid: string) {
 		return await this.cacheNameCustomer(uid).then(async cacheName => {
 			const cacheNode = await this.redisService.getStore<dataBase.TableCustomer>(cacheName)
@@ -40,7 +45,27 @@ export class CacheCustomer extends CustomService {
 		})
 	}
 
-	/**写入用户缓存**/
+	/**读取用户配置缓存**/
+	public async getConfigur(uid: string) {
+		return await this.cacheNameConfigur(uid).then(async cacheName => {
+			const cacheNode = await this.redisService.getStore<dataBase.TableCustomerConfigur>(cacheName)
+			if (isEmpty(cacheNode)) {
+				return await this.validator(this.dataBase.tableCustomerConfigur, {
+					message: '账户不存在',
+					join: { alias: 'tb' },
+					where: new Brackets(qb => {
+						qb.where('tb.uid = :uid', { uid })
+					})
+				}).then(async data => {
+					await this.setConfigur(uid, { ...data })
+					return await divineResult({ ...data })
+				})
+			}
+			return await divineResult({ ...cacheNode })
+		})
+	}
+
+	/**写入用户信息缓存**/
 	public async setCustomer(uid: string, data: Record<string, any>) {
 		return await this.cacheNameCustomer(uid).then(async cacheName => {
 			await this.redisService.setStore(cacheName, data)
@@ -48,7 +73,15 @@ export class CacheCustomer extends CustomService {
 		})
 	}
 
-	/**校验当前用户**/
+	/**写入用户配置缓存**/
+	public async setConfigur(uid: string, data: Record<string, any>) {
+		return await this.cacheNameConfigur(uid).then(async cacheName => {
+			await this.redisService.setStore(cacheName, data)
+			return await divineResult({ ...data })
+		})
+	}
+
+	/**校验当前用户信息**/
 	public async checkCustomer(uid: string, command: Array<string>) {
 		return await this.getCustomer(uid).then(async data => {
 			await divineCatchWherer(data.status === 'disable' && command.includes(data.status), {

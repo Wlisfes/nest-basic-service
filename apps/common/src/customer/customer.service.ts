@@ -5,7 +5,7 @@ import { compareSync } from 'bcryptjs'
 import { CustomService } from '@/service/custom.service'
 import { CacheCustomer } from '@/cache/cache-common.service'
 import { DataBaseService } from '@/service/database.service'
-import { divineIntNumber, divineResult } from '@/utils/utils-common'
+import { divineIntNumber, divineIntStringer, divineResult } from '@/utils/utils-common'
 import { divineCatchWherer, divineCreateJwtToken, divineClientSender } from '@/utils/utils-plugin'
 import { divineOmitDatePatter } from '@/utils/utils-process'
 import { custom } from '@/utils/utils-configer'
@@ -44,7 +44,9 @@ export class CustomerService extends CustomService {
 				credit: 0,
 				current: 0,
 				balance: 0,
-				authorize: 'initialize'
+				authorize: 'initialize',
+				apiKey: await divineIntStringer(32),
+				apiSecret: await divineIntStringer(32)
 			})
 			return await divineResult({ message: '注册成功' })
 		})
