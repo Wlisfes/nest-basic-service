@@ -72,15 +72,15 @@ export class CustomerService extends CustomService {
 		})
 
 		/**查询登录用户**/
-		const node = await this.validator(this.dataBase.tableCustomer, {
-			message: '账户不存在',
-			select: ['keyId', 'uid', 'nickname', 'avatar', 'mobile', 'email', 'password', 'status', 'createTime', 'updateTime'],
-			join: { alias: 'tb' },
-			where: new Brackets(qb => {
-				qb.where('tb.mobile = :mobile', { mobile: state.mobile })
-				qb.andWhere('tb.status IN(:...status)', { status: ['enable', 'disable'] })
-			})
+		const node = await this.customeBuilder(this.dataBase.tableCustomer, async qb => {
+			qb.addSelect('tb.password')
+			qb.where('tb.mobile = :mobile', { mobile: state.mobile })
+			qb.andWhere('tb.status IN(:...status)', { status: ['enable', 'disable'] })
+			return await qb.getOne()
 		}).then(async data => {
+			await divineCatchWherer(!Boolean(data), {
+				message: '用户未注册'
+			})
 			await divineCatchWherer(data.status === 'disable', {
 				message: '账户已被禁用'
 			})
@@ -112,6 +112,16 @@ export class CustomerService extends CustomService {
 		const node = await this.cacheCustomer.checkCustomer(state.uid, ['disable']).then(async node => {
 			return await divineOmitDatePatter(node, ['password'])
 		})
-		return await divineResult(node)
+		return await this.cacheCustomer.getConfigur(state.uid).then(async data => {
+			return await divineResult({
+				...node,
+				apiKey: data.apiKey ?? null,
+				apiSecret: data.apiSecret ?? null,
+				authorize: data.authorize ?? 'initialize',
+				credit: data.credit ?? 0,
+				current: data.current ?? 0,
+				balance: data.balance ?? 0
+			})
+		})
 	}
 }

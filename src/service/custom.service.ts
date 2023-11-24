@@ -6,19 +6,6 @@ import { divineResult } from '@/utils/utils-common'
 @Injectable()
 export class CustomService {
 	/**验证数据模型是否存在**/
-	public async nodeValidator<T>(node: T, state: Partial<{ message: string; code: number }> = {}) {
-		try {
-			await divineCatchWherer(!node && Boolean(state.message), {
-				message: state.message,
-				code: state.code ?? HttpStatus.BAD_REQUEST
-			})
-			return await divineResult(node)
-		} catch (e) {
-			throw new HttpException(e.message, e.code)
-		}
-	}
-
-	/**验证数据模型是否存在**/
 	public async validator<T>(model: Repository<T>, state: FindOneOptions<T> & Partial<{ message: string; code: number }>) {
 		try {
 			const node = await model.findOne(state)

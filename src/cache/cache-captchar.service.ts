@@ -30,7 +30,7 @@ export class CacheAppwr extends CustomService {
 					qb.addSelect('tb.appSecret')
 					return await qb.getOne()
 				}).then(async data => {
-					await this.nodeValidator(data, { message: '应用不存在' }).then(async () => {
+					await divineCatchWherer(!Boolean(data), { message: '应用不存在' }).then(async () => {
 						return await this.setAppwr(appId, data)
 					})
 					return await divineResult({ ...data })
