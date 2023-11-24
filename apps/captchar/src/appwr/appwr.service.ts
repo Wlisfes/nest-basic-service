@@ -33,16 +33,11 @@ export class AppwrService extends CustomService {
 				qb.andWhere('tb.status IN(:...status)', { status: ['activated', 'disable'] })
 			})
 		})
-		//查询应用数量
-		const count = await this.dataBase.tableCaptcharAppwr.count({
-			where: { uid, status: Not('delete') }
-		})
 		//写入表
 		const node = await this.customeCreate(this.dataBase.tableCaptcharAppwr, {
 			uid,
 			name: state.name,
 			status: 'activated',
-			visible: count === 0,
 			appId: await divineIntNumber(18),
 			appSecret: await divineIntStringer(32)
 		})
