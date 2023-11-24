@@ -10,6 +10,16 @@ export class TableCustomerConfigur extends TableCommon {
 	@Column({ comment: 'uid', update: false, nullable: false })
 	uid: string
 
+	@ApiProperty({ description: 'API Key', example: '' })
+	@IsNotEmpty({ message: 'API Key 必填' })
+	@Column({ comment: 'API Key', select: false, nullable: false })
+	apiKey: string
+
+	@ApiProperty({ description: 'API Secret', example: '' })
+	@IsNotEmpty({ message: 'API Secret 必填' })
+	@Column({ comment: 'API Secret', select: false, nullable: false })
+	apiSecret: string
+
 	@ApiProperty({
 		description: '用户认证状态：未认证-initialize、认证中-processer、认证成功-success、认证失败-failure',
 		enum: ['initialize', 'processer', 'success', 'failure'],
