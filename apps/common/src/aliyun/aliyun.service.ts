@@ -88,6 +88,7 @@ export class AliyunService extends CustomService {
 	public async httpColumnStorageExceler(state: http.ColumnStorageExceler, uid: string) {
 		return await this.customeBuilder(this.dataBase.tableExceler, qb => {
 			qb.leftJoinAndMapOne('tb.customer', dataBase.TableCustomer, 'customer', 'customer.uid = tb.uid')
+			qb.where('tb.uid = :uid', { uid })
 			qb.skip((state.page - 1) * state.size)
 			qb.take(state.size)
 			return qb.getManyAndCount()
