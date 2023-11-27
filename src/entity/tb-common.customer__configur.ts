@@ -12,12 +12,12 @@ export class TableCustomerConfigur extends TableCommon {
 
 	@ApiProperty({ description: 'API Key', example: '' })
 	@IsNotEmpty({ message: 'API Key 必填' })
-	@Column({ comment: 'API Key', select: false, nullable: false })
+	@Column({ comment: 'API Key', nullable: false })
 	apiKey: string
 
 	@ApiProperty({ description: 'API Secret', example: '' })
 	@IsNotEmpty({ message: 'API Secret 必填' })
-	@Column({ comment: 'API Secret', select: false, nullable: false })
+	@Column({ comment: 'API Secret', nullable: false })
 	apiSecret: string
 
 	@ApiProperty({
