@@ -74,8 +74,8 @@ export class AliyunService extends CustomService {
 				fileName: node.fileName,
 				suffix: node.suffix,
 				folder: node.folder,
-				total: sheet.total,
-				fileURL: `https://oss.lisfes.cn/basic/excel/2023-10/35871977524518149842.xlsx`
+				total: sheet.total
+				//fileURL: `https://oss.lisfes.cn/basic/excel/2023-10/35871977524518149842.xlsx`
 			}).then(async data => {
 				return await divineResult({ ...data, list: sheet.list })
 			})
