@@ -78,6 +78,26 @@ export class AppwrService extends CustomService {
 		})
 	}
 
+	/**重置密钥**/
+	public async httpResetCaptcharSecret(state: http.ResetCaptcharSecret, uid: string) {
+		return await this.cacheAppwr.checkAppwr(state.appId, ['disable']).then(async data => {
+			await divineCatchWherer(data.uid !== uid, {
+				message: '应用不存在'
+			})
+			//更新数据表
+			await this.customeUpdate(this.dataBase.tableCaptcharAppwr, {
+				condition: { appId: state.appId },
+				state: {
+					appSecret: await divineIntStringer(32)
+				}
+			})
+			//更新缓存
+			return await this.cacheAppwr.writeCache(state.appId).then(async () => {
+				return await divineResult({ message: '重置成功' })
+			})
+		})
+	}
+
 	/**获取应用信息**/
 	public async httpResolverCaptcharAppwr(state: http.ResolverCaptcharAppwr, uid: string) {
 		return await this.cacheAppwr.checkAppwr(state.appId, []).then(async data => {

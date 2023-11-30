@@ -31,6 +31,16 @@ export class AppwrController {
 		return await this.appwrService.httpUpdateCaptcharAppwr(body, request.user.uid)
 	}
 
+	@Post('/reset/secret')
+	@ApiDecorator({
+		operation: { summary: '重置密钥' },
+		response: { status: 200, description: 'OK', type: NoticeResolver },
+		authorize: { login: true, error: true }
+	})
+	public async httpResetCaptcharSecret(@Request() request, @Body() body: http.ResetCaptcharSecret) {
+		return await this.appwrService.httpResetCaptcharSecret(body, request.user.uid)
+	}
+
 	@Get('/resolver')
 	@ApiDecorator({
 		operation: { summary: '获取应用信息' },
