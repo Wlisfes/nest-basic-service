@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common'
-import { Brackets } from 'typeorm'
 import { isEmpty } from 'class-validator'
 import { CustomService } from '@/service/custom.service'
 import { RedisService } from '@/service/redis.service'
