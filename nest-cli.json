@@ -57,6 +57,24 @@
 			"compilerOptions": {
 				"tsConfigPath": "apps/message/tsconfig.app.json"
 			}
+		},
+		"message-kueuer": {
+			"type": "application",
+			"root": "apps/message-kueuer",
+			"entryFile": "main",
+			"sourceRoot": "apps/message-kueuer/src",
+			"compilerOptions": {
+				"tsConfigPath": "apps/message-kueuer/tsconfig.app.json"
+			}
+		},
+		"message-scheduler": {
+			"type": "application",
+			"root": "apps/message-scheduler",
+			"entryFile": "main",
+			"sourceRoot": "apps/message-scheduler/src",
+			"compilerOptions": {
+				"tsConfigPath": "apps/message-scheduler/tsconfig.app.json"
+			}
 		}
 	}
 }
