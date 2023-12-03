@@ -15,7 +15,8 @@
 			"@common/*": ["apps/common/src/*"],
 			"@nodemailer/*": ["apps/nodemailer/src/*"],
 			"@captchar/*": ["apps/captchar/src/*"],
-			"@captchar-kueuer/*": ["apps/captchar-kueuer/src/*"]
+			"@captchar-kueuer/*": ["apps/captchar-kueuer/src/*"],
+			"@message/*": ["apps/message/src/*"]
 		},
 		"incremental": true,
 		"skipLibCheck": true,
