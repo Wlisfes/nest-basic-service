@@ -1,45 +1,32 @@
 {
-  "compilerOptions": {
-    "module": "commonjs",
-    "declaration": true,
-    "removeComments": true,
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "allowSyntheticDefaultImports": true,
-    "target": "es2017",
-    "sourceMap": true,
-    "outDir": "./dist",
-    "baseUrl": "./",
-    "paths": {
-      "@/*": [
-        "src/*"
-      ],
-      "@common/*": [
-        "apps/common/src/*"
-      ],
-      "@nodemailer/*": [
-        "apps/nodemailer/src/*"
-      ],
-      "@captchar/*": [
-        "apps/captchar/src/*"
-      ],
-      "@captchar-kueuer/*": [
-        "apps/captchar-kueuer/src/*"
-      ],
-      "@message/*": [
-        "apps/message/src/*"
-      ]
-    },
-    "incremental": true,
-    "skipLibCheck": true,
-    "strictNullChecks": false,
-    "noImplicitAny": false,
-    "strictBindCallApply": false,
-    "forceConsistentCasingInFileNames": false,
-    "noFallthroughCasesInSwitch": false
-  },
-  "exclude": [
-    "node_modules",
-    "dist"
-  ]
+	"compilerOptions": {
+		"module": "commonjs",
+		"declaration": true,
+		"removeComments": true,
+		"emitDecoratorMetadata": true,
+		"experimentalDecorators": true,
+		"allowSyntheticDefaultImports": true,
+		"target": "es2017",
+		"sourceMap": true,
+		"outDir": "./dist",
+		"baseUrl": "./",
+		"paths": {
+			"@/*": ["src/*"],
+			"@common/*": ["apps/common/src/*"],
+			"@nodemailer/*": ["apps/nodemailer/src/*"],
+			"@captchar/*": ["apps/captchar/src/*"],
+			"@captchar-kueuer/*": ["apps/captchar-kueuer/src/*"],
+			"@message/*": ["apps/message/src/*"],
+			"@message-kueuer/*": ["apps/message-kueuer/src/*"],
+			"@message-scheduler/*": ["apps/message-scheduler/src/*"]
+		},
+		"incremental": true,
+		"skipLibCheck": true,
+		"strictNullChecks": false,
+		"noImplicitAny": false,
+		"strictBindCallApply": false,
+		"forceConsistentCasingInFileNames": false,
+		"noFallthroughCasesInSwitch": false
+	},
+	"exclude": ["node_modules", "dist"]
 }
