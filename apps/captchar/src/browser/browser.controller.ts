@@ -1,10 +1,7 @@
 import { Controller, Post, Get, Body, Query, Headers, Request } from '@nestjs/common'
-import { MessagePattern } from '@nestjs/microservices'
 import { ApiTags } from '@nestjs/swagger'
 import { BrowserService } from '@captchar/browser/browser.service'
 import { ApiDecorator } from '@/decorator/compute.decorator'
-import { divineResult } from '@/utils/utils-common'
-import { custom } from '@/utils/utils-configer'
 import * as dataBase from '@/entity'
 import * as http from '@captchar/interface/browser.resolver'
 
@@ -12,15 +9,6 @@ import * as http from '@captchar/interface/browser.resolver'
 @Controller('browser')
 export class BrowserController {
 	constructor(private readonly browserService: BrowserService) {}
-
-	@MessagePattern({ cmd: custom.captchar.instance.cmd.httpAuthorizeCheckerPattern })
-	public async httpAuthorizeCheckerPattern(data: http.AuthorizeCaptcharChecker & { referer: string }) {
-		try {
-			return await this.browserService.httpAuthorizeCaptcharChecker(data, data.referer)
-		} catch (e) {
-			return await divineResult({ data: null, message: e.message, code: e.status })
-		}
-	}
 
 	@Post('/authorize')
 	@ApiDecorator({

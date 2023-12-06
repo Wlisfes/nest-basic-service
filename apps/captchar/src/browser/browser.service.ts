@@ -1,5 +1,6 @@
-import { Injectable, Inject, HttpException, HttpStatus } from '@nestjs/common'
-import { ClientProxy } from '@nestjs/microservices'
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common'
+import { Queue } from 'bull'
+import { InjectQueue } from '@nestjs/bull'
 import { Brackets } from 'typeorm'
 import { CustomService } from '@/service/custom.service'
 import { CacheAppwr } from '@/cache/cache-captchar.service'
@@ -7,7 +8,6 @@ import { DataBaseService } from '@/service/database.service'
 import { divineIntNumber, divineResult } from '@/utils/utils-common'
 import { divineCatchWherer, divineCreateJwtToken, divineParseJwtToken } from '@/utils/utils-plugin'
 import { custom } from '@/utils/utils-configer'
-import { firstValueFrom } from 'rxjs'
 import * as dataBase from '@/entity'
 import * as http from '@captchar/interface/browser.resolver'
 
@@ -16,7 +16,7 @@ export class BrowserService extends CustomService {
 	constructor(
 		private readonly cacheAppwr: CacheAppwr,
 		private readonly dataBase: DataBaseService,
-		@Inject(custom.captchar.kueuer.instance.name) private kueuer: ClientProxy
+		@InjectQueue(custom.captchar.kueuer.bull.name) public readonly kueuer: Queue
 	) {
 		super()
 	}
@@ -39,10 +39,15 @@ export class BrowserService extends CustomService {
 				token: token,
 				referer: referer,
 				status: 'none'
-			}).then(async () => {
+			}).then(async data => {
 				//推入队列
-				return await firstValueFrom(
-					this.kueuer.send({ cmd: custom.captchar.kueuer.instance.cmd.httpCreateJobKueuer }, { session, token, status: 'none' })
+				await this.kueuer.add(
+					{
+						session: data.session,
+						token,
+						status: 'none'
+					},
+					{ delay: custom.captchar.kueuer.bull.delay, jobId: data.session }
 				)
 			})
 			return await divineResult({ session, token })
@@ -75,33 +80,33 @@ export class BrowserService extends CustomService {
 						message: 'token验证失败'
 					})
 					//更新队列数据
-					await firstValueFrom(
-						this.kueuer.send(
-							{ cmd: custom.captchar.kueuer.instance.cmd.httpUpdateJobKueuer },
-							{ jobId: state.session, option: { status: 'success' } }
-						)
-					).then(async e => {
-						//更新表数据
-						return await this.customeUpdate(this.dataBase.tableCaptcharRecord, {
-							condition: { session: state.session },
-							state: { status: 'success' }
-						})
-					})
+					// await firstValueFrom(
+					// 	this.kueuer.send(
+					// 		{ cmd: custom.captchar.kueuer.instance.cmd.httpUpdateJobKueuer },
+					// 		{ jobId: state.session, option: { status: 'success' } }
+					// 	)
+					// ).then(async e => {
+					// 	//更新表数据
+					// 	return await this.customeUpdate(this.dataBase.tableCaptcharRecord, {
+					// 		condition: { session: state.session },
+					// 		state: { status: 'success' }
+					// 	})
+					// })
 					return await divineResult({ check: true })
 				})
 			} catch (e) {
 				//更新队列数据
-				await firstValueFrom(
-					this.kueuer.send(
-						{ cmd: custom.captchar.kueuer.instance.cmd.httpUpdateJobKueuer },
-						{ jobId: state.session, option: { status: 'failure' } }
-					)
-				).then(async e => {
-					return await this.customeUpdate(this.dataBase.tableCaptcharRecord, {
-						condition: { session: state.session },
-						state: { status: 'failure' }
-					})
-				})
+				// await firstValueFrom(
+				// 	this.kueuer.send(
+				// 		{ cmd: custom.captchar.kueuer.instance.cmd.httpUpdateJobKueuer },
+				// 		{ jobId: state.session, option: { status: 'failure' } }
+				// 	)
+				// ).then(async e => {
+				// 	return await this.customeUpdate(this.dataBase.tableCaptcharRecord, {
+				// 		condition: { session: state.session },
+				// 		state: { status: 'failure' }
+				// 	})
+				// })
 				throw new HttpException(e.message, e.status)
 			}
 		})

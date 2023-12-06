@@ -1,5 +1,4 @@
 import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common'
-import { ClientsModule, Transport } from '@nestjs/microservices'
 import { LoggerMiddleware } from '@/middleware/logger.middleware'
 import { LoggerModule } from '@/module/logger.module'
 import { ConfigerModule } from '@/module/configer.module'
@@ -10,22 +9,9 @@ import { AppController } from '@captchar/app.controller'
 import { AppService } from '@captchar/app.service'
 import { AppwrModule } from '@captchar/appwr/appwr.module'
 import { BrowserModule } from '@captchar/browser/browser.module'
-import { custom } from '@/utils/utils-configer'
 
 @Module({
 	imports: [
-		ClientsModule.register({
-			isGlobal: true,
-			clients: [
-				{
-					name: custom.captchar.kueuer.instance.name,
-					transport: Transport.TCP,
-					options: {
-						port: custom.captchar.kueuer.port
-					}
-				}
-			]
-		}),
 		LoggerModule.forRoot({ name: 'Captchar' }),
 		ConfigerModule,
 		CustomizeModule,
