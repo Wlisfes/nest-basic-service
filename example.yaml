@@ -44,11 +44,6 @@ jwt:
 common:
     port: 5010
     prefix: /api/common
-    #微服务配置
-    instance:
-        name: common:instance
-        cmd: #微服务通讯事件
-            httpConnect: common:instance:cmd:httpConnect:pattern
 
 #Nodemailer服务相关配置####################################################################
 nodemailer:
@@ -62,12 +57,6 @@ nodemailer:
 captchar:
     port: 5030
     prefix: /api/captchar
-    #微服务配置
-    instance:
-        name: captchar:instance
-        cmd: #微服务通讯事件
-            httpConnect: captchar:instance:cmd:httpConnect:pattern
-            httpAuthorizeCheckerPattern: captchar:instance:browser:httpAuthorizeCheckerPattern
     #微服务队列配置
     kueuer:
         port: 5031
