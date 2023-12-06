@@ -80,33 +80,26 @@ export class BrowserService extends CustomService {
 						message: 'token验证失败'
 					})
 					//更新队列数据
-					// await firstValueFrom(
-					// 	this.kueuer.send(
-					// 		{ cmd: custom.captchar.kueuer.instance.cmd.httpUpdateJobKueuer },
-					// 		{ jobId: state.session, option: { status: 'success' } }
-					// 	)
-					// ).then(async e => {
-					// 	//更新表数据
-					// 	return await this.customeUpdate(this.dataBase.tableCaptcharRecord, {
-					// 		condition: { session: state.session },
-					// 		state: { status: 'success' }
-					// 	})
-					// })
-					return await divineResult({ check: true })
+					await this.kueuer.getJob(state.session).then(async job => {
+						return await job.update(Object.assign(job.data, { status: 'success' }))
+					})
+					//更新表数据
+					return await this.customeUpdate(this.dataBase.tableCaptcharRecord, {
+						condition: { session: state.session },
+						state: { status: 'success' }
+					}).then(async () => {
+						return await divineResult({ check: true })
+					})
 				})
 			} catch (e) {
 				//更新队列数据
-				// await firstValueFrom(
-				// 	this.kueuer.send(
-				// 		{ cmd: custom.captchar.kueuer.instance.cmd.httpUpdateJobKueuer },
-				// 		{ jobId: state.session, option: { status: 'failure' } }
-				// 	)
-				// ).then(async e => {
-				// 	return await this.customeUpdate(this.dataBase.tableCaptcharRecord, {
-				// 		condition: { session: state.session },
-				// 		state: { status: 'failure' }
-				// 	})
-				// })
+				await this.kueuer.getJob(state.session).then(async job => {
+					return await job.update(Object.assign(job.data, { status: 'failure' }))
+				})
+				await this.customeUpdate(this.dataBase.tableCaptcharRecord, {
+					condition: { session: state.session },
+					state: { status: 'failure' }
+				})
 				throw new HttpException(e.message, e.status)
 			}
 		})

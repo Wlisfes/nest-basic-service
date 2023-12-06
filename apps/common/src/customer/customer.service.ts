@@ -1,12 +1,12 @@
-import { HttpStatus, Injectable, Inject } from '@nestjs/common'
-import { ClientProxy } from '@nestjs/microservices'
+import { HttpStatus, Injectable } from '@nestjs/common'
 import { Brackets } from 'typeorm'
 import { compareSync } from 'bcryptjs'
+import { HttpService } from '@nestjs/axios'
 import { CustomService } from '@/service/custom.service'
 import { CacheCustomer } from '@/cache/cache-common.service'
 import { DataBaseService } from '@/service/database.service'
 import { divineIntNumber, divineIntStringer, divineResult } from '@/utils/utils-common'
-import { divineCatchWherer, divineCreateJwtToken, divineClientSender } from '@/utils/utils-plugin'
+import { divineCatchWherer, divineCreateJwtToken } from '@/utils/utils-plugin'
 import { divineOmitDatePatter } from '@/utils/utils-process'
 import { custom } from '@/utils/utils-configer'
 import * as http from '@common/interface/customer.resolver'
@@ -16,7 +16,7 @@ export class CustomerService extends CustomService {
 	constructor(
 		private readonly cacheCustomer: CacheCustomer,
 		private readonly dataBase: DataBaseService,
-		@Inject(custom.captchar.instance.name) private captchar: ClientProxy
+		private readonly httpService: HttpService
 	) {
 		super()
 	}
@@ -54,20 +54,21 @@ export class CustomerService extends CustomService {
 
 	/**登录**/
 	public async httpAuthorizeCustomer(state: http.AuthorizeCustomer, referer: string) {
-		/**验证服务校验**/
-		await divineClientSender(this.captchar, {
-			cmd: custom.captchar.instance.cmd.httpAuthorizeCheckerPattern,
+		/**验证码校验**/ //prettier-ignore
+		await this.httpService.axiosRef.request({
+			baseURL: `http://${custom.ipv4}:${custom.captchar.port}`,
+			url: `${custom.captchar.prefix}/browser/authorize/checker`,
+			method: 'POST',
+			headers: { origin: referer },
 			data: {
-				referer,
 				appSecret: 'zzFznmt8DY64hHBnkoboTmUzFZIadSdV',
 				appId: '169851019895347735',
 				session: state.session,
-				token: state.token
+				token: state.token,
 			}
-		}).then(async node => {
-			return await divineCatchWherer(!node.check, {
-				message: node.message,
-				code: node.status ?? HttpStatus.BAD_REQUEST
+		}).then(async ({ data }) => {
+			return await divineCatchWherer(data.code !== HttpStatus.OK || !data.data.check, {
+				message: data.message
 			})
 		})
 
