@@ -1,5 +1,6 @@
 import { HttpStatus, Injectable } from '@nestjs/common'
 import { Brackets } from 'typeorm'
+import { firstValueFrom } from 'rxjs'
 import { compareSync } from 'bcryptjs'
 import { HttpService } from '@nestjs/axios'
 import { CustomService } from '@/service/custom.service'
@@ -54,19 +55,21 @@ export class CustomerService extends CustomService {
 
 	/**登录**/
 	public async httpAuthorizeCustomer(state: http.AuthorizeCustomer, referer: string) {
-		/**验证码校验**/ //prettier-ignore
-		await this.httpService.axiosRef.request({
-			baseURL: `http://${custom.ipv4}:${custom.captchar.port}`,
-			url: `${custom.captchar.prefix}/browser/authorize/checker`,
-			method: 'POST',
-			headers: { origin: referer },
-			data: {
-				appSecret: 'zzFznmt8DY64hHBnkoboTmUzFZIadSdV',
-				appId: '169851019895347735',
-				session: state.session,
-				token: state.token,
-			}
-		}).then(async ({ data }) => {
+		/**验证码校验**/
+		await firstValueFrom(
+			this.httpService.request({
+				baseURL: `http://${custom.ipv4}:${custom.captchar.port}`,
+				url: `${custom.captchar.prefix}/browser/authorize/checker`,
+				method: 'POST',
+				headers: { origin: referer },
+				data: {
+					appSecret: 'zzFznmt8DY64hHBnkoboTmUzFZIadSdV',
+					appId: '169851019895347735',
+					session: state.session,
+					token: state.token
+				}
+			})
+		).then(async ({ data }) => {
 			return await divineCatchWherer(data.code !== HttpStatus.OK || !data.data.check, {
 				message: data.message
 			})
