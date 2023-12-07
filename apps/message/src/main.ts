@@ -1,5 +1,4 @@
 import { NestFactory } from '@nestjs/core'
-import { Transport, MicroserviceOptions } from '@nestjs/microservices'
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger'
 import { ValidationPipe } from '@nestjs/common'
 import { AppModule } from '@message/app.module'
@@ -36,7 +35,7 @@ async function bootstrap() {
 	app.use(express.json())
 	app.use(express.urlencoded({ extended: true }))
 	//接口前缀
-	app.setGlobalPrefix(custom.common.prefix)
+	app.setGlobalPrefix(custom.message.prefix)
 	//全局注册验证管道
 	app.useGlobalPipes(new ValidationPipe({ transform: true, whitelist: true }))
 	//挂载文档
