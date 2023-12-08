@@ -42,24 +42,33 @@ jwt:
 
 #Common服务相关配置########################################################################
 common:
-    port: 5010
+    port: 7010
     prefix: /api/common
+
+#Messager短信服务相关配置##################################################################
+message:
+    port: 7020
+    prefix: /api/message
+    #供应商配置
+    provide:
+        uni:
+            accessKeyId: PznDdiQ4HCGCfWsRDccKGrvUa6qrQkoqKu8vcSDf86BPURJRr
 
 #Nodemailer服务相关配置####################################################################
 nodemailer:
-    port: 5020
+    port: 7030
     prefix: /api/nodemailer
     #redis队列配置
     kueuer:
-        port: 5021
+        port: 7031
 
 #Captchar服务相关配置######################################################################
 captchar:
-    port: 5030
+    port: 7040
     prefix: /api/captchar
     #微服务队列配置
     kueuer:
-        port: 5031
+        port: 7041
         bull:
             name: captchar:kueuer:authorize
             delay: 300000
