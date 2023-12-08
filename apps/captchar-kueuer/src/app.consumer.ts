@@ -1,24 +1,31 @@
+import { Inject } from '@nestjs/common'
 import { Processor, Process } from '@nestjs/bull'
-import { InjectRepository } from '@nestjs/typeorm'
-import { Repository } from 'typeorm'
 import { Job } from 'bull'
+import { WINSTON_MODULE_PROVIDER } from 'nest-winston'
+import { Logger } from 'winston'
 import { CustomService } from '@/service/custom.service'
+import { DataBaseService } from '@/service/database.service'
 import { divineHandler } from '@/utils/utils-common'
-import { TableCaptcharRecord } from '@/entity/tb-common.captchar__record'
 import { custom } from '@/utils/utils-configer'
 
 @Processor({ name: custom.captchar.kueuer.bull.name })
 export class AppCaptcharKueuerConsumer extends CustomService {
-	constructor(@InjectRepository(TableCaptcharRecord) public readonly tableCaptcharRecord: Repository<TableCaptcharRecord>) {
+	constructor(@Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger, private readonly dataBase: DataBaseService) {
 		super()
 	}
 
 	/**队列开始执行**/
 	@Process()
-	async process(job: Job<Record<string, never>>) {
-		console.log('Captchar-Kueuer消费者：', job.id)
+	async process(job: Job<Record<string, any>>) {
+		this.logger.info(AppCaptcharKueuerConsumer.name, {
+			log: Object.assign(job.data, {
+				jobId: job.opts.jobId,
+				delay: job.opts.delay,
+				timestamp: job.timestamp
+			})
+		})
 		await divineHandler(job.data.status === 'none', async () => {
-			return await this.customeUpdate(this.tableCaptcharRecord, {
+			return await this.customeUpdate(this.dataBase.tableCaptcharRecord, {
 				condition: { session: job.data.session },
 				state: { status: 'invalid' }
 			})

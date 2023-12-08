@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common'
 import { TypeOrmModule } from '@nestjs/typeorm'
+import { LoggerModule } from '@/module/logger.module'
 import { ConfigerModule } from '@/module/configer.module'
 import { DatabaseModule } from '@/module/database.module'
 import { BullModule } from '@nestjs/bull'
@@ -12,6 +13,7 @@ import { custom } from '@/utils/utils-configer'
 @Module({
 	imports: [
 		ConfigerModule,
+		LoggerModule.forRoot({ name: 'Captchar-Kueuer' }),
 		BullModule.forRoot({
 			prefix: custom.redis.prefix,
 			redis: {
