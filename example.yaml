@@ -49,6 +49,13 @@ common:
 message:
     port: 7020
     prefix: /api/message
+    #微服务队列配置
+    kueuer:
+        port: 7021
+        bull:
+            name: message:kueuer:tasker
+            removeOnComplete: true
+            removeOnFail: false
     #供应商配置
     provide:
         uni:
