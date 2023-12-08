@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common'
-import { TypeOrmModule } from '@nestjs/typeorm'
 import { LoggerModule } from '@/module/logger.module'
 import { ConfigerModule } from '@/module/configer.module'
 import { DatabaseModule } from '@/module/database.module'
@@ -7,7 +6,6 @@ import { BullModule } from '@nestjs/bull'
 import { AppController } from '@captchar-kueuer/app.controller'
 import { AppService } from '@captchar-kueuer/app.service'
 import { AppCaptcharKueuerConsumer } from '@captchar-kueuer/app.consumer'
-import { TableCaptcharRecord } from '@/entity/tb-common.captchar__record'
 import { custom } from '@/utils/utils-configer'
 
 @Module({
@@ -30,8 +28,7 @@ import { custom } from '@/utils/utils-configer'
 				removeOnFail: custom.captchar.kueuer.bull.removeOnFail
 			}
 		}),
-		DatabaseModule,
-		TypeOrmModule.forFeature([TableCaptcharRecord])
+		DatabaseModule
 	],
 	controllers: [AppController],
 	providers: [AppService, AppCaptcharKueuerConsumer]
