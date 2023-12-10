@@ -56,6 +56,9 @@ message:
             name: message:kueuer:tasker
             removeOnComplete: true
             removeOnFail: false
+    #微服务调度配置
+    scheduler:
+        port: 7022
     #供应商配置
     provide:
         uni:
