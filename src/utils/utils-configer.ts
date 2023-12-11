@@ -6,7 +6,7 @@ import * as ip from 'ip'
 /**自定义注入配置**/
 export function CustomProvider(): Record<string, any> {
 	const ipv4 = ip.address()
-	const configer = yaml.load(fs.readFileSync(path.join(__dirname, `../../../development.yaml`), 'utf8'))
+	const configer = yaml.load(fs.readFileSync(path.join(__dirname, `../../../configer.yaml`), 'utf8'))
 	return Object.assign({ ipv4 }, configer)
 }
 

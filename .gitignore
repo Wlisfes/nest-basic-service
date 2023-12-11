@@ -14,8 +14,7 @@ package-lock.json
 yarn.lock
 .env
 /src/i18n/i18n.interface.ts
-development.yaml
-production.yaml
+configer.yaml
 
 # OS
 .DS_Store
