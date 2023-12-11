@@ -8,12 +8,12 @@
 	"scripts": {
 		"build": "nest build",
 		"start": "nest start",
-		"dev": "set NODE_ENV=development && nest start --watch",
+		"dev": "nest start --watch",
 		"start:debug": "nest start --debug --watch",
-		"start:common": "set NODE_ENV=production && node dist/apps/common/main",
-		"start:nodemailer": "set NODE_ENV=production && node dist/apps/nodemailer/main",
-		"start:captchar": "set NODE_ENV=production && node dist/apps/captchar/main",
-		"start:captchar-kueuer": "set NODE_ENV=production && node dist/apps/captchar-kueuer/main"
+		"start:common": "node dist/apps/common/main",
+		"start:nodemailer": "node dist/apps/nodemailer/main",
+		"start:captchar": "node dist/apps/captchar/main",
+		"start:captchar-kueuer": "node dist/apps/captchar-kueuer/main"
 	},
 	"dependencies": {
 		"@faker-js/faker": "^8.1.0",
